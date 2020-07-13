@@ -70,7 +70,7 @@ public class CapabilityMP
             }
             else
             {
-                return null;
+                return LazyOptional.empty();
             }
         }
 
