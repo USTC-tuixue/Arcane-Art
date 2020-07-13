@@ -94,6 +94,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     compileOnly 'org.projectlombok:lombok:1.18.12'
 
+    compile 'com.udojava:EvalEx:2.5'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

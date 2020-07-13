@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
@@ -10,12 +11,15 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+@Mod.EventBusSubscriber(modid = ArcaneArt.MOD_ID)
 public class APIEventHandler
 {
     static final Logger LOGGER = LogManager.getLogger(ArcaneArt.MOD_NAME + " API");
@@ -51,5 +55,9 @@ public class APIEventHandler
         }
     }
 
-
+    @SubscribeEvent
+    public void registerConfig(ModConfig.Reloading event)
+    {
+        ((CommentedFileConfig)event.getConfig().getConfigData()).load();
+    }
 }
