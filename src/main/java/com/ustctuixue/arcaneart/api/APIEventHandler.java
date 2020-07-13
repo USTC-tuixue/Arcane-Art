@@ -13,9 +13,17 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 public class APIEventHandler
 {
+    static final Logger LOGGER = LogManager.getLogger(ArcaneArt.MOD_NAME + " API");
+
+    private static final Marker MAGIC_REGEN = MarkerManager.getMarker("Magic Regen");
+    private static final Marker SETUP = MarkerManager.getMarker("SetUp");
 
     @SubscribeEvent
     public void setup(FMLCommonSetupEvent event)
@@ -34,6 +42,7 @@ public class APIEventHandler
         }
     }
 
+    @SubscribeEvent
     public void regenMP(TickEvent.PlayerTickEvent event)
     {
         event.player.getCapability(CapabilityMP.MANA_BAR_CAP).ifPresent((manaBar)->{
@@ -41,8 +50,9 @@ public class APIEventHandler
             {
                 double regen = event.player.getAttribute(CapabilityMP.REGEN_RATE).getValue();
                 double maxMP = event.player.getAttribute(CapabilityMP.MAX_MANA).getValue();
-                regen = MathHelper.clamp(regen * maxMP, 0, maxMP);
-                manaBar.setMana(manaBar.getMana() + regen);
+                regen = MathHelper.clamp(manaBar.getMana() + regen * maxMP, 0, maxMP);
+                manaBar.setMana(regen);
+                // LOGGER.info("Mana of " + event.player.getUniqueID().toString() + ":" + manaBar.getMana());
             }
         });
     }

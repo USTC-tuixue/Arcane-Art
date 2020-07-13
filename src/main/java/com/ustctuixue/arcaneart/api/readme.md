@@ -1,6 +1,7 @@
 # API 说明
 
 ## MP 系统
+
 `package com.ustctuixue.arcaneart.api.mp;`
 
 ### MP 槽
@@ -41,3 +42,12 @@ public class Test{
 ## MP 相关事件
 
 MP 槽相关的事件都是 `mp.MPEvent` 的子类，目前这一部分还没完成。
+
+
+
+## 法术解释器
+
+玩家施法方式：法球施法、持续性施法
+
+
+
