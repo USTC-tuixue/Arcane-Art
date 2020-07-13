@@ -6,10 +6,8 @@ import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,20 +40,7 @@ public class APIEventHandler
         }
     }
 
-    @SubscribeEvent
-    public void regenMP(TickEvent.PlayerTickEvent event)
-    {
-        event.player.getCapability(CapabilityMP.MANA_BAR_CAP).ifPresent((manaBar)->{
-            if (manaBar.coolDown())
-            {
-                double regen = event.player.getAttribute(CapabilityMP.REGEN_RATE).getValue();
-                double maxMP = event.player.getAttribute(CapabilityMP.MAX_MANA).getValue();
-                regen = MathHelper.clamp(manaBar.getMana() + regen * maxMP, 0, maxMP);
-                manaBar.setMana(regen);
-                // LOGGER.info("Mana of " + event.player.getUniqueID().toString() + ":" + manaBar.getMana());
-            }
-        });
-    }
+
 
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event)
@@ -65,4 +50,6 @@ public class APIEventHandler
             event.addCapability(ArcaneArt.getResourceLocation("mp"), new CapabilityMP.Provider());
         }
     }
+
+
 }
