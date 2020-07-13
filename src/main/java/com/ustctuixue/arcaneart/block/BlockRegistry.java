@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart;
+package com.ustctuixue.arcaneart.block;
 
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.RegistryObject;

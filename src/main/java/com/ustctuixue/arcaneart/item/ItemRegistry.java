@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart;
+package com.ustctuixue.arcaneart.item;
 
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -11,4 +11,7 @@ public class ItemRegistry {
 	/*public static RegistryObject<Item> obsidianIngot = ITEMS.register("xxxx_xxxx", () -> {
 		return xxxx;
 	});*/
+	public static RegistryObject<Item> diamond_staff = ITEMS.register("diamond_staff", () -> {
+		return new diamondStaff();
+	});
 }

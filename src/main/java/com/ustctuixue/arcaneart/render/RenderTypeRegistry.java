@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart;
+package com.ustctuixue.arcaneart.render;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
