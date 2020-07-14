@@ -1,10 +1,12 @@
 package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIEventHandler;
+import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.item.ItemRegistry;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,10 +28,13 @@ public class ArcaneArt
     private static final Marker MAIN = MarkerManager.getMarker("MAIN");
     public ArcaneArt()
     {
-    	ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    	IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOGGER.info(MAIN, "Loading Mod " + MOD_NAME);
         MinecraftForge.EVENT_BUS.register(new APIEventHandler());
         MinecraftForge.EVENT_BUS.register(this);
+        eventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::clientSetup);
+    	ItemRegistry.ITEMS.register(eventBus);
     }
 
     public static ResourceLocation getResourceLocation(String name)
@@ -37,15 +42,12 @@ public class ArcaneArt
         return new ResourceLocation(MOD_ID, name);
     }
 
-    @SubscribeEvent
-    public void commonSetup(FMLCommonSetupEvent event)
+    public void commonSetup(final FMLCommonSetupEvent event)
     {
 
     }
-
-    @SubscribeEvent
-    public void clientSetup(FMLClientSetupEvent event)
+    public void clientSetup(final FMLClientSetupEvent event)
     {
-
+    	KeyLoader.register();
     }
 }
