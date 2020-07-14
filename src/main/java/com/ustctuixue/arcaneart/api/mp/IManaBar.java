@@ -9,7 +9,7 @@ public interface IManaBar
     double getMana();
 
     /**
-     * 设置生物当前的 MP 值
+     * 设置生物当前的 MP 值，不检查 MP 值是否超出上限
      * @param mana 设置的值，如果小于 0 则认为是 0
      */
     void setMana(double mana);

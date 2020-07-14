@@ -48,6 +48,13 @@ public class DefaultManaBar implements IManaBar
     @Override
     public boolean coolDown()
     {
-        return (--regenCoolDown) == 0;
+
+        if (regenCoolDown <= 0)
+        {
+            regenCoolDown = 0;
+            return true;
+        }
+        regenCoolDown--;
+        return false;
     }
 }
