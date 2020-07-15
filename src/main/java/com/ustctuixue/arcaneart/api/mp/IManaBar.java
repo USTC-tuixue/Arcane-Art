@@ -19,7 +19,7 @@ public interface IManaBar
      * 消耗 MP 值
      * @param mana 消耗的 MP 量
      */
-    void consumeMana(double mana);
+    boolean consumeMana(double mana);
 
     /**
      *
