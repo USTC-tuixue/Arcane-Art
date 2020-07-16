@@ -5,10 +5,8 @@ import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
-import com.ustctuixue.arcaneart.api.spell.inventory.CapabilitySpellInventory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -26,7 +24,6 @@ public class APIEventHandler
 {
     static final Logger LOGGER = LogManager.getLogger(ArcaneArt.MOD_NAME + " API");
 
-    private static final Marker MAGIC_REGEN = MarkerManager.getMarker("Magic Regen");
     private static final Marker SETUP = MarkerManager.getMarker("SetUp");
 
     @SubscribeEvent
@@ -57,12 +54,7 @@ public class APIEventHandler
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
             );
-            if (event.getObject() instanceof PlayerEntity)
-            {
-                event.addCapability(ArcaneArt.getResourceLocation("spell_inventory"),
-                        new CapabilitySpellInventory.Provider()
-                );
-            }
+
         }
     }
 
