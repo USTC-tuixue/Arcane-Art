@@ -5,6 +5,8 @@ import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
+import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -30,6 +32,7 @@ public class APIEventHandler
     public void setup(FMLCommonSetupEvent event)
     {
         CapabilityManager.INSTANCE.register(IManaBar.class, new CapabilityMP.Storage(), DefaultManaBar::new);
+        CapabilityManager.INSTANCE.register(MPStorage.class, new CapabilityMPStorage.Storage(), MPStorage::new);
     }
 
     @SubscribeEvent
@@ -54,7 +57,6 @@ public class APIEventHandler
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
             );
-
         }
     }
 

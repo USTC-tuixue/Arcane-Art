@@ -1,21 +1,18 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.google.common.base.Strings;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.ustctuixue.arcaneart.ArcaneArt;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import org.lwjgl.system.CallbackI;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SpellTranslator
@@ -44,24 +41,25 @@ public class SpellTranslator
         return null;
     }
 
-    public static String expandMacros(List<String> list)
-    {
-        Map<String, String> macroMap = Maps.newHashMap();
-        for (String line : list)
-        {
-            String[] words = line.split(" ");
-            for (int i = 0; i < words.length; i++)
-            {
-                words[i] = macroMap.getOrDefault(words[i], words[i]);
+    private static Map<String, String> KEY_WORD_TRANSLATION = Maps.newHashMap();
 
-            }
-            if (line.matches("[lL]et \\S* be .*"))
+    public static List<String> translateNaturalToStandard(List<String> incantations)
+    {
+        List<String> machineLanguage = Lists.newArrayList();
+        for (String key :
+                KEY_WORD_TRANSLATION.keySet())
+        {
+            for (String incantation : incantations)
             {
-                macroMap.put(words[1], line.split("be ")[1]);
+                machineLanguage.add(
+                        incantation.replaceAll(KEY_WORD_TRANSLATION.get(key), key)
+                );
             }
         }
-        return list.get(list.size() - 1);
+
+        return machineLanguage;
     }
+
 
 
 }
