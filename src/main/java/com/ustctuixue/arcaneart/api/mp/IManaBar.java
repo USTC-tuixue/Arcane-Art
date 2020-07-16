@@ -18,8 +18,9 @@ public interface IManaBar
     /**
      * 消耗 MP 值
      * @param mana 消耗的 MP 量
+     * @return 有足够的 MP 供消耗则返回 true，否则为 false
      */
-    void consumeMana(double mana);
+    boolean consumeMana(double mana);
 
     /**
      *

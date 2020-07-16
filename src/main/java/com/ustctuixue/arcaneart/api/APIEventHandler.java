@@ -9,6 +9,7 @@ import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -54,7 +55,10 @@ public class APIEventHandler
     {
         if (event.getObject() instanceof LivingEntity)
         {
-            event.addCapability(ArcaneArt.getResourceLocation("mp"), new CapabilityMP.Provider());
+            event.addCapability(
+                    ArcaneArt.getResourceLocation("mp"),
+                    new CapabilityMP.Provider()
+            );
         }
     }
 
