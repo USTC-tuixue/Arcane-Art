@@ -38,6 +38,7 @@ public class Test{
 对应的属性项为：`CapabilityMP::REGEN_RATE`
 
 ### MP 回复计时器
+
 整合到 MP 槽了，这里主要是 API 内部调用，故不作详细说明。
 
 ## MP 相关事件
