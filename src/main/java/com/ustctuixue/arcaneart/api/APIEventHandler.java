@@ -7,15 +7,20 @@ import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.api.spell.translate.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -64,5 +69,18 @@ public class APIEventHandler
     public void registerConfig(ModConfig.Reloading event)
     {
         ((CommentedFileConfig)event.getConfig().getConfigData()).load();
+    }
+
+    @SubscribeEvent
+    public void createRegistry(RegistryEvent.NewRegistry event)
+    {
+        RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
+        SpellKeyWord.REGISTRY = builder.create();
+    }
+
+    @SubscribeEvent
+    public void loadKeyWordMaps(FMLServerAboutToStartEvent event)
+    {
+        LanguageManager.getInstance().readFromConfig();
     }
 }

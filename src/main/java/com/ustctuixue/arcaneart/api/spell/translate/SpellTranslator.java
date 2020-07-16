@@ -1,8 +1,5 @@
-package com.ustctuixue.arcaneart.api.spell;
+package com.ustctuixue.arcaneart.api.spell.translate;
 
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -11,13 +8,11 @@ import net.minecraft.nbt.StringNBT;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SpellTranslator
 {
-    public static List<String> jointFromWrittenBook(ItemStack itemStack)
+    public static List<String> joinFromWrittenBook(ItemStack itemStack)
     {
         CompoundNBT compoundNBT = itemStack.getTag();
         if (compoundNBT != null)
@@ -41,25 +36,8 @@ public class SpellTranslator
         return null;
     }
 
-    private static Map<String, String> KEY_WORD_TRANSLATION = Maps.newHashMap();
-
-    public static List<String> translateNaturalToStandard(List<String> incantations)
+    public static List<String> translateByProfile(List<String> rawSpell, LanguageProfile profile)
     {
-        List<String> machineLanguage = Lists.newArrayList();
-        for (String key :
-                KEY_WORD_TRANSLATION.keySet())
-        {
-            for (String incantation : incantations)
-            {
-                machineLanguage.add(
-                        incantation.replaceAll(KEY_WORD_TRANSLATION.get(key), key)
-                );
-            }
-        }
-
-        return machineLanguage;
+        return rawSpell.stream().map(profile::translate).collect(Collectors.toList());
     }
-
-
-
 }
