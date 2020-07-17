@@ -55,7 +55,21 @@ MP 槽相关的事件都是 `mp.MPEvent` 的子类，目前这一部分还没完
     - 松开右键时作用
     - 法球 impact 时作用
     - 陷阱触发时作用
-  - 魔法消耗类型
-    - 持续性：rate
-    - 固定性：sum
-  - 
+
+
+
+### 法术翻译器
+
+将自然语言的单词翻译成机器语言的关键词（`ResourceLocation`的格式）。支持多语种，以及扩充关键词
+
+#### 注册关键词
+
+关键词的基类：`spell.SpellKeyWord`，注册方法和注册方块、物品等如出一辙。
+
+#### 为关键词添加翻译
+
+使用 `SpellKeyWord::addTranslation(String language, String... translation)` 添加默认翻译。这里 `language` 是对应的语言，`translation` 是关键词对应的翻译。在翻译时，`translation` 数组里的单词都会被替换为关键词。
+
+#### 添加、修改法术语言
+
+直接在 config/Incantation Languages 里面添加、修改语言设置文件即可。empty.toml 是生成的语言文件模板，不会被读取。

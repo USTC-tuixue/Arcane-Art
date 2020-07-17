@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
@@ -17,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class Spell implements INBTSerializable<ListNBT>
@@ -27,6 +30,8 @@ public class Spell implements INBTSerializable<ListNBT>
 
     @Getter @NonNull
     ListNBT spell;
+
+    private final Map<String, Object> variables = Maps.newHashMap();
 
     @Getter @NonNull
     final List<ISpellEffectOnHold> effectOnHold = Lists.newArrayList();
@@ -99,5 +104,15 @@ public class Spell implements INBTSerializable<ListNBT>
         {
             spell.clear();
         }
+    }
+
+    public Object getVariable(String name)
+    {
+        return variables.get(name);
+    }
+
+    public void setVariable(String name, Object obj)
+    {
+        variables.put(name, obj);
     }
 }

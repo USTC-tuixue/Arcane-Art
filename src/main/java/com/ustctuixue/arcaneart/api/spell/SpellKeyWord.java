@@ -27,12 +27,12 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
         defaultTranslations.put(language, Strings.join(translation, "|"));
     }
 
-    public Set<Map.Entry<String, String>> getDefaultTranslationEntrySet()
+    public final Set<Map.Entry<String, String>> getDefaultTranslationEntrySet()
     {
         return defaultTranslations.entrySet();
     }
 
-    public Set<String> getDefaultTranslationKeySet()
+    public final Set<String> getDefaultTranslationKeySet()
     {
         return defaultTranslations.keySet();
     }
@@ -43,17 +43,17 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
      * @return translation regex pattern
      */
     @Nullable
-    public String getDefaultTranslation(String language)
+    public final String getDefaultTranslation(String language)
     {
-        return defaultTranslations.getOrDefault(language, null);
+        return defaultTranslations.getOrDefault(language, getRegistryName().toString());
     }
 
-    public Collection<String> getDefaultTranslationValueSet()
+    public final Collection<String> getDefaultTranslationValueSet()
     {
         return defaultTranslations.values();
     }
 
-    public String getTranslationPath()
+    public final String getTranslationPath()
     {
         return name.getNamespace() + "." + name.getPath();
     }
@@ -64,7 +64,7 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
     private ResourceLocation name;
 
     @Override
-    public SpellKeyWord setRegistryName(ResourceLocation name)
+    public final SpellKeyWord setRegistryName(ResourceLocation name)
     {
         this.name = name;
         return this;
@@ -72,14 +72,14 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 
     @Nullable
     @Override
-    public ResourceLocation getRegistryName()
+    public final ResourceLocation getRegistryName()
     {
         return this.name;
     }
 
 
     @Override
-    public Class<SpellKeyWord> getRegistryType()
+    public final Class<SpellKeyWord> getRegistryType()
     {
         return SpellKeyWord.class;
     }

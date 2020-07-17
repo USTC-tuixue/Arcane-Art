@@ -1,11 +1,13 @@
 package com.ustctuixue.arcaneart.api.spell.translate;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,12 +54,27 @@ public class LanguageManager
                 Objects.requireNonNull(PROFILE_DIR.listFiles()))
         {
             String name = configFile.getName().split("\\.")[0];
-            LanguageProfile profile = new LanguageProfile(name,
-                    SpellKeyWord.REGISTRY.getKeys()
-            );
-            profile.load(getFile(name));
-            this.profiles.put(name, profile);
+            if (!name.equals("empty"))
+            {
+                LanguageProfile profile = new LanguageProfile(name,
+                        SpellKeyWord.REGISTRY.getKeys()
+                );
+                profile.load(getFile(name));
+                this.profiles.put(name, profile);
+            }
         }
+        generateTemplate();
+    }
+
+    private static void generateTemplate()
+    {
+        File templateFile = getFile("empty");
+        CommentedFileConfig config = CommentedFileConfig.of(templateFile);
+        SpellKeyWord.REGISTRY.getValues().forEach(
+                (keyWord) -> config.add(keyWord.getTranslationPath(), "")
+        );
+        config.save();
+        config.close();
     }
 
     public LanguageProfile getBestMatchedProfile(List<String> sp)
