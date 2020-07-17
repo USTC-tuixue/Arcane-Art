@@ -10,18 +10,15 @@ import com.ustctuixue.arcaneart.api.spell.effect.*;
 import com.ustctuixue.arcaneart.api.util.ReflectHelper;
 import lombok.*;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Spell implements INBTSerializable<ListNBT>
 {
 
@@ -29,7 +26,12 @@ public class Spell implements INBTSerializable<ListNBT>
             = new CommandDispatcher<>();
 
     @Getter @NonNull
-    ListNBT spell;
+    ListNBT spell = new ListNBT();
+
+    public Spell(ListNBT nbt)
+    {
+        this.spell = nbt.copy();
+    }
 
     private final Map<String, Object> variables = Maps.newHashMap();
 
@@ -42,28 +44,39 @@ public class Spell implements INBTSerializable<ListNBT>
     @Getter @NonNull
     final List<ISpellEffectOnRelease> effectOnRelease = Lists.newArrayList();
 
-    public void playerCastOnHold(IManaBar bar, World worldIn, PlayerEntity playerIn, Hand handIn)
+    @Getter
+    double costOnHold;
+
+    @Getter
+    double costOnRelease;
+
+    @Getter
+    int chargeTick;
+
+    public boolean playerCastOnHold(IManaBar bar, World worldIn, LivingEntity entityLiving, ItemStack stack, int time)
     {
-        for (ISpellEffectOnHold effect:
-             effectOnHold)
+
+        boolean f = bar.consumeMana(ISpellCostModifier.modifyCost(costOnHold, entityLiving, worldIn));
+        if (f)
         {
-            if (bar.consumeMana(effect.manaCost()))
-            {
-                effect.onItemRightClick(worldIn, playerIn, handIn);
-            }
+            effectOnHold.forEach(effect ->
+                    effect.onUsingTick(worldIn, entityLiving, stack, time)
+            );
         }
+        return f;
     }
 
-    public void playerCastOnRelease(IManaBar bar, ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft)
+    public boolean playerCastOnRelease(IManaBar bar, ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft)
     {
-        for (ISpellEffectOnRelease effect :
-                effectOnRelease)
+
+        boolean f = bar.consumeMana(ISpellCostModifier.modifyCost(costOnRelease, entityLiving, worldIn));
+        if (f && 72000 - timeLeft > chargeTick)
         {
-            if (bar.consumeMana(effect.manaCost()))
-            {
-                effect.onPlayerStoppedUsing(stack, worldIn, entityLiving, timeLeft);
-            }
+            effectOnRelease.forEach(effect ->
+                    effect.onPlayerStoppedUsing(stack, worldIn, entityLiving, timeLeft)
+            );
         }
+        return f;
     }
 
     public void clear()
@@ -71,6 +84,16 @@ public class Spell implements INBTSerializable<ListNBT>
         this.effectOnHold.clear();
         this.effectOnRelease.clear();
         this.effectOnImpact.clear();
+        this.chargeTick = 0;
+        this.costOnHold = 0;
+        this.costOnRelease = 0;
+    }
+
+    void calculateStat()
+    {
+        costOnHold = effectOnHold.stream().mapToDouble(ISpellCost::manaCost).sum();
+        costOnRelease = effectOnRelease.stream().mapToDouble(ISpellCost::manaCost).sum();
+        chargeTick = effectOnRelease.stream().mapToInt(ISpellEffectOnRelease::chargeTick).max().orElse(0);
     }
 
     @Override
@@ -100,10 +123,12 @@ public class Spell implements INBTSerializable<ListNBT>
             {
                 SPELL_DISPATCHER.execute(incantation, spell);
             }
+            spell.calculateStat();
         }catch (CommandSyntaxException e)
         {
             spell.clear();
         }
+
     }
 
     public Object getVariable(String name)

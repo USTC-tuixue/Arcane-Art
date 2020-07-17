@@ -7,10 +7,15 @@ import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
+import com.ustctuixue.arcaneart.api.spell.ItemSpell;
+import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.translate.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -54,13 +59,26 @@ public class APIEventHandler
 
 
     @SubscribeEvent
-    public void attachCapability(AttachCapabilitiesEvent<Entity> event)
+    public void attachCapabilityEntity(AttachCapabilitiesEvent<Entity> event)
     {
         if (event.getObject() instanceof LivingEntity)
         {
             event.addCapability(
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
+            );
+        }
+    }
+
+    @SubscribeEvent
+    public void attachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event)
+    {
+        Item item = event.getObject().getItem();
+        if(item instanceof ItemSpellCaster || item instanceof ItemSpell)
+        {
+            event.addCapability(
+                    ArcaneArt.getResourceLocation("spell"),
+                    new CapabilitySpell.Provider()
             );
         }
     }
