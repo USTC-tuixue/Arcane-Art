@@ -2,9 +2,9 @@ package com.ustctuixue.arcaneart.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public class ServerConfig
+class ServerConfig
 {
-    public ServerConfig(ForgeConfigSpec.Builder builder)
+    ServerConfig(ForgeConfigSpec.Builder builder)
     {
 
     }

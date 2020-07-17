@@ -1,23 +1,26 @@
 package com.ustctuixue.arcaneart.api;
 
 import com.udojava.evalex.Expression;
+import com.ustctuixue.arcaneart.ArcaneArt;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.loading.FMLPaths;
+
+import java.io.File;
 
 public class APIConfig
 {
-    public static final ForgeConfigSpec API_CONFIG =
-            new ForgeConfigSpec.Builder().configure(APIConfig::new).getRight();
-
-    APIConfig(ForgeConfigSpec.Builder builder)
+    public APIConfig(ForgeConfigSpec.Builder builder)
     {
+        builder.push("api");
         MP.load(builder);
+        builder.pop();
     }
 
     public static class MP
     {
         public static ForgeConfigSpec.DoubleValue DEATH_RESET_RATIO;
 
-        public static void load(ForgeConfigSpec.Builder builder)
+        static void load(ForgeConfigSpec.Builder builder)
         {
             builder.push("MP");
 
@@ -71,9 +74,9 @@ public class APIConfig
             public static ForgeConfigSpec.IntValue MAX_LEVEL;
 
             private static ForgeConfigSpec.ConfigValue<String> RAW_EXP_CURVE;
-            public static Expression EXP_CURVE;
+            private static Expression EXP_CURVE = null;
 
-            public static void load(ForgeConfigSpec.Builder builder)
+            static void load(ForgeConfigSpec.Builder builder)
             {
                 builder.push("Levelling");
 
@@ -92,16 +95,28 @@ public class APIConfig
                 RAW_EXP_CURVE = builder
                         .comment(
                                 "Experience curve for levelling. ",
-                                "Use x refer to current magic level.",
+                                "Use x to refer to current magic level.",
                                 "Result is the experience needed to level up.",
                                 "Experience across levels is not cumulative.",
-                                "Note that level starts at LV.0 ."
+                                "Note: level starts from 0 .",
+                                "Expression Usage: https://github.com/uklimaschewski/EvalEx"
                         )
                         .define("ExpCurve", "(x + 1) ^ 2 * 4000");
 
-                EXP_CURVE = new Expression(RAW_EXP_CURVE.get());
                 builder.pop();
+            }
+
+            public static Expression getExpCurve()
+            {
+                if (EXP_CURVE == null)
+                {
+                    EXP_CURVE = new Expression(RAW_EXP_CURVE.get());
+                }
+                return EXP_CURVE;
             }
         }
     }
+
+
+
 }

@@ -1,11 +1,12 @@
 package com.ustctuixue.arcaneart.config;
 
+import com.ustctuixue.arcaneart.api.APIConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public class CommonConfig
+class CommonConfig
 {
-    public CommonConfig(ForgeConfigSpec.Builder builder)
+    CommonConfig(ForgeConfigSpec.Builder builder)
     {
-
+        new APIConfig(builder);
     }
 }
