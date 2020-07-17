@@ -1,7 +1,6 @@
 package com.ustctuixue.arcaneart.api.spell.compiler.argument.variable;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.ustctuixue.arcaneart.api.spell.compiler.VariableArgument;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.ILocationArgument;
 

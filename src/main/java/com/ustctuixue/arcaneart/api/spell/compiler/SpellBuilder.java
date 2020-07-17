@@ -1,9 +1,10 @@
-package com.ustctuixue.arcaneart.api.spell;
+package com.ustctuixue.arcaneart.api.spell.compiler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.spell.Spell;
 import com.ustctuixue.arcaneart.api.spell.effect.ISpellCost;
 import com.ustctuixue.arcaneart.api.spell.effect.ISpellEffectOnHold;
 import com.ustctuixue.arcaneart.api.spell.effect.ISpellEffectOnImpact;
@@ -15,8 +16,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,7 +52,7 @@ public class SpellBuilder implements IBuilder<Spell>
     public Spell build()
     {
          return new Spell(
-                 name,
+                 name, incantations,
                  effectOnHold, effectOnImpact, effectOnRelease,
                  costOnHold, costOnRelease, chargeTick
          );

@@ -1,12 +1,10 @@
-package com.ustctuixue.arcaneart.api.spell.compiler;
+package com.ustctuixue.arcaneart.api.spell.compiler.argument.variable;
 
-import com.ustctuixue.arcaneart.api.spell.SpellBuilder;
+import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import javax.annotation.Nullable;
 
 @RequiredArgsConstructor
 public class Variable<T>

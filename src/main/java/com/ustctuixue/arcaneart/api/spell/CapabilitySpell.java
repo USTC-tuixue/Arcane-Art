@@ -1,7 +1,8 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
+import com.ustctuixue.arcaneart.api.util.ReflectHelper;
+import net.minecraft.nbt.*;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -10,6 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class CapabilitySpell
 {
@@ -22,30 +24,36 @@ public class CapabilitySpell
         @Override
         public INBT writeNBT(Capability<Spell> capability, Spell instance, Direction side)
         {
-            return instance.serializeNBT();
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putString("title", instance.getName());
+            ListNBT listNBT = new ListNBT();
+            instance.getIncantations().forEach(s -> listNBT.add(StringNBT.valueOf(s)));
+            nbt.put("incantations", listNBT);
+            return nbt;
         }
 
-        @Override
+        @Override @SuppressWarnings("unchecked")
         public void readNBT(Capability<Spell> capability, Spell instance, Direction side, INBT nbt)
         {
-            instance.deserializeNBT((ListNBT) nbt);
+            CompoundNBT compoundNBT = (CompoundNBT) nbt;
+            SpellBuilder builder = new SpellBuilder()
+                    .withName(compoundNBT.getString("title"))
+                    .withIncantations(
+                            (List<String>) ReflectHelper.getListNBTValues(
+                                    compoundNBT.getList("incantations", 8),
+                                    8
+                            )
+                    );
+            Spell spell = builder.build();
+            instance.copyFrom(spell);
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<ListNBT>
+    public static class Provider implements ICapabilitySerializable<CompoundNBT>
     {
-        Spell spell = new Spell();
+        Storage storage = new Storage();
+        Spell spell = new SpellBuilder().build();
 
-        /**
-         * Retrieves the Optional handler for the capability requested on the specific side.
-         * The return value <strong>CAN</strong> be the same for multiple faces.
-         * Modders are encouraged to cache this value, using the listener capabilities of the Optional to
-         * be notified if the requested capability get lost.
-         *
-         * @param cap
-         * @param side
-         * @return The requested an optional holding the requested capability.
-         */
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
@@ -54,15 +62,15 @@ public class CapabilitySpell
         }
 
         @Override
-        public ListNBT serializeNBT()
+        public CompoundNBT serializeNBT()
         {
-            return spell.serializeNBT();
+            return (CompoundNBT) storage.writeNBT(SPELL_CASTER_CAP, spell, null);
         }
 
         @Override
-        public void deserializeNBT(ListNBT nbt)
+        public void deserializeNBT(CompoundNBT nbt)
         {
-            spell.deserializeNBT(nbt);
+            storage.readNBT(SPELL_CASTER_CAP, spell, null, nbt);
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
+import com.ustctuixue.arcaneart.api.spell.ISpellCostModifier;
 import com.ustctuixue.arcaneart.api.spell.effect.*;
 
 import com.ustctuixue.arcaneart.api.util.ReflectHelper;
@@ -17,29 +18,32 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.List;
 import java.util.Map;
 
-@AllArgsConstructor(access = AccessLevel.MODULE)
+@AllArgsConstructor
 public class Spell
 {
     @NonNull @Getter
     private String name;
 
-    @NonNull
-    private final List<ISpellEffectOnHold> effectOnHold;
+    @NonNull @Getter
+    private List<String> incantations;
 
     @NonNull
-    private final List<ISpellEffectOnImpact> effectOnImpact;
+    List<ISpellEffectOnHold> effectOnHold;
 
     @NonNull
-    final List<ISpellEffectOnRelease> effectOnRelease;
+    List<ISpellEffectOnImpact> effectOnImpact;
+
+    @NonNull
+    List<ISpellEffectOnRelease> effectOnRelease;
 
     @Getter @NonNull
-    final double costOnHold;
+    double costOnHold;
 
     @Getter @NonNull
-    final double costOnRelease;
+    double costOnRelease;
 
     @Getter @NonNull
-    final int chargeTick;
+    int chargeTick;
 
     public boolean playerCastOnHold(IManaBar bar, World worldIn, LivingEntity entityLiving, ItemStack stack, int time)
     {
@@ -65,5 +69,19 @@ public class Spell
             );
         }
         return f;
+    }
+
+    public void copyFrom(Spell spell)
+    {
+        this.costOnRelease = spell.costOnRelease;
+        this.costOnHold = spell.costOnHold;
+        this.chargeTick = spell.chargeTick;
+
+        this.name = spell.name;
+        this.incantations = spell.incantations;
+
+        this.effectOnRelease = spell.effectOnRelease;
+        this.effectOnHold = spell.effectOnHold;
+        this.effectOnImpact = spell.effectOnImpact;
     }
 }
