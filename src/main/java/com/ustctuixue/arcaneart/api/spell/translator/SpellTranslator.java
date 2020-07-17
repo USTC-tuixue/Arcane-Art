@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.translate;
+package com.ustctuixue.arcaneart.api.spell.translator;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,7 +22,8 @@ public class SpellTranslator
             for (INBT page : pages)
             {
                 String pageContent = ((StringNBT)page).getString();
-                if (!pageContent.endsWith("-"))
+                if (!pageContent.endsWith("-")) // 连q
+
                 {
                     buffer.append(" ");
                 }

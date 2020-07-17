@@ -7,11 +7,8 @@ import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
-import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
-import com.ustctuixue.arcaneart.api.spell.ItemSpell;
-import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
-import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
-import com.ustctuixue.arcaneart.api.spell.translate.LanguageManager;
+import com.ustctuixue.arcaneart.api.spell.*;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -25,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,4 +99,10 @@ public class APIEventHandler
     {
         LanguageManager.getInstance().readFromConfig();
     }
+
+    public void registerSpellKeyWords(RegistryEvent.Register<SpellKeyWord> event)
+    {
+        SpellKeyWords.registerAll(event.getRegistry());
+    }
+
 }

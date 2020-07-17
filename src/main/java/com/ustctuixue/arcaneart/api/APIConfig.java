@@ -117,6 +117,36 @@ public class APIConfig
         }
     }
 
+    public static class Spell
+    {
+        public static ForgeConfigSpec.ConfigValue<String> LEFT_QUOTES;
+        public static ForgeConfigSpec.ConfigValue<String> RIGHT_QUOTES;
+
+        static void load(ForgeConfigSpec.Builder builder)
+        {
+            builder.push("spell");
+            LEFT_QUOTES = builder
+                    .comment
+                            (
+                                    "A pair of quotes defines a variable.",
+                                    "Here's some quotes"
+                            )
+                    .define("leftQuotes", "\"“「『");
+            RIGHT_QUOTES = builder
+                    .comment("")
+                    .define("rightQuotes", "\"”」』");
+            builder.pop();
+        }
+        public static String getVariableRegex()
+        {
+            return "[" + LEFT_QUOTES.get() +
+                    "]" +
+                    "[\\D].*[" +
+                    RIGHT_QUOTES.get() +
+                    "]";
+        }
+    }
+
 
 
 }
