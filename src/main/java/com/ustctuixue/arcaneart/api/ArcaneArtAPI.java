@@ -1,8 +1,8 @@
 package com.ustctuixue.arcaneart.api;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Mod;
-
+// import net.minecraftforge.fml.common.Mod;
+//
 // @Mod(ArcaneArtAPI.MOD_ID)
 public class ArcaneArtAPI
 {
