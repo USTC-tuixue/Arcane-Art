@@ -13,6 +13,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -22,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,11 +75,11 @@ public class APIEventHandler
     public void attachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event)
     {
         Item item = event.getObject().getItem();
-        if(item instanceof ItemSpellCaster || item instanceof ItemSpell)
+        if(item instanceof ItemSpell)
         {
             event.addCapability(
-                    ArcaneArt.getResourceLocation("spell"),
-                    new CapabilitySpell.Provider()
+                    ArcaneArtAPI.getResourceLocation("spell"),
+                    new CapabilitySpell.StorageProvider()
             );
         }
     }
@@ -91,15 +94,11 @@ public class APIEventHandler
     public void createRegistry(RegistryEvent.NewRegistry event)
     {
         RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
-        SpellKeyWord.REGISTRY = builder.create();
+        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.create();
     }
+
 
     @SubscribeEvent
-    public void loadKeyWordMaps(FMLServerAboutToStartEvent event)
-    {
-        LanguageManager.getInstance().readFromConfig();
-    }
-
     public void registerSpellKeyWords(RegistryEvent.Register<SpellKeyWord> event)
     {
         SpellKeyWords.registerAll(event.getRegistry());
