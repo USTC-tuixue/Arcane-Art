@@ -1,6 +1,8 @@
 package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIEventHandler;
+import com.ustctuixue.arcaneart.api.TestObjects;
+import com.ustctuixue.arcaneart.api.client.APIClientEventHandler;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -8,13 +10,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import java.io.File;
 
 @Mod(ArcaneArt.MOD_ID)
 public class ArcaneArt
@@ -30,6 +29,8 @@ public class ArcaneArt
         ArcaneArtConfig.registerConfigs();
         MinecraftForge.EVENT_BUS.register(new APIEventHandler());
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new APIClientEventHandler());
+        TestObjects.register();
     }
 
     public static ResourceLocation getResourceLocation(String name)
