@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "anim_cycle": ["/", "#cycle_length"]
+  },
+  "clips": {
+    "default": ["apply", "arcaneart:block/diamond_staff_armature@default", "#anim_cycle" ]
+  },
+  "states": [
+    "default"
+  ],
+  "transitions": {},
+  "start_state": "default"
+}
