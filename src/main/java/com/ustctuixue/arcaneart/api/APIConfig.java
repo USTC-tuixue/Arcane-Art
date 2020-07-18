@@ -1,9 +1,7 @@
 package com.ustctuixue.arcaneart.api;
 
 import com.udojava.evalex.Expression;
-import com.ustctuixue.arcaneart.ArcaneArt;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 
