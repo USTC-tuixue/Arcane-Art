@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class CollectiveCrystalTileEntity extends TileEntity implements ITickableTileEntity {
     public CollectiveCrystalTileEntity() {
-        super(AutomationRegistry.collectiveCrystalTileEntity.get());
+        super(AutomationRegistry.COLLECTIVE_CRYSTAL_TILEENTITY.get());
     }
 
     @Override
