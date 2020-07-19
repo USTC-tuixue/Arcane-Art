@@ -18,10 +18,10 @@ public class SpellKeyWords
         }
     }
 
-    public static final SpellKeyWord AT = create("at");
-    public static final SpellKeyWord TOWARDS = create("towards");
-    public static final SpellKeyWord NEAREST_ENTITY = create("nearest_entity");
-    public static final SpellKeyWord NEAREST_ENEMY = create("nearest_enemy");
+    public static final SpellKeyWord AT = create("at").addTranslation("en_us", "at");
+    public static final SpellKeyWord TOWARDS = create("towards").addTranslation("en_us", "towards");
+    public static final SpellKeyWord NEAREST_ENTITY = create("nearest_entity").addTranslation("en_us", "nearest_entity");
+    public static final SpellKeyWord NEAREST_ENEMY = create("nearest_enemy").addTranslation("en_us", "nearest_enemy");
     public static final SpellKeyWord NEAREST_ANIMAL = create("nearest_animal");
     public static final SpellKeyWord NEAREST_PLAYER = create("nearest_player");
     public static final SpellKeyWord NEAREST_PROJECTILE = create("nearest_projectile");

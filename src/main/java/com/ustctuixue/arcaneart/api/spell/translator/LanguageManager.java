@@ -3,6 +3,7 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -91,7 +92,7 @@ public class LanguageManager
                         {
                             matchCount += 1;
                         }
-                        else if (word.matches("[\"“「『][^\"”]*[\"”」』]"))
+                        else if (word.matches(APIConfig.Spell.getVariableRegex()))
                         {
                             varCount++;
                         }
