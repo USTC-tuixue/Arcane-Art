@@ -12,19 +12,18 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LanguageManager
 {
-    public static final String PROFILE_DIR_NAME = "Incantation Languages";
-    public static final File PROFILE_DIR = new File(FMLPaths.CONFIGDIR.get().toFile(), PROFILE_DIR_NAME);
+    private static final String PROFILE_DIR_NAME = "Incantation Languages";
+    private static final File PROFILE_DIR = new File(FMLPaths.CONFIGDIR.get().toFile(), PROFILE_DIR_NAME);
 
-    LanguageManager()
+    private LanguageManager()
     {}
 
-    static final LanguageManager INSTANCE = new LanguageManager();
+    private static final LanguageManager INSTANCE = new LanguageManager();
 
     public static LanguageManager getInstance()
     {
@@ -35,8 +34,8 @@ public class LanguageManager
 
     /**
      *
-     * @param languageName
-     * @return
+     * @param languageName name for language
+     * @return file for the language
      */
     private static File getFile(String languageName)
     {
@@ -110,9 +109,13 @@ public class LanguageManager
                     String[] words = sp.get(0).split("\\s");
                     double matchCount = 0;
                     int varCount = 0;
+                    if (Objects.isNull(profile))
+                    {
+                        ArcaneArtAPI.LOGGER.error(LANGUAGE, "Language Profile \"" + profileName + "\" is null!");
+                        return 0.;
+                    }
                     for (String word : words)
                     {
-                        Objects.requireNonNull(profile);
                         if (word.matches(profile.getAllPatterns()))
                         {
                             matchCount += 1;

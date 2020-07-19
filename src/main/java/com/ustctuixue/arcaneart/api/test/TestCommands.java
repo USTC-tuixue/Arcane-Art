@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.api.test;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import com.ustctuixue.arcaneart.api.spell.translator.SpellTranslator;
@@ -34,8 +35,10 @@ public class TestCommands
 
         int translate(CommandSource source, String s)
         {
-            List<String> stringList = Arrays.asList(s.split("."));
+            List<String> stringList = Arrays.asList(s.split("\\."));
+
             LanguageProfile profile = LanguageManager.getInstance().getBestMatchedProfile(stringList);
+            source.sendFeedback(new TranslationTextComponent("Language: " + profile.getName()), true);
             stringList = SpellTranslator.translateByProfile(stringList, profile);
             for (String t :
                     stringList)

@@ -2,7 +2,6 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import joptsimple.internal.Strings;
@@ -36,7 +35,7 @@ public class LanguageProfile
         );
     }
 
-    public void load(File file)
+    void load(File file)
     {
         CommentedFileConfig config = CommentedFileConfig.of(file);
         config.load();
@@ -58,25 +57,30 @@ public class LanguageProfile
         return getPattern(SpellKeyWord.REGISTRY.getValue(k));
     }
 
-    public String getPattern(SpellKeyWord keyWord)
+    String getPattern(SpellKeyWord keyWord)
     {
         return keyWordMap.getOrDefault(keyWord, "");
     }
 
-    public String getAllPatterns()
+    String getAllPatterns()
     {
         return Strings.join(keyWordMap.values(), "|");
     }
 
-    public String translate(String raw)
+    /**
+     *
+     * @param sentence 语句
+     * @return 翻译后的语句
+     */
+    public String translate(String sentence)
     {
-        String m = raw;
+        String m = sentence;
         for (Map.Entry<SpellKeyWord, String> entry :
                 this.keyWordMap.entrySet())
         {
             ResourceLocation rl = entry.getKey().getRegistryName();
             Objects.requireNonNull(rl);
-            m = m.replaceAll(entry.getValue(), rl.toString());
+            m = sentence.replaceAll(entry.getValue(), rl.toString());
         }
         return m;
     }
