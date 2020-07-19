@@ -3,7 +3,7 @@ package com.ustctuixue.arcaneart.api.spell;
 import com.google.common.collect.Maps;
 import joptsimple.internal.Strings;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -15,16 +15,17 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 {
 
     private Map<String, String> defaultTranslations = Maps.newHashMap();
-    public static IForgeRegistry<SpellKeyWord> REGISTRY;
+    public static ForgeRegistry<SpellKeyWord> REGISTRY;
 
     /**
      * Add a translation to this keyword
      * @param language language id
      * @param translation translation for the keyword in this language in all forms
      */
-    public void addTranslation(String language, String... translation)
+    public SpellKeyWord addTranslation(String language, String... translation)
     {
         defaultTranslations.put(language, Strings.join(translation, "|"));
+        return this;
     }
 
     public final Set<Map.Entry<String, String>> getDefaultTranslationEntrySet()
@@ -83,4 +84,29 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
     {
         return SpellKeyWord.class;
     }
+
+    static String encode(String word)
+    {
+        int id = REGISTRY.getID(new ResourceLocation(word));
+        if (id != -1)
+        {
+            return String.format("kw:%04d", id);
+        }
+        return word;
+    }
+
+    static String decode(String word)
+    {
+        if (word.matches("kw:[0-9]{4}"))
+        {
+            SpellKeyWord keyWord = REGISTRY.getValue(Integer.getInteger(word.substring(3)));
+            ResourceLocation rl = keyWord.getRegistryName();
+            if (rl != null)
+            {
+                return rl.toString();
+            }
+        }
+        return word;
+    }
+
 }
