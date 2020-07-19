@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import com.ustctuixue.arcaneart.gui.MagicMenuProvider;
+import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,7 +34,7 @@ public class KeyPack {
         ctx.get().enqueueWork(() -> {
         	PlayerEntity player = ctx.get().getSender();
         	if(message.equals("OpenMagicMenu")) {
-        		NetworkHooks.openGui((ServerPlayerEntity)player,new com.ustctuixue.arcaneart.gui.MagicMenuProvider() );
+        		NetworkHooks.openGui((ServerPlayerEntity)player,new com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider() );
         	}
         });
         ctx.get().setPacketHandled(true);

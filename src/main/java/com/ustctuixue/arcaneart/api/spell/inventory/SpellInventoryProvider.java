@@ -1,4 +1,5 @@
-package com.ustctuixue.arcaneart.api;
+package com.ustctuixue.arcaneart.api.spell.inventory;
+
 
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
@@ -12,7 +13,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class SpellInventoryProvider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
-	private ISpellInventory spellInventoryCapability;
+	private ISpellInventory spellInventoryCapability=null;
 	@Override
 	public CompoundNBT serializeNBT() {
 		return getOrCreateCapability().serializeNBT();

@@ -4,70 +4,70 @@ package com.ustctuixue.arcaneart.api.mp;
 public interface IManaBar
 {
     /**
-     * @return é‘¾å³°å½‡é¢ç†ºå¢¿è¤°æ’³å¢  MP éŠï¿½
+     * @return »ñÈ¡ÉúÎïµ±Ç° MP Öµ
      */
     double getMana();
 
     /**
-     * ç’å‰§ç–†é¢ç†ºå¢¿è¤°æ’³å¢ é¨ï¿½ MP éŠï¿½
-     * @param mana ç’å‰§ç–†é¨å‹«ï¿½ç¡·ç´æ¿¡å‚›ç‰çå¿ç°¬ 0 é’æ¬’î…»æ¶“çƒ˜æ§¸ 0
+     * ÉèÖÃÉúÎïµ±Ç°µÄ MP Öµ£¬²»¼ì²é MP ÖµÊÇ·ñ³¬³öÉÏÏŞ
+     * @param mana ÉèÖÃµÄÖµ£¬Èç¹ûĞ¡ÓÚ 0 ÔòÈÏÎªÊÇ 0
      */
     void setMana(double mana);
 
 
     /**
-     * å¨‘å £ï¿½ï¿½ MP éŠï¿½
-     * @param mana å¨‘å £ï¿½æ¥ƒæ®‘ MP é–²ï¿½
-     * @return 
+     * ÏûºÄ MP Öµ
+     * @param mana ÏûºÄµÄ MP Á¿
+     * @return ÓĞ×ã¹»µÄ MP ¹©ÏûºÄÔò·µ»Ø true£¬·ñÔòÎª false
      */
     boolean consumeMana(double mana);
 
     /**
      *
-     * @return æ©æ–¿æ´– MP é¥ç‚²î˜²éå³°åµˆéƒå •æ£¿é”›å±½å´Ÿæµ£å¶„è´Ÿ tick
+     * @return ·µ»Ø MP »Ø¸´ÀäÈ´Ê±¼ä£¬µ¥Î»Îª tick
      */
     int getRegenCoolDown();
 
     /**
-     * ç’å‰§ç–† MP é¥ç‚²î˜²éå³°åµˆéƒå •æ£¿
-     * @param coolDown é—æ›šç¶…æ¶“ï¿½ tick
+     * ÉèÖÃ MP »Ø¸´ÀäÈ´Ê±¼ä
+     * @param coolDown µ¥Î»Îª tick
      */
     void setRegenCoolDown(int coolDown);
 
     /**
-     * å§£ï¿½ tick ç’‹å†ªæ•¤æ¶“ï¿½å¨†â˜…ç´é¢ã„¤ç°¬é¥ç‚²î˜²éå³°åµˆéŠæ•î…¸éƒï¿½
-     * @return é„îˆšæƒé™îˆ™äº’å¯®ï¿½æ¿®å¬ªæ´–æ¾¶ï¿½
+     * Ã¿ tick µ÷ÓÃÒ»´Î£¬ÓÃÓÚ»Ø¸´ÀäÈ´µ¹¼ÆÊ±
+     * @return ÊÇ·ñ¿ÉÒÔ¿ªÊ¼»Ø¸´
      */
     boolean coolDown();
 
 
     /**
-     * é‘¾å³°å½‡è¤°æ’³å¢ æ¦„æ—€ç¡¶ç¼å¿›ç™éŠç¡·ç´é—å›©éª‡éƒèˆµç«»é—†ï¿½
-     * @return æ¦„æ—€ç¡¶ç¼å¿›ç™
+     * »ñÈ¡µ±Ç°Ä§·¨¾­ÑéÖµ£¬Éı¼¶Ê±ÇåÁã
+     * @return Ä§·¨¾­Ñé
      */
     double getMagicExperience();
 
     /**
-     * ç’å‰§ç–†è¤°æ’³å¢ é¨å‹¯ç“Ÿå¨‰æ› ç²¡æ¥ å±½ï¿½ï¿½
-     * @param exp ç¼å¿›ç™éŠï¿½
+     * ÉèÖÃµ±Ç°µÄÄ§·¨¾­ÑéÖµ
+     * @param exp ¾­ÑéÖµ
      */
     void setMagicExperience(double exp);
 
     /**
-     * æ¾§ç‚²å§æ¦„æ—€ç¡¶ç¼å¿›ç™éŠï¿½
-     * @param exp ç¼å¿›ç™éŠï¿½
+     * Ôö¼ÓÄ§·¨¾­ÑéÖµ
+     * @param exp ¾­ÑéÖµ
      */
     void addMagicExperience(double exp);
 
     /**
-     * é‘¾å³°ç·±è¤°æ’³å¢ é¨å‹¯ç“Ÿå¨‰æ› ç“‘ç»¾ï¿½
-     * @return æ¦„æ—€ç¡¶ç»›å¤Œéª‡
+     * »ñµÃµ±Ç°µÄÄ§·¨µÈ¼¶
+     * @return Ä§·¨µÈ¼¶
      */
     int getMagicLevel();
 
     /**
-     * ç’å‰§ç–†æ¦„æ—€ç¡¶ç»›å¤Œéª‡
-     * @param level ç»›å¤Œéª‡
+     * ÉèÖÃÄ§·¨µÈ¼¶
+     * @param level µÈ¼¶
      */
     void setMagicLevel(int level);
 }

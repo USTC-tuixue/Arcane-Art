@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.gui;
+package com.ustctuixue.arcaneart.gui.MagicMenu;
 
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.networking.KeyEvent;

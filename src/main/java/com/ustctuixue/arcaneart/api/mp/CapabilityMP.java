@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.mp;
 
+import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,9 +19,9 @@ public class CapabilityMP
 {
 
     public static IAttribute MAX_MANA = new RangedAttribute(null, "arcaneart.maxMana",
-            100.0D, 0.0D, 5000.0D);
+            100.0D, 0.0D, InnerNumberDefaults.MAX_ALLOWED_MP);
     public static IAttribute REGEN_RATE = new RangedAttribute(null, "arcaneart.regenRate",
-            4.0D, 0.0D, 1000.0D);
+            InnerNumberDefaults.REGEN_RATE, 0.0D, 1.0D);
     @CapabilityInject(IManaBar.class)
     public static Capability<IManaBar> MANA_BAR_CAP;
 
@@ -39,7 +40,7 @@ public class CapabilityMP
             CompoundNBT nbt = new CompoundNBT();
             nbt.putDouble(MANA, instance.getMana());
             nbt.putDouble(EXP, instance.getMagicExperience());
-            nbt.putDouble(REGEN, instance.getRegenCoolDown());
+            nbt.putInt(REGEN, instance.getRegenCoolDown());
             nbt.putInt(LVL, instance.getMagicLevel());
             return nbt;
         }
@@ -70,7 +71,7 @@ public class CapabilityMP
             }
             else
             {
-                return null;
+                return LazyOptional.empty();
             }
         }
 

@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.gui;
+package com.ustctuixue.arcaneart.gui.MagicMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ustctuixue.arcaneart.ArcaneArt;
