@@ -1,6 +1,8 @@
 package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIEventHandler;
+import com.ustctuixue.arcaneart.api.TestObjects;
+import com.ustctuixue.arcaneart.api.client.APIClientEventHandler;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import net.minecraft.item.ItemGroup;
@@ -13,13 +15,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import java.io.File;
 
 @Mod(ArcaneArt.MOD_ID)
 public class ArcaneArt
@@ -35,9 +35,14 @@ public class ArcaneArt
         ArcaneArtConfig.registerConfigs();
         MinecraftForge.EVENT_BUS.register(new APIEventHandler());
         MinecraftForge.EVENT_BUS.register(this);
+
+        MinecraftForge.EVENT_BUS.register(new APIClientEventHandler());
+        TestObjects.register();
+
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+
     }
 
     public static ResourceLocation getResourceLocation(String name)
@@ -57,7 +62,7 @@ public class ArcaneArt
 
     }
 
-    public static ItemGroup ARCANE_ART_ITEM_GROUP = new ItemGroup(){
+    public static ItemGroup ARCANE_ART_ITEM_GROUP = new ItemGroup(ArcaneArt.MOD_NAME){
         @Override
         public ItemStack createIcon()
         {

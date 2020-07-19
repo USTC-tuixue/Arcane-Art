@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.translate;
+package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;

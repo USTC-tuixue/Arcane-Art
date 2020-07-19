@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.translate;
+package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
@@ -7,7 +7,6 @@ import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
