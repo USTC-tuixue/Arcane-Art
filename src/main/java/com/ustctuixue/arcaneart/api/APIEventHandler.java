@@ -32,16 +32,20 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-@Mod.EventBusSubscriber(modid = ArcaneArt.MOD_ID)
+@Mod.EventBusSubscriber
 public class APIEventHandler
 {
-    static final Logger LOGGER = LogManager.getLogger(ArcaneArt.MOD_NAME + " API");
-
     private static final Marker SETUP = MarkerManager.getMarker("SetUp");
 
-    @SubscribeEvent
-    public void setup(FMLCommonSetupEvent event)
+    public APIEventHandler()
     {
+        ArcaneArtAPI.LOGGER.info(SETUP, "New APIEventHandler");
+    }
+
+    @SubscribeEvent
+    public void setup(final FMLCommonSetupEvent event)
+    {
+        ArcaneArtAPI.LOGGER.info(SETUP, "setup");
         CapabilityManager.INSTANCE.register(IManaBar.class, new CapabilityMP.Storage(), DefaultManaBar::new);
         CapabilityManager.INSTANCE.register(MPStorage.class, new CapabilityMPStorage.Storage(), MPStorage::new);
     }
@@ -93,8 +97,9 @@ public class APIEventHandler
     @SubscribeEvent
     public void createRegistry(RegistryEvent.NewRegistry event)
     {
+        ArcaneArtAPI.LOGGER.info(MarkerManager.getMarker("NewRegistry"), "Creating registry");
         RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
-        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.create();
+        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.setType(SpellKeyWord.class).setName(ArcaneArt.getResourceLocation("spell_words")).create();
     }
 
 

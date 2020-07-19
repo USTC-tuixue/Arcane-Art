@@ -1,11 +1,14 @@
 package com.ustctuixue.arcaneart.api;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.network.PacketHandler;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 // import net.minecraftforge.fml.common.Mod;
 //
@@ -19,6 +22,8 @@ public class ArcaneArtAPI
     {
         return new ResourceLocation(MOD_ID, name);
     }
+
+    public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public static final PacketHandler packetHandler = new PacketHandler();
 

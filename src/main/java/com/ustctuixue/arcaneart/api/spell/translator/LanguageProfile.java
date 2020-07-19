@@ -2,6 +2,8 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
+import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import joptsimple.internal.Strings;
 import lombok.Getter;
@@ -37,12 +39,13 @@ public class LanguageProfile
     public void load(File file)
     {
         CommentedFileConfig config = CommentedFileConfig.of(file);
-
         config.load();
-        keyWordMap.replaceAll((k, v) -> config.get(k.getTranslationPath()));
+        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Dumping translations:");
+        keyWordMap.replaceAll((k, v) -> (String) config.getOptional(k.getTranslationPath()).orElseGet(()->keyWordMap.get(k)));
         for (Map.Entry<SpellKeyWord, String> entry:
                 this.keyWordMap.entrySet())
         {
+            ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, entry.getKey().getTranslationPath() + " = " + entry.getValue());
             config.add(entry.getKey().getTranslationPath(), entry.getValue());
         }
         config.save();

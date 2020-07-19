@@ -139,7 +139,10 @@ public class APIConfig
         {
             return "[" + LEFT_QUOTES.get() +
                     "]" +
-                    "[\\D].*[" +
+                    "[\\D^"+
+                    LEFT_QUOTES.get()+
+                    RIGHT_QUOTES.get()+
+                    "].*[" +
                     RIGHT_QUOTES.get() +
                     "]";
         }
