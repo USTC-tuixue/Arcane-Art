@@ -12,6 +12,7 @@ public class EntityListArgument implements ArgumentType<NonNullList<Entity>>
     double distance;
     BlockPos originPos;
 
+
     @Override
     public NonNullList<Entity> parse(StringReader reader) throws CommandSyntaxException
     {
