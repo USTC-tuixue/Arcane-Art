@@ -1,7 +1,15 @@
 package com.ustctuixue.arcaneart.api.test;
 
 
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.Spell;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
+import lombok.NonNull;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 import javax.annotation.Nonnull;
@@ -12,5 +20,14 @@ public class TestEventHandler
     public void onServerStart(@Nonnull FMLServerStartingEvent event)
     {
         TestCommands.register(event.getCommandDispatcher());
+
+    }
+
+    @SubscribeEvent
+    public void onCommonSetup(FMLLoadCompleteEvent event)
+    {
+        SpellKeyWord.REGISTRY.getValues().forEach(e -> ArcaneArtAPI.LOGGER.debug(Spell.MARKER, e.getRegistryName()));
+        SpellKeyWords.addAllTranslations();
+
     }
 }

@@ -3,13 +3,18 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.Spell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import joptsimple.internal.Strings;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LanguageProfile
@@ -17,24 +22,43 @@ public class LanguageProfile
     @Getter
     private final String name;
     private final Map<SpellKeyWord, String> keyWordMap = Maps.newHashMap();
+    @Setter @Getter
     private String leftQuote = "";
+    @Setter @Getter
     private String rightQuote = "";
+    @Setter @Getter
     private String period = "";
 
     LanguageProfile(String name)
     {
         this.name = name;
+    }
+
+    private void loadFromRegistry()
+    {
         Set<ResourceLocation> keyWords = SpellKeyWord.REGISTRY.getKeys();
         keyWordMap.putAll(
-                Maps.asMap(keyWords.stream().map(
-                        (kw)->
-                                SpellKeyWord.REGISTRY.getValue(kw)).collect(Collectors.toSet()),
+                Maps.asMap(
+                        keyWords
+                                .stream()
+                                .filter(
+                                    resourceLocation -> {
+                                        SpellKeyWord kw = SpellKeyWord.REGISTRY.getValue(resourceLocation);
+                                        return !keyWordMap.containsKey(kw);
+                                    }
+                                )
+                                .map(
+                                    (kw)->
+                                            SpellKeyWord.REGISTRY.getValue(kw)
+                                )
+                                .collect(Collectors.toSet()),
                         (k) ->
-                            {
-                                // I don't know how you registered a null into a Forge registry.
-                                Objects.requireNonNull(k);
-                                return k.getDefaultTranslation(name);
-                            }
+                        {
+                            // I don't know how you registered a null into a Forge registry.
+                            Objects.requireNonNull(k);
+                            Objects.requireNonNull(k.getRegistryName());
+                            return k.getRegistryName().toString();
+                        }
                 )
         );
     }
@@ -43,7 +67,8 @@ public class LanguageProfile
     {
         CommentedFileConfig config = CommentedFileConfig.of(file);
         config.load();
-        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Dumping translations:");
+        loadFromRegistry();
+        ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "Loading file for language: " + this.name);
 
         keyWordMap.replaceAll((k, v) -> (String) config.getOptional(k.getTranslationPath()).orElseGet(()->keyWordMap.get(k)));
         this.leftQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote").orElse(this.leftQuote);
@@ -56,19 +81,11 @@ public class LanguageProfile
             ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, entry.getKey().getTranslationPath() + " = " + entry.getValue());
             config.add(entry.getKey().getTranslationPath(), entry.getValue());
         }
+        config.add(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote", this.leftQuote);
+        config.add(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote", this.rightQuote);
+        config.add(ArcaneArtAPI.MOD_ID + ".punctuation.period", this.period);
         config.save();
         config.close();
-    }
-
-
-    public String getPattern(ResourceLocation k)
-    {
-        return getPattern(SpellKeyWord.REGISTRY.getValue(k));
-    }
-
-    String getPattern(SpellKeyWord keyWord)
-    {
-        return keyWordMap.getOrDefault(keyWord, "");
     }
 
     String getAllPatterns()
@@ -81,7 +98,7 @@ public class LanguageProfile
      * @param sentence 语句
      * @return 翻译后的语句
      */
-    public String translate(String sentence)
+    String translate(String sentence)
     {
         String m = sentence;
         for (Map.Entry<SpellKeyWord, String> entry :
@@ -89,8 +106,76 @@ public class LanguageProfile
         {
             ResourceLocation rl = entry.getKey().getRegistryName();
             Objects.requireNonNull(rl);
-            m = sentence.replaceAll(entry.getValue(), rl.toString());
+
+            Pattern pattern = Pattern.compile(entry.getValue());
+            m = pattern.matcher(m).replaceAll(rl.toString());
         }
         return m;
     }
+
+    /**
+     * This will completely replace default translations
+     * @param keyword spell keyword to change
+     * @param translation translation word
+     * @param translations translation words
+     * @return this
+     */
+    public LanguageProfile setTranslationFor(final SpellKeyWord keyword, final String translation, String... translations)
+    {
+        if (translations.length != 0)
+        {
+            this.keyWordMap.put(keyword, String.join("|", translation, String.join("|", translations)));
+        }
+        else
+        {
+            this.keyWordMap.put(keyword, translation);
+        }
+
+        return this;
+    }
+
+    /**
+     * Add a translation for keyword
+     * @param keyword keyword to change
+     * @param translation translation to be added
+     * @param translations translation to be added
+     * @return this
+     */
+    public LanguageProfile addTranslationFor(SpellKeyWord keyword, String translation, String... translations)
+    {
+        String newTranslations = translation;
+        if (translations.length != 0)
+        {
+            newTranslations = String.join("|", translation, String.join("|", translations));
+        }
+
+        if (keyWordMap.containsKey(keyword) && !keyWordMap.get(keyword).isEmpty())
+        {
+            newTranslations = String.join("|", keyWordMap.get(keyword), newTranslations);
+        }
+        this.keyWordMap.put(keyword, newTranslations);
+        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Updated translation: " + keyword + "=" + newTranslations);
+        return this;
+    }
+
+    public LanguageProfile setTranslationFor(ResourceLocation keyWord, String translation, String... translations)
+    {
+        return this.setTranslationFor(SpellKeyWord.REGISTRY.getValue(keyWord), translation, translations);
+    }
+
+    public LanguageProfile addTranslationFor(ResourceLocation keyWord, String translation, String... translations)
+    {
+        return this.addTranslationFor(SpellKeyWord.REGISTRY.getValue(keyWord), translation, translations);
+    }
+
+    public LanguageProfile setTranslationFor(String keyWord, String translation, String... translations)
+    {
+        return this.setTranslationFor(new ResourceLocation(keyWord), translation, translations);
+    }
+
+    public LanguageProfile addTranslationFor(String keyWord, String translation, String... translations)
+    {
+        return this.addTranslationFor(new ResourceLocation(keyWord), translation, translations);
+    }
+
 }

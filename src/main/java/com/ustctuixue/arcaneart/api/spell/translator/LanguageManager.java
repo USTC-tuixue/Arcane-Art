@@ -1,12 +1,9 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -58,31 +55,34 @@ public class LanguageManager
         ArcaneArtAPI.LOGGER.info(LANGUAGE, "Generating template for incantation translations");
         generateTemplate();
         ArcaneArtAPI.LOGGER.info(LANGUAGE, "Generating default config for incantation translations");
-        Set<String> languages = Sets.newHashSet();
-        for (SpellKeyWord keyWord :
-                SpellKeyWord.REGISTRY)
-        {
-            languages.addAll(keyWord.getDefaultTranslationKeySet());
-        }
+        Set<String> languages = this.profiles.keySet();
+
         // Collect config files
-        Set<File> configFiles =
-                languages.stream().map(LanguageManager::getFile).collect(Collectors.toSet());
-        configFiles.addAll(Arrays.asList(Objects.requireNonNull(PROFILE_DIR.listFiles((dir, name) ->
+        List<File> configFiles = Arrays.stream(Objects.requireNonNull(PROFILE_DIR.listFiles((dir, name) ->
         {
             String[] withExt = name.split("\\.", 2);
             return !withExt[0].equals("empty") && withExt[1].equals("toml");
-        }))));
+        }))).collect(Collectors.toList());
+
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Found language files:");
+        configFiles.forEach(f -> ArcaneArtAPI.LOGGER.info(LANGUAGE, "\t" + f.getName().split("\\.")[0]));
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Default language pofiles:");
+        languages.forEach((language)->ArcaneArtAPI.LOGGER.info(LANGUAGE, "\t" + language));
+
+        if (!languages.isEmpty())
+        {
+            configFiles.addAll(languages.stream().map(LanguageManager::getFile).collect(Collectors.toSet()));
+        }
 
         ArcaneArtAPI.LOGGER.info(LANGUAGE, "Read from config files");
-        for (File configFile :
-                Objects.requireNonNull(PROFILE_DIR.listFiles()))
+        for (File configFile : configFiles)
         {
             String[] names = configFile.getName().split("\\.");
             String name = names[0];
             if (!name.equals("empty") && names[1].equals("toml"))
             {
                 ArcaneArtAPI.LOGGER.info(LANGUAGE, "Reading language file: " + configFile.getName());
-                LanguageProfile profile = new LanguageProfile(name);
+                LanguageProfile profile = getLanguageProfile(name);
                 profile.load(getFile(name));
                 this.profiles.put(name, profile);
             }
@@ -92,12 +92,8 @@ public class LanguageManager
     private static void generateTemplate()
     {
         File templateFile = getFile("empty");
-        CommentedFileConfig config = CommentedFileConfig.of(templateFile);
-        SpellKeyWord.REGISTRY.getValues().forEach(
-                (keyWord) -> config.add(keyWord.getTranslationPath(), "")
-        );
-        config.save();
-        config.close();
+        LanguageProfile profile = new LanguageProfile("empty");
+        profile.load(templateFile);
     }
 
 
@@ -145,5 +141,20 @@ public class LanguageManager
             }
         }
         return profiles.get(profileName);
+    }
+
+    /**
+     * Return the language profile according to language name. If the language is not registered, this
+     * function will create a new one
+     * @param languageName language name
+     * @return language profile
+     */
+    public LanguageProfile getLanguageProfile(String languageName)
+    {
+        if (!this.profiles.containsKey(languageName))
+        {
+            this.profiles.put(languageName, new LanguageProfile(languageName));
+        }
+        return this.profiles.get(languageName);
     }
 }

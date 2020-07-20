@@ -45,6 +45,11 @@ public class ArcaneArt
         modLoadingEventBus.register(this);
         modLoadingEventBus.register(new APIEventHandler());
         modLoadingEventBus.register(new MPEventHandler());
+
+
+        modLoadingEventBus.register(new TestEventHandler());
+
+
         MinecraftForge.EVENT_BUS.register(new APIEventHandler());
         MinecraftForge.EVENT_BUS.register(new MPEventHandler());
         MinecraftForge.EVENT_BUS.register(this);
