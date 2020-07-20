@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class Spell
 {
+    public static Marker MARKER = MarkerManager.getMarker("SPELL");
+
     @NonNull @Getter
     private String name;
 

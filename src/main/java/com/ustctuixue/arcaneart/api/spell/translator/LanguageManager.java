@@ -1,25 +1,27 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.api.APIConfig;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
+import javax.annotation.Nullable;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LanguageManager
 {
-    public static final String PROFILE_DIR_NAME = "Incantation Languages";
-    public static final File PROFILE_DIR = new File(FMLPaths.CONFIGDIR.get().toFile(), PROFILE_DIR_NAME);
+    private static final String PROFILE_DIR_NAME = "Incantation Languages";
+    private static final File PROFILE_DIR = new File(FMLPaths.CONFIGDIR.get().toFile(), PROFILE_DIR_NAME);
 
-    LanguageManager()
+    private LanguageManager()
     {}
 
-    static final LanguageManager INSTANCE = new LanguageManager();
+    private static final LanguageManager INSTANCE = new LanguageManager();
 
     public static LanguageManager getInstance()
     {
@@ -30,10 +32,10 @@ public class LanguageManager
 
     /**
      *
-     * @param languageName
-     * @return
+     * @param languageName name for language
+     * @return file for the language
      */
-    public static File getFile(String languageName)
+    private static File getFile(String languageName)
     {
         if (!PROFILE_DIR.exists())
         {
@@ -45,37 +47,57 @@ public class LanguageManager
         }
         return new File(PROFILE_DIR, languageName + ".toml");
     }
-
+    static Marker LANGUAGE = MarkerManager.getMarker("INCANTATION_LANGUAGES");
     // Must run at server start, when registries are frozen
     public void readFromConfig()
     {
-        for (File configFile :
-                Objects.requireNonNull(PROFILE_DIR.listFiles()))
+
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Generating template for incantation translations");
+        generateTemplate();
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Generating default config for incantation translations");
+        Set<String> languages = this.profiles.keySet();
+
+        // Collect config files
+        List<File> configFiles = Arrays.stream(Objects.requireNonNull(PROFILE_DIR.listFiles((dir, name) ->
         {
-            String name = configFile.getName().split("\\.")[0];
-            if (!name.equals("empty"))
+            String[] withExt = name.split("\\.", 2);
+            return !withExt[0].equals("empty") && withExt[1].equals("toml");
+        }))).collect(Collectors.toList());
+
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Found language files:");
+        configFiles.forEach(f -> ArcaneArtAPI.LOGGER.info(LANGUAGE, "\t" + f.getName().split("\\.")[0]));
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Default language pofiles:");
+        languages.forEach((language)->ArcaneArtAPI.LOGGER.info(LANGUAGE, "\t" + language));
+
+        if (!languages.isEmpty())
+        {
+            configFiles.addAll(languages.stream().map(LanguageManager::getFile).collect(Collectors.toSet()));
+        }
+
+        ArcaneArtAPI.LOGGER.info(LANGUAGE, "Read from config files");
+        for (File configFile : configFiles)
+        {
+            String[] names = configFile.getName().split("\\.");
+            String name = names[0];
+            if (!name.equals("empty") && names[1].equals("toml"))
             {
-                LanguageProfile profile = new LanguageProfile(name,
-                        SpellKeyWord.REGISTRY.getKeys()
-                );
+                ArcaneArtAPI.LOGGER.info(LANGUAGE, "Reading language file: " + configFile.getName());
+                LanguageProfile profile = getLanguageProfile(name);
                 profile.load(getFile(name));
                 this.profiles.put(name, profile);
             }
         }
-        generateTemplate();
     }
 
     private static void generateTemplate()
     {
         File templateFile = getFile("empty");
-        CommentedFileConfig config = CommentedFileConfig.of(templateFile);
-        SpellKeyWord.REGISTRY.getValues().forEach(
-                (keyWord) -> config.add(keyWord.getTranslationPath(), "")
-        );
-        config.save();
-        config.close();
+        LanguageProfile profile = new LanguageProfile("empty");
+        profile.load(templateFile);
     }
 
+
+    @Nullable
     public LanguageProfile getBestMatchedProfile(List<String> sp)
     {
         Map<String, Double> probabilities =
@@ -84,19 +106,28 @@ public class LanguageManager
                     String[] words = sp.get(0).split("\\s");
                     double matchCount = 0;
                     int varCount = 0;
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Matching language " + profileName);
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Variable regex: " + APIConfig.Spell.getVariableRegex());
+                    if (Objects.isNull(profile))
+                    {
+                        ArcaneArtAPI.LOGGER.error(LANGUAGE, "Language Profile \"" + profileName + "\" is null!");
+                        return 0.;
+                    }
                     for (String word : words)
                     {
-                        Objects.requireNonNull(profile);
                         if (word.matches(profile.getAllPatterns()))
                         {
+                            ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Word \"" + word + "\" is in language " + profileName);
                             matchCount += 1;
                         }
-                        else if (word.matches("[\"“「『][^\"”]*[\"”」』]"))
+                        else if (word.matches(APIConfig.Spell.getVariableRegex()))
                         {
+                            ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Found variable: " + word);
                             varCount++;
                         }
 
                     }
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Match count: "+matchCount + ", Word count (variables not included): " + (words.length - varCount));
                     return  matchCount / (words.length - varCount);
                 });
         double maxProb = 0;
@@ -110,5 +141,20 @@ public class LanguageManager
             }
         }
         return profiles.get(profileName);
+    }
+
+    /**
+     * Return the language profile according to language name. If the language is not registered, this
+     * function will create a new one
+     * @param languageName language name
+     * @return language profile
+     */
+    public LanguageProfile getLanguageProfile(String languageName)
+    {
+        if (!this.profiles.containsKey(languageName))
+        {
+            this.profiles.put(languageName, new LanguageProfile(languageName));
+        }
+        return this.profiles.get(languageName);
     }
 }

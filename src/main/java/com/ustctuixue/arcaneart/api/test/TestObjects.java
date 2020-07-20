@@ -1,5 +1,6 @@
-package com.ustctuixue.arcaneart.api;
+package com.ustctuixue.arcaneart.api.test;
 
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;

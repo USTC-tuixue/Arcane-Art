@@ -32,18 +32,31 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-@Mod.EventBusSubscriber(modid = ArcaneArt.MOD_ID)
+@Mod.EventBusSubscriber
 public class APIEventHandler
 {
-    static final Logger LOGGER = LogManager.getLogger(ArcaneArt.MOD_NAME + " API");
-
     private static final Marker SETUP = MarkerManager.getMarker("SetUp");
 
-    @SubscribeEvent
-    public void setup(FMLCommonSetupEvent event)
+    public APIEventHandler()
     {
+        ArcaneArtAPI.LOGGER.info(SETUP, "New APIEventHandler");
+    }
+
+    @SubscribeEvent
+    public void setup(final FMLCommonSetupEvent event)
+    {
+        ArcaneArtAPI.LOGGER.info(SETUP, "setup");
         CapabilityManager.INSTANCE.register(IManaBar.class, new CapabilityMP.Storage(), DefaultManaBar::new);
         CapabilityManager.INSTANCE.register(MPStorage.class, new CapabilityMPStorage.Storage(), MPStorage::new);
+        CapabilityManager.INSTANCE.register(ISpellInventory.class, new Capability.IStorage<ISpellInventory>() {
+			@Override
+			public INBT writeNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
+					net.minecraft.util.Direction side) {return null;}
+
+			@Override
+			public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
+					net.minecraft.util.Direction side, INBT nbt) {}
+		}, SpellInventory::new);
     }
 
     @SubscribeEvent
@@ -68,9 +81,26 @@ public class APIEventHandler
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
             );
+		if (event.getObject() instanceof PlayerEntity) {
+    			event.addCapability(ArcaneArt.getResourceLocation("spellinv"), new SpellInventoryProvider());
+    		}
         }
     }
+	@SubscribeEvent
+	public static void onPlayerCloned(PlayerEvent.Clone event) {
+		LazyOptional<ISpellInventory> oldSpeedCap = event.getOriginal()
+				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
+		LazyOptional<ISpellInventory> newSpeedCap = event.getPlayer()
+				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
 
+		if (oldSpeedCap.isPresent() && newSpeedCap.isPresent()) {
+			newSpeedCap.ifPresent((newCap) -> {
+				oldSpeedCap.ifPresent((oldCap) -> {
+					newCap.deserializeNBT(oldCap.serializeNBT());
+				});
+			});
+		}
+	}	
     @SubscribeEvent
     public void attachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event)
     {
@@ -93,8 +123,9 @@ public class APIEventHandler
     @SubscribeEvent
     public void createRegistry(RegistryEvent.NewRegistry event)
     {
+        ArcaneArtAPI.LOGGER.info(MarkerManager.getMarker("NewRegistry"), "Creating registry");
         RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
-        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.create();
+        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.setType(SpellKeyWord.class).setName(ArcaneArt.getResourceLocation("spell_words")).create();
     }
 
 

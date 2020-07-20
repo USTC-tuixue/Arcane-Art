@@ -1,6 +1,8 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class SpellKeyWords
@@ -22,7 +24,7 @@ public class SpellKeyWords
     public static final SpellKeyWord TOWARDS = create("towards");
     public static final SpellKeyWord NEAREST_ENTITY = create("nearest_entity");
     public static final SpellKeyWord NEAREST_ENEMY = create("nearest_enemy");
-    public static final SpellKeyWord NEAREST_PASSIVE = create("nearest_passive");
+    public static final SpellKeyWord NEAREST_ANIMAL = create("nearest_animal");
     public static final SpellKeyWord NEAREST_PLAYER = create("nearest_player");
     public static final SpellKeyWord NEAREST_PROJECTILE = create("nearest_projectile");
     public static final SpellKeyWord NEAREST_ITEM = create("nearest_item");
@@ -33,7 +35,19 @@ public class SpellKeyWords
                 (
                         registry,
                         AT, TOWARDS, NEAREST_ENEMY, NEAREST_ENTITY, NEAREST_ITEM,
-                        NEAREST_PASSIVE, NEAREST_PLAYER, NEAREST_PROJECTILE
+                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE
                 );
+    }
+
+    public static final LanguageProfile EN_US = LanguageManager.getInstance().getLanguageProfile("en_us");
+
+    public static void addAllTranslations()
+    {
+        EN_US.addTranslationFor(AT, "at", "on");
+        EN_US.addTranslationFor(TOWARDS, "towards");
+        EN_US.addTranslationFor(NEAREST_ENTITY, "nearest entity");
+        EN_US.setLeftQuote("\"");
+        EN_US.setRightQuote("\"");
+        EN_US.setPeriod(".");
     }
 }
