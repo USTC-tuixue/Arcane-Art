@@ -1,10 +1,11 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.variable;
+package com.ustctuixue.arcaneart.api.spell.compiler.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.ustctuixue.arcaneart.api.APIConfig;
+import com.ustctuixue.arcaneart.api.spell.compiler.argument.Variable;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
@@ -49,7 +50,7 @@ public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
                 }
                 else                            // Found a variable
                 {
-                    return new Variable<T>(builder.toString(), this.getType());
+                    return new Variable<>(builder.toString(), this.getType());
                 }
             }
             else                                // If not a variable form

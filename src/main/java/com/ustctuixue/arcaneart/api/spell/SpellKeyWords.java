@@ -28,6 +28,11 @@ public class SpellKeyWords
     public static final SpellKeyWord NEAREST_PLAYER = create("nearest_player");
     public static final SpellKeyWord NEAREST_PROJECTILE = create("nearest_projectile");
     public static final SpellKeyWord NEAREST_ITEM = create("nearest_item");
+    public static final SpellKeyWord NEAREST_ALLY = create("ally");
+    public static final SpellKeyWord IN_RANGE = create("in_range");
+    public static final SpellKeyWord FROM = create("from");
+    public static final SpellKeyWord MAX_COUNT = create("with_max_count");
+    public static final SpellKeyWord SELF = create("self");
 
     public static void registerAll(IForgeRegistry<SpellKeyWord> registry)
     {
