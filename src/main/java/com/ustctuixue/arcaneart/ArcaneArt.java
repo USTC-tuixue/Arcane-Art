@@ -85,6 +85,7 @@ public class ArcaneArt
 
     }
 
+
     public static ItemGroup ARCANE_ART_ITEM_GROUP = new ItemGroup(ArcaneArt.MOD_NAME){
         @Override
         public ItemStack createIcon()
