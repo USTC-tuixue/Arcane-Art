@@ -1,6 +1,8 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public class SpellKeyWords
@@ -18,10 +20,10 @@ public class SpellKeyWords
         }
     }
 
-    public static final SpellKeyWord AT = create("at").addTranslation("en_us", "at");
-    public static final SpellKeyWord TOWARDS = create("towards").addTranslation("en_us", "towards");
-    public static final SpellKeyWord NEAREST_ENTITY = create("nearest_entity").addTranslation("en_us", "nearest_entity");
-    public static final SpellKeyWord NEAREST_ENEMY = create("nearest_enemy").addTranslation("en_us", "nearest_enemy");
+    public static final SpellKeyWord AT = create("at");
+    public static final SpellKeyWord TOWARDS = create("towards");
+    public static final SpellKeyWord NEAREST_ENTITY = create("nearest_entity");
+    public static final SpellKeyWord NEAREST_ENEMY = create("nearest_enemy");
     public static final SpellKeyWord NEAREST_ANIMAL = create("nearest_animal");
     public static final SpellKeyWord NEAREST_PLAYER = create("nearest_player");
     public static final SpellKeyWord NEAREST_PROJECTILE = create("nearest_projectile");
@@ -35,5 +37,17 @@ public class SpellKeyWords
                         AT, TOWARDS, NEAREST_ENEMY, NEAREST_ENTITY, NEAREST_ITEM,
                         NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE
                 );
+    }
+
+    public static final LanguageProfile EN_US = LanguageManager.getInstance().getLanguageProfile("en_us");
+
+    public static void addAllTranslations()
+    {
+        EN_US.addTranslationFor(AT, "at", "on");
+        EN_US.addTranslationFor(TOWARDS, "towards");
+        EN_US.addTranslationFor(NEAREST_ENTITY, "nearest entity");
+        EN_US.setLeftQuote("\"");
+        EN_US.setRightQuote("\"");
+        EN_US.setPeriod(".");
     }
 }

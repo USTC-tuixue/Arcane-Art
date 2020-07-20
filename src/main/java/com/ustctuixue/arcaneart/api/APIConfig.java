@@ -11,6 +11,7 @@ public class APIConfig
     {
         builder.push("api");
         MP.load(builder);
+        Spell.load(builder);
         builder.pop();
     }
 
@@ -135,6 +136,7 @@ public class APIConfig
                     .define("rightQuotes", "\"”」』");
             builder.pop();
         }
+
         public static String getVariableRegex()
         {
             return "[" + LEFT_QUOTES.get() +
