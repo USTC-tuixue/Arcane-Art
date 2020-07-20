@@ -48,6 +48,15 @@ public class APIEventHandler
         ArcaneArtAPI.LOGGER.info(SETUP, "setup");
         CapabilityManager.INSTANCE.register(IManaBar.class, new CapabilityMP.Storage(), DefaultManaBar::new);
         CapabilityManager.INSTANCE.register(MPStorage.class, new CapabilityMPStorage.Storage(), MPStorage::new);
+        CapabilityManager.INSTANCE.register(ISpellInventory.class, new Capability.IStorage<ISpellInventory>() {
+			@Override
+			public INBT writeNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
+					net.minecraft.util.Direction side) {return null;}
+
+			@Override
+			public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
+					net.minecraft.util.Direction side, INBT nbt) {}
+		}, SpellInventory::new);
     }
 
     @SubscribeEvent
