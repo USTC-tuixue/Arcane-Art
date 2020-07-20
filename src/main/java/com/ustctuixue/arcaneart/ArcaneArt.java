@@ -76,13 +76,16 @@ public class ArcaneArt
     public void commonSetup(final FMLCommonSetupEvent event)
     {
         LOGGER.info(COMMON_SETUP, "FML Common Setup Event");
-
+    	KeyEvent.registerMessage();
     }
 
     @SubscribeEvent
     public void clientSetup(FMLClientSetupEvent event)
     {
-
+        KeyLoader.register();
+        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), (MagicContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) -> {
+            return new MagicMenu(screenContainer,inv,titleIn);
+        });
     }
 
 
