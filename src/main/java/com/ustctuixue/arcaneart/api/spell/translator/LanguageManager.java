@@ -11,6 +11,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,6 +64,7 @@ public class LanguageManager
         {
             languages.addAll(keyWord.getDefaultTranslationKeySet());
         }
+        // Collect config files
         Set<File> configFiles =
                 languages.stream().map(LanguageManager::getFile).collect(Collectors.toSet());
         configFiles.addAll(Arrays.asList(Objects.requireNonNull(PROFILE_DIR.listFiles((dir, name) ->
@@ -80,9 +82,7 @@ public class LanguageManager
             if (!name.equals("empty") && names[1].equals("toml"))
             {
                 ArcaneArtAPI.LOGGER.info(LANGUAGE, "Reading language file: " + configFile.getName());
-                LanguageProfile profile = new LanguageProfile(name,
-                        SpellKeyWord.REGISTRY.getKeys()
-                );
+                LanguageProfile profile = new LanguageProfile(name);
                 profile.load(getFile(name));
                 this.profiles.put(name, profile);
             }
@@ -101,6 +101,7 @@ public class LanguageManager
     }
 
 
+    @Nullable
     public LanguageProfile getBestMatchedProfile(List<String> sp)
     {
         Map<String, Double> probabilities =
@@ -109,6 +110,8 @@ public class LanguageManager
                     String[] words = sp.get(0).split("\\s");
                     double matchCount = 0;
                     int varCount = 0;
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Matching language " + profileName);
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Variable regex: " + APIConfig.Spell.getVariableRegex());
                     if (Objects.isNull(profile))
                     {
                         ArcaneArtAPI.LOGGER.error(LANGUAGE, "Language Profile \"" + profileName + "\" is null!");
@@ -118,14 +121,17 @@ public class LanguageManager
                     {
                         if (word.matches(profile.getAllPatterns()))
                         {
+                            ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Word \"" + word + "\" is in language " + profileName);
                             matchCount += 1;
                         }
                         else if (word.matches(APIConfig.Spell.getVariableRegex()))
                         {
+                            ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Found variable: " + word);
                             varCount++;
                         }
 
                     }
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Match count: "+matchCount + ", Word count (variables not included): " + (words.length - varCount));
                     return  matchCount / (words.length - varCount);
                 });
         double maxProb = 0;

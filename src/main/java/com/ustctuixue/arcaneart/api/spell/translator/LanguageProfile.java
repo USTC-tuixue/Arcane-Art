@@ -17,10 +17,14 @@ public class LanguageProfile
     @Getter
     private final String name;
     private final Map<SpellKeyWord, String> keyWordMap = Maps.newHashMap();
+    private String leftQuote = "";
+    private String rightQuote = "";
+    private String period = "";
 
-    LanguageProfile(String name, Set<ResourceLocation> keyWords)
+    LanguageProfile(String name)
     {
         this.name = name;
+        Set<ResourceLocation> keyWords = SpellKeyWord.REGISTRY.getKeys();
         keyWordMap.putAll(
                 Maps.asMap(keyWords.stream().map(
                         (kw)->
@@ -40,7 +44,12 @@ public class LanguageProfile
         CommentedFileConfig config = CommentedFileConfig.of(file);
         config.load();
         ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Dumping translations:");
+
         keyWordMap.replaceAll((k, v) -> (String) config.getOptional(k.getTranslationPath()).orElseGet(()->keyWordMap.get(k)));
+        this.leftQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote").orElse(this.leftQuote);
+        this.rightQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote").orElse(this.rightQuote);
+        this.period = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.period").orElse(this.period);
+
         for (Map.Entry<SpellKeyWord, String> entry:
                 this.keyWordMap.entrySet())
         {
