@@ -81,9 +81,26 @@ public class APIEventHandler
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
             );
+		if (event.getObject() instanceof PlayerEntity) {
+    			event.addCapability(ArcaneArt.getResourceLocation("spellinv"), new SpellInventoryProvider());
+    		}
         }
     }
+	@SubscribeEvent
+	public static void onPlayerCloned(PlayerEvent.Clone event) {
+		LazyOptional<ISpellInventory> oldSpeedCap = event.getOriginal()
+				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
+		LazyOptional<ISpellInventory> newSpeedCap = event.getPlayer()
+				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
 
+		if (oldSpeedCap.isPresent() && newSpeedCap.isPresent()) {
+			newSpeedCap.ifPresent((newCap) -> {
+				oldSpeedCap.ifPresent((oldCap) -> {
+					newCap.deserializeNBT(oldCap.serializeNBT());
+				});
+			});
+		}
+	}	
     @SubscribeEvent
     public void attachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event)
     {
