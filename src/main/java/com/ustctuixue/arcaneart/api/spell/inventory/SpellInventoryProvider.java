@@ -1,16 +1,13 @@
 package com.ustctuixue.arcaneart.api.spell.inventory;
 
-
-import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
 
 public class SpellInventoryProvider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
 	private ISpellInventory spellInventoryCapability;
@@ -24,17 +21,17 @@ public class SpellInventoryProvider implements ICapabilityProvider, INBTSerializ
 		getOrCreateCapability().deserializeNBT(nbt);
 	}
 
+	@Nonnull
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        return cap == SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY ? LazyOptional.of(() -> {
-            return this.getOrCreateCapability();
-        }).cast() : LazyOptional.empty();
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        return cap == SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY ? LazyOptional.of(this::getOrCreateCapability).cast() : LazyOptional.empty();
 	}
 
+	@Nonnull
 	private ISpellInventory getOrCreateCapability() {        
 		if (spellInventoryCapability == null) {
-        this.spellInventoryCapability = new SpellInventory();
-    }
-    return this.spellInventoryCapability;
+			this.spellInventoryCapability = new SpellInventory();
+		}
+		return this.spellInventoryCapability;
 	}
 }
