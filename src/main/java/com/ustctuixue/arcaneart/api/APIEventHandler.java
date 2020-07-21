@@ -8,18 +8,27 @@ import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.*;
+import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryProvider;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.INBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -51,7 +60,7 @@ public class APIEventHandler
         CapabilityManager.INSTANCE.register(ISpellInventory.class, new Capability.IStorage<ISpellInventory>() {
 			@Override
 			public INBT writeNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
-					net.minecraft.util.Direction side) {return null;}
+                                 net.minecraft.util.Direction side) {return null;}
 
 			@Override
 			public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,

@@ -1,17 +1,21 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SpellTranslator
 {
-    public static List<String> joinFromWrittenBook(ItemStack itemStack)
+    @Nullable
+    public static RawSpell joinFromWrittenBook(ItemStack itemStack)
     {
         CompoundNBT compoundNBT = itemStack.getTag();
         if (compoundNBT != null)
@@ -21,7 +25,7 @@ public class SpellTranslator
             for (INBT page : pages)
             {
                 String pageContent = page.getString();
-                if (!pageContent.endsWith("-")) // 连q
+                if (!pageContent.endsWith("-")) // 连字符
 
                 {
                     buffer.append(" ");
@@ -29,15 +33,52 @@ public class SpellTranslator
                 buffer.append(pageContent);
             }
 
-            return Arrays.asList(buffer.toString().replaceAll("[-\n]", "").split(". "));
+            return new RawSpell(
+                    Items.WRITTEN_BOOK.getDisplayName(itemStack).getFormattedText(),
+                    buffer.toString().replaceAll("-", "")
+            );
 
 
         }
         return null;
     }
 
-    public static List<String> translateByProfile(List<String> rawSpell, LanguageProfile profile)
+    static SpellKeyWord getFirstKeyWord(final String translatedSentence)
     {
-        return rawSpell.stream().map(profile::translate).collect(Collectors.toList());
+        int wordEnd = translatedSentence.indexOf(' ');
+        wordEnd = wordEnd == -1? translatedSentence.length():wordEnd;
+        String rl = translatedSentence.substring(0, wordEnd);
+        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "First word: " + rl);
+        return SpellKeyWord.REGISTRY.getValue(new ResourceLocation(rl));
+    }
+
+    @Nullable
+    public static TranslatedSpell translateByProfile(RawSpell rawSpell, LanguageProfile profile)
+    {
+        List<String> translated = profile.translate(rawSpell.getIncantations());
+        TranslatedSpell result = new TranslatedSpell(rawSpell.getName());
+        for (String s : translated)
+        {
+            SpellKeyWord kw = getFirstKeyWord(s);
+            if (kw == null)
+            {
+                ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "First word is not registered!");
+                ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "Line: " + s);
+                return null;
+            }
+            switch (kw.getType())
+            {
+                case ON_HOLD:
+                    result.addOnHoldSentence(s);
+                    break;
+                case ON_RELEASE:
+                    result.addOnReleaseSentence(s);
+                    break;
+                default:
+                    result.addCommonSentence(s);
+            }
+        }
+
+        return result;
     }
 }

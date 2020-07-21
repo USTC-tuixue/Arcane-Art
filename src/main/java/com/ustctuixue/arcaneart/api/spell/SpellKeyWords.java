@@ -4,12 +4,13 @@ import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import net.minecraftforge.registries.IForgeRegistry;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWord.Property;
 
 public class SpellKeyWords
 {
-    private static SpellKeyWord create(String name)
+    private static SpellKeyWord create(String name, Property property)
     {
-        return new SpellKeyWord().setRegistryName(ArcaneArtAPI.getResourceLocation(name));
+        return new SpellKeyWord(property).setRegistryName(ArcaneArtAPI.getResourceLocation(name));
     }
 
     private static void register(IForgeRegistry<SpellKeyWord> registry, SpellKeyWord... words)
@@ -18,6 +19,11 @@ public class SpellKeyWords
         {
             registry.register(word);
         }
+    }
+
+    private static SpellKeyWord create(String name)
+    {
+        return create(name, new Property().withType(SpellKeyWord.ExecuteType.NOT_EXECUTABLE));
     }
 
     public static final SpellKeyWord AT = create("at");
@@ -34,13 +40,15 @@ public class SpellKeyWords
     public static final SpellKeyWord MAX_COUNT = create("with_max_count");
     public static final SpellKeyWord SELF = create("self");
 
+    public static final SpellKeyWord MAKE = create("make", new Property().withType(SpellKeyWord.ExecuteType.COMMON));
+
     public static void registerAll(IForgeRegistry<SpellKeyWord> registry)
     {
         register
                 (
                         registry,
                         AT, TOWARDS, NEAREST_ENEMY, NEAREST_ENTITY, NEAREST_ITEM,
-                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE
+                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE, MAKE
                 );
     }
 
@@ -51,8 +59,9 @@ public class SpellKeyWords
         EN_US.addTranslationFor(AT, "at", "on");
         EN_US.addTranslationFor(TOWARDS, "towards");
         EN_US.addTranslationFor(NEAREST_ENTITY, "nearest entity");
+        EN_US.addTranslationFor(MAKE, "make");
         EN_US.setLeftQuote("\"");
         EN_US.setRightQuote("\"");
-        EN_US.setPeriod(".");
+        EN_US.setSemicolon(";");
     }
 }
