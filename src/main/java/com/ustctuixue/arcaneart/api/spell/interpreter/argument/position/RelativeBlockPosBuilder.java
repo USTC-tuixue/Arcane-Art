@@ -1,7 +1,6 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.position;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 
-import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.IRelativeArgumentBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.IRelativeArgumentBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +28,6 @@ public class RelativeBlockPosBuilder implements IRelativeArgumentBuilder<BlockPo
         return null;
     }
 
-    public static RelativeBlockPosBuilder DEFAULT_BUILDER =
+    public static RelativeBlockPosBuilder ZERO =
             new RelativeBlockPosBuilder(BlockPos.ZERO);
 }

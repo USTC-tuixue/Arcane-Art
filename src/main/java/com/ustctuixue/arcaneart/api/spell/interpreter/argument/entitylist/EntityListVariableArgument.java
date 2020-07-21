@@ -1,7 +1,7 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.entitylist;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.VariableArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.VariableArgument;
 
 public class EntityListVariableArgument extends VariableArgument<RelativeEntityListBuilder>
 {

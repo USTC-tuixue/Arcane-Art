@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.entitylist;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;

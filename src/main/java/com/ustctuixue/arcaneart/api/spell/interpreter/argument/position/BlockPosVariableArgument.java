@@ -1,7 +1,7 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.position;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.VariableArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.VariableArgument;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.ILocationArgument;
 

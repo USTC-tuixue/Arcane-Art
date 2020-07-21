@@ -2,15 +2,12 @@ package com.ustctuixue.arcaneart.api.test;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import com.ustctuixue.arcaneart.api.spell.translator.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class TestCommands
 {

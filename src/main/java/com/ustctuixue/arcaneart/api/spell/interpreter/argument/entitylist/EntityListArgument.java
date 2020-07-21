@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.entitylist;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -7,13 +7,13 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
-import com.ustctuixue.arcaneart.api.spell.compiler.CommandExceptionTypes;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.ArgumentUtil;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.blockpos.BlockPosArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.CommandExceptionTypes;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.ArgumentUtil;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosBuilder;
 import com.ustctuixue.arcaneart.api.util.MinMaxBound;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Map;
 import java.util.function.Predicate;
@@ -105,13 +105,13 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
         return MinMaxBound.of(minDistance, maxDistance);
     }
 
-    private static BlockPos getOriginPos(StringReader reader) throws CommandSyntaxException
+    private static RelativeBlockPosBuilder getOriginPos(StringReader reader) throws CommandSyntaxException
     {
         if (ArgumentUtil.validateSpellKeyWord(reader, SpellKeyWords.FROM))
         {
-            return new BlockPosArgument().parse(reader);
+            return new RelativeBlockPosArgument().parse(reader);
         }
-        return new BlockPos(0, 0, 0);
+        return new RelativeBlockPosBuilder(0, 0, 0);
     }
 
     private static int getNumberLimit(StringReader reader) throws CommandSyntaxException

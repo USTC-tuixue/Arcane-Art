@@ -1,16 +1,15 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.entitylist;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
-import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.IRelativeArgumentBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.IRelativeArgumentBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosBuilder;
 import com.ustctuixue.arcaneart.api.util.MinMaxBound;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -22,7 +21,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
     @Setter @Getter
     protected MinMaxBound<Double> distance = MinMaxBound.unBounded();
     @Setter
-    protected BlockPos originPos = BlockPos.ZERO;
+    protected RelativeBlockPosBuilder originPos = RelativeBlockPosBuilder.ZERO;
     @Setter
     protected int limit = 1;
     @Setter
@@ -34,7 +33,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
 
 
     @Override
-    public EntityList build(SpellBuilder source)
+    public EntityList build(SpellCasterSource source)
     {
         return null;
     }

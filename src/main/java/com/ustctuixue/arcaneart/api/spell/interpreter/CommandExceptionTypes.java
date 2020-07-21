@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler;
+package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import lombok.AccessLevel;

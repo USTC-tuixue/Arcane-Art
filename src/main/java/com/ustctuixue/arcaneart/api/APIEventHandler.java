@@ -8,20 +8,18 @@ import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.*;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryProvider;
-import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
@@ -33,11 +31,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -144,4 +140,8 @@ public class APIEventHandler
         SpellKeyWords.registerAll(event.getRegistry());
     }
 
+    public void onServerStart(FMLServerStartingEvent event)
+    {
+        MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
+    }
 }

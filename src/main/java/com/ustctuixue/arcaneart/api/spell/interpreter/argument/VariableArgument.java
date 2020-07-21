@@ -1,11 +1,9 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.ustctuixue.arcaneart.api.APIConfig;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.Variable;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>

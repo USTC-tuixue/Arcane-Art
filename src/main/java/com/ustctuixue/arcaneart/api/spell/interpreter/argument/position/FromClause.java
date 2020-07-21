@@ -1,16 +1,16 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.position;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
-import com.ustctuixue.arcaneart.api.spell.compiler.argument.Clause;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Clause;
 
 public class FromClause extends Clause<RelativeBlockPosBuilder>
 {
     @Override
     protected RelativeBlockPosBuilder defaultValue()
     {
-        return RelativeBlockPosBuilder.DEFAULT_BUILDER;
+        return RelativeBlockPosBuilder.ZERO;
     }
 
     @Override

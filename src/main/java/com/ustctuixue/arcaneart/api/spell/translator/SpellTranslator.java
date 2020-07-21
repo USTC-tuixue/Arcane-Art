@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;

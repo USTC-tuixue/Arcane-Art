@@ -1,9 +1,8 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
-import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.util.ResourceLocation;

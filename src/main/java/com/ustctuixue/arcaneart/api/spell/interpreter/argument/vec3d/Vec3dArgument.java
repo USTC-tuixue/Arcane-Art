@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.vector3d;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.vec3d;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;

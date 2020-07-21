@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;

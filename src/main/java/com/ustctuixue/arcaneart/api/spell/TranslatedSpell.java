@@ -1,9 +1,10 @@
-package com.ustctuixue.arcaneart.api.spell.translator;
+package com.ustctuixue.arcaneart.api.spell;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
 
 public class TranslatedSpell
@@ -46,6 +47,24 @@ public class TranslatedSpell
     public TranslatedSpell addOnReleaseSentence(String s)
     {
         onReleaseSentences.add(s);
+        return this;
+    }
+
+    public TranslatedSpell addAllCommonSentences(Collection<String> sentences)
+    {
+        commonSentences.addAll(sentences);
+        return this;
+    }
+
+    public TranslatedSpell addAllOnHoldSentences(Collection<String> sentences)
+    {
+        onHoldSentences.addAll(sentences);
+        return this;
+    }
+
+    public TranslatedSpell addAllOnReleaseSentences(Collection<String> sentences)
+    {
+        onReleaseSentences.addAll(sentences);
         return this;
     }
 
