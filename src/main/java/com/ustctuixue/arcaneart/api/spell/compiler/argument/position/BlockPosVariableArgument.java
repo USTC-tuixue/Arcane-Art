@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.blockpos;
+package com.ustctuixue.arcaneart.api.spell.compiler.argument.position;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.compiler.argument.VariableArgument;
