@@ -6,6 +6,7 @@ import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
+import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
