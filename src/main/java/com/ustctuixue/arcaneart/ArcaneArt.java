@@ -2,17 +2,21 @@ package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIEventHandler;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.mp.MPEvent;
 import com.ustctuixue.arcaneart.api.mp.MPEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.api.client.APIClientEventHandler;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
+import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
+import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
+import com.ustctuixue.arcaneart.client.KeyLoader;
+import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import javax.annotation.Nonnull;
 
 @Mod(ArcaneArt.MOD_ID)
 public class ArcaneArt
@@ -67,7 +73,8 @@ public class ArcaneArt
 
     }
 
-    public static ResourceLocation getResourceLocation(String name)
+    @Nonnull
+    public static ResourceLocation getResourceLocation(@Nonnull String name)
     {
         return new ResourceLocation(MOD_ID, name);
     }
@@ -76,14 +83,16 @@ public class ArcaneArt
     public void commonSetup(final FMLCommonSetupEvent event)
     {
         LOGGER.info(COMMON_SETUP, "FML Common Setup Event");
-
+    	KeyEvent.registerMessage();
     }
 
     @SubscribeEvent
     public void clientSetup(FMLClientSetupEvent event)
     {
-
+        KeyLoader.register();
+        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
     }
+
 
     public static ItemGroup ARCANE_ART_ITEM_GROUP = new ItemGroup(ArcaneArt.MOD_NAME){
         @Override
