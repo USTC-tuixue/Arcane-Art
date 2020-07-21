@@ -16,4 +16,5 @@ public class CommandExceptionTypes
 
     public static final SimpleCommandExceptionType INVALID_SPELL_WORD
             = new SimpleCommandExceptionType(new TranslationTextComponent(getExceptionTranslationKey("invalid_spell_word")));
+
 }

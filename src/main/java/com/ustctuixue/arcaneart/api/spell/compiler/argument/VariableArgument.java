@@ -10,9 +10,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
 {
-
-    private static final SimpleCommandExceptionType INCOMPLETE_QUOTES =
-            new SimpleCommandExceptionType(new TranslationTextComponent("spell.exception.incomplete_quotes"));
     private static final SimpleCommandExceptionType INCONSISTENT_QUOTES =
             new SimpleCommandExceptionType(new TranslationTextComponent("spell.exception.inconsistent_quotes"));
 
@@ -25,40 +22,17 @@ public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
     {
         if (reader.canRead())
         {
-            int quoteId = APIConfig.Spell.LEFT_QUOTES.get().indexOf(reader.peek());
-            int rightQuoteId;
-            int cursor = reader.getCursor();
-            StringBuilder builder = new StringBuilder();
-            if (quoteId != -1)
+            reader.skipWhitespace();
+            char next = reader.peek();
+            if (StringReader.isQuotedStringStart(next))                  // If is a variable
             {
-                do
-                {
-                    builder.append(reader.read());
-                    rightQuoteId = APIConfig.Spell.RIGHT_QUOTES.get().indexOf(reader.peek());
-                }while (reader.canRead() && rightQuoteId != -1);
-
-                if (rightQuoteId == -1)         // Quotes must come in pairs
-                {
-                    reader.setCursor(cursor);
-                    throw INCOMPLETE_QUOTES.createWithContext(reader);
-                }
-
-                if (rightQuoteId != quoteId)    // Quotes must match
-                {
-                    reader.setCursor(cursor);
-                    throw INCONSISTENT_QUOTES.createWithContext(reader);
-                }
-                else                            // Found a variable
-                {
-                    return new Variable<>(builder.toString(), this.getType());
-                }
+                return new Variable<>(reader.readStringUntil(next), this.getType());
             }
             else                                // If not a variable form
             {
                 return new Variable<>(this.getType(), this.getArgumentType().parse(reader));
             }
         }
-        reader.setCursor(0);
         throw INCONSISTENT_QUOTES.createWithContext(reader);
     }
 }

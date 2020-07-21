@@ -51,11 +51,12 @@ public class SpellBuilder implements IBuilder<Spell>
     @Override @Nonnull
     public Spell build()
     {
-         return new Spell(
-                 name, incantations,
-                 effectOnHold, effectOnImpact, effectOnRelease,
-                 costOnHold, costOnRelease, chargeTick
-         );
+        compile();
+        return new Spell(
+             name, incantations,
+             effectOnHold, effectOnImpact, effectOnRelease,
+             costOnHold, costOnRelease, chargeTick
+        );
     }
 
     public void clearEffects()
@@ -68,7 +69,7 @@ public class SpellBuilder implements IBuilder<Spell>
         this.costOnRelease = 0;
     }
 
-    void parse()
+    boolean compile()
     {
         try
         {
@@ -77,9 +78,11 @@ public class SpellBuilder implements IBuilder<Spell>
                 SPELL_DISPATCHER.execute(incantation, this);
             }
             this.calculateStat();
+            return true;
         }catch (CommandSyntaxException e)
         {
             this.clearEffects();
+            return false;
         }
     }
 
