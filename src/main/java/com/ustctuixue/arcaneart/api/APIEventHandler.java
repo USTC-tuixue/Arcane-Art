@@ -2,39 +2,36 @@ package com.ustctuixue.arcaneart.api;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
-import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.*;
+import com.ustctuixue.arcaneart.api.mp.tile.*;
 import com.ustctuixue.arcaneart.api.spell.*;
-import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
-import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryProvider;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.inventory.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraft.nbt.INBT;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import javax.annotation.Nonnull;
 
 @Mod.EventBusSubscriber
 public class APIEventHandler
@@ -55,7 +52,7 @@ public class APIEventHandler
         CapabilityManager.INSTANCE.register(ISpellInventory.class, new Capability.IStorage<ISpellInventory>() {
 			@Override
 			public INBT writeNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
-					net.minecraft.util.Direction side) {return null;}
+                                 net.minecraft.util.Direction side) {return null;}
 
 			@Override
 			public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
@@ -64,7 +61,7 @@ public class APIEventHandler
     }
 
     @SubscribeEvent
-    public void attachAttribute(EntityEvent.EntityConstructing event)
+    public void attachAttribute(@Nonnull EntityEvent.EntityConstructing event)
     {
         Entity entity = event.getEntity();
         if (entity instanceof LivingEntity)
@@ -77,7 +74,7 @@ public class APIEventHandler
 
 
     @SubscribeEvent
-    public void attachCapabilityEntity(AttachCapabilitiesEvent<Entity> event)
+    public void attachCapabilityEntity(@Nonnull AttachCapabilitiesEvent<Entity> event)
     {
         if (event.getObject() instanceof LivingEntity)
         {
@@ -91,7 +88,7 @@ public class APIEventHandler
         }
     }
 	@SubscribeEvent
-	public static void onPlayerCloned(PlayerEvent.Clone event) {
+	public static void onPlayerCloned(@Nonnull PlayerEvent.Clone event) {
 		LazyOptional<ISpellInventory> oldSpeedCap = event.getOriginal()
 				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
 		LazyOptional<ISpellInventory> newSpeedCap = event.getPlayer()
@@ -106,7 +103,7 @@ public class APIEventHandler
 		}
 	}	
     @SubscribeEvent
-    public void attachCapabilityItemStack(AttachCapabilitiesEvent<ItemStack> event)
+    public void attachCapabilityItemStack(@Nonnull AttachCapabilitiesEvent<ItemStack> event)
     {
         Item item = event.getObject().getItem();
         if(item instanceof ItemSpell)
@@ -119,7 +116,7 @@ public class APIEventHandler
     }
 
     @SubscribeEvent
-    public void registerConfig(ModConfig.Reloading event)
+    public void registerConfig(@Nonnull ModConfig.Reloading event)
     {
         ((CommentedFileConfig)event.getConfig().getConfigData()).load();
     }
@@ -134,9 +131,13 @@ public class APIEventHandler
 
 
     @SubscribeEvent
-    public void registerSpellKeyWords(RegistryEvent.Register<SpellKeyWord> event)
+    public void registerSpellKeyWords(@Nonnull RegistryEvent.Register<SpellKeyWord> event)
     {
         SpellKeyWords.registerAll(event.getRegistry());
     }
 
+    public void onServerStart(@Nonnull FMLServerStartingEvent event)
+    {
+        MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
+    }
 }

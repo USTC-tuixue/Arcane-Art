@@ -3,7 +3,9 @@ package com.ustctuixue.arcaneart.api.spell;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
+import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -16,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ItemSpellCaster extends Item
 {
@@ -36,22 +39,13 @@ public class ItemSpellCaster extends Item
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft)
     {
         LazyOptional<IManaBar> optionalBar = entityLiving.getCapability(CapabilityMP.MANA_BAR_CAP);
-        LazyOptional<Spell> optionalSpell = stack.getCapability(CapabilitySpell.SPELL_CAP);
-        optionalBar.ifPresent( bar ->
-            optionalSpell.ifPresent(spell ->
-                spell.playerCastOnRelease(bar, stack, worldIn, entityLiving, timeLeft)
-            )
-        );
+        // TODO
     }
 
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity player, int count)
     {
-        player.getCapability(CapabilityMP.MANA_BAR_CAP).ifPresent( bar ->
-            stack.getCapability(CapabilitySpell.SPELL_CAP).ifPresent(spell ->
-                spell.playerCastOnHold(bar, player.world, player, stack, count)
-            )
-        );
+        // TODO
     }
 
     @Override
@@ -66,14 +60,18 @@ public class ItemSpellCaster extends Item
         return UseAction.BOW;
     }
 
-    public static Spell getSpell(PlayerEntity player, int slot)
+    @Nonnull
+    public static TranslatedSpell getSpell(PlayerEntity player, int slot)
     {
-        return new SpellBuilder().build();
+        ISpellInventory inventory = player.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY).orElse(new SpellInventory());
+        ItemStack itemSpellStack = inventory.getShortcut(slot);
+
+        return itemSpellStack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(TranslatedSpell::new);
     }
 
     public void setSpellSlot(ItemStack stack, int slot)
     {
-        if (slot >= 9)
+        if (slot >= 9 || slot < 0)
         {
             throw new RuntimeException("Slot " + slot + " is not in valid range [0,9)");
         }
@@ -86,7 +84,7 @@ public class ItemSpellCaster extends Item
 
     public int getSpellSlot(ItemStack stack)
     {
-        if (stack.hasTag())
+        if (stack.getTag() != null)
         {
             byte slot = stack.getTag().getByte("spell_slot");
             if (slot >= 0 && slot < 9)
@@ -94,10 +92,7 @@ public class ItemSpellCaster extends Item
                 return slot;
             }
         }
-        else
-        {
-            stack.setTag(new CompoundNBT());
-        }
+        this.setSpellSlot(stack, 0);    // If not a valid spell slot id, set to 0
         return 0;
     }
 }

@@ -1,7 +1,5 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
-import com.ustctuixue.arcaneart.api.util.ReflectHelper;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -17,62 +15,63 @@ import java.util.stream.Collectors;
 
 public class CapabilitySpell
 {
-    @CapabilityInject(Spell.class)
-    public static Capability<Spell> SPELL_CAP = null;
+    @CapabilityInject(TranslatedSpell.class)
+    public static Capability<TranslatedSpell> SPELL_CAP = null;
 
 
-    public static class Storage implements Capability.IStorage<Spell>
+    public static class Storage implements Capability.IStorage<TranslatedSpell>
     {
+        private static final String TITLE = "title";
+        private static final String COMMON = "commonSentences";
+        private static final String ON_HOLD = "onHoldSentences";
+        private static final String ON_RELEASE = "onReleaseSentences";
+
         @Nullable
         @Override
-        public INBT writeNBT(Capability<Spell> capability, Spell instance, Direction side)
+        public INBT writeNBT(Capability<TranslatedSpell> capability, TranslatedSpell instance, Direction side)
         {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putString("title", instance.getName());
-
-            ListNBT list = new ListNBT();
-            encodeIncantation(instance.getIncantations()).forEach(s -> list.add(StringNBT.valueOf(s)));
-            nbt.put("incantations", list);
+            nbt.putString(TITLE, instance.getName());
+            nbt.put(COMMON, encodeIncantation(instance.getCommonSentences()));
+            nbt.put(ON_HOLD, encodeIncantation(instance.getOnHoldSentences()));
+            nbt.put(ON_RELEASE, encodeIncantation(instance.getOnReleaseSentences()));
             return nbt;
         }
 
-        @Override @SuppressWarnings("unchecked")
-        public void readNBT(Capability<Spell> capability, Spell instance, Direction side, INBT nbt)
+        @Override
+        public void readNBT(Capability<TranslatedSpell> capability, TranslatedSpell instance, Direction side, INBT nbt)
         {
             CompoundNBT compoundNBT = (CompoundNBT) nbt;
-            SpellBuilder builder = new SpellBuilder()
-                    .withName(compoundNBT.getString("title"))
-                    .withIncantations(decodeIncantation(
-                            (List<String>)
-                                    ReflectHelper.getListNBTValues(
-                                            compoundNBT.getList("incantations", 8),
-                                            8
-                                    )
-                    ));
-            Spell spell = builder.build();
-            instance.copyFrom(spell);
+            instance.setName(compoundNBT.getString(TITLE));
+            instance.addAllCommonSentences(decodeIncantation(compoundNBT.getList(COMMON, 8)));
+            instance.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
+            instance.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
         }
 
         // Compress incantations
-        private List<String> encodeIncantation(List<String> incantations)
+        private ListNBT encodeIncantation(List<String> incantations)
         {
-            return incantations.stream().map(s ->
+            ListNBT nbt = new ListNBT();
+            incantations.forEach(s ->
                 {
                     String[] words = s.split(" ");
                     for (int i = 0; i < words.length; ++i)
                     {
                         words[i] = SpellKeyWord.encode(words[i]);
                     }
-                    return String.join(" ", words);
+                    nbt.add(StringNBT.valueOf(String.join(" ", words)));
                 }
-            ).collect(Collectors.toList());
+            );
+            return nbt;
         }
 
-        private List<String> decodeIncantation(List<String> encoded)
+        private List<String> decodeIncantation(ListNBT encoded)
         {
-            return encoded.stream().map(s ->
+
+            return encoded.stream().map(stringNBT ->
             {
-                String[] words = s.split(" ");
+                String sentence = stringNBT.getString();
+                String[] words = sentence.split(" ");
                 for (int i = 0; i < words.length; i++)
                 {
                     words[i] = SpellKeyWord.decode(words[i]);
@@ -86,7 +85,7 @@ public class CapabilitySpell
     public static class StorageProvider implements ICapabilitySerializable<CompoundNBT>
     {
         Storage storage = new Storage();
-        Spell spell = new SpellBuilder().build();
+        TranslatedSpell spell = new TranslatedSpell();
 
         @Nonnull
         @Override
@@ -110,7 +109,7 @@ public class CapabilitySpell
 
     public static class Provider implements ICapabilityProvider
     {
-        Spell spell = new SpellBuilder().build();
+        TranslatedSpell spell = new TranslatedSpell();
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)

@@ -1,6 +1,5 @@
-package com.ustctuixue.arcaneart.api.spell.compiler.argument.variable;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
 
-import com.ustctuixue.arcaneart.api.spell.compiler.SpellBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
