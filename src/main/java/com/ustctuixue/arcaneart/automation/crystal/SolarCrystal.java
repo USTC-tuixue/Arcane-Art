@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.automation;
+package com.ustctuixue.arcaneart.automation.crystal;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

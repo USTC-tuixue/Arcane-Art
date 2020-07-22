@@ -40,13 +40,13 @@ public class Spell
     @NonNull
     List<ISpellEffectOnRelease> effectOnRelease;
 
-    @Getter @NonNull
+    @Getter
     double costOnHold;
 
-    @Getter @NonNull
+    @Getter
     double costOnRelease;
 
-    @Getter @NonNull
+    @Getter
     int chargeTick;
 
     public boolean playerCastOnHold(IManaBar bar, World worldIn, LivingEntity entityLiving, ItemStack stack, int time)
