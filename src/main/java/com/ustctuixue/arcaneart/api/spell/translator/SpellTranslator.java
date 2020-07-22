@@ -1,10 +1,9 @@
-package com.ustctuixue.arcaneart.api.spell.translate;
+package com.ustctuixue.arcaneart.api.spell.translator;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +20,9 @@ public class SpellTranslator
             StringBuilder buffer = new StringBuilder();
             for (INBT page : pages)
             {
-                String pageContent = ((StringNBT)page).getString();
-                if (!pageContent.endsWith("-"))
+                String pageContent = page.getString();
+                if (!pageContent.endsWith("-")) // 连q
+
                 {
                     buffer.append(" ");
                 }

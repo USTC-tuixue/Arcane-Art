@@ -3,8 +3,8 @@ package com.ustctuixue.arcaneart.api.spell;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
+import com.ustctuixue.arcaneart.api.spell.ISpellCostModifier;
 import com.ustctuixue.arcaneart.api.spell.effect.*;
 
 import com.ustctuixue.arcaneart.api.util.ReflectHelper;
@@ -14,35 +14,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.List;
 import java.util.Map;
 
-@NoArgsConstructor
-public class Spell implements INBTSerializable<ListNBT>
+@AllArgsConstructor
+public class Spell
 {
+    public static Marker MARKER = MarkerManager.getMarker("SPELL");
 
-    public static final CommandDispatcher<Spell> SPELL_DISPATCHER
-            = new CommandDispatcher<>();
+    @NonNull @Getter
+    private String name;
 
-    @Getter @NonNull
-    ListNBT spell = new ListNBT();
+    @NonNull @Getter
+    private List<String> incantations;
 
-    public Spell(ListNBT nbt)
-    {
-        this.spell = nbt.copy();
-    }
+    @NonNull
+    List<ISpellEffectOnHold> effectOnHold;
 
-    private final Map<String, Object> variables = Maps.newHashMap();
+    @NonNull
+    List<ISpellEffectOnImpact> effectOnImpact;
 
-    @Getter @NonNull
-    final List<ISpellEffectOnHold> effectOnHold = Lists.newArrayList();
-
-    @Getter @NonNull
-    final List<ISpellEffectOnImpact> effectOnImpact = Lists.newArrayList();
-
-    @Getter @NonNull
-    final List<ISpellEffectOnRelease> effectOnRelease = Lists.newArrayList();
+    @NonNull
+    List<ISpellEffectOnRelease> effectOnRelease;
 
     @Getter
     double costOnHold;
@@ -79,65 +75,17 @@ public class Spell implements INBTSerializable<ListNBT>
         return f;
     }
 
-    public void clear()
+    public void copyFrom(Spell spell)
     {
-        this.effectOnHold.clear();
-        this.effectOnRelease.clear();
-        this.effectOnImpact.clear();
-        this.chargeTick = 0;
-        this.costOnHold = 0;
-        this.costOnRelease = 0;
-    }
+        this.costOnRelease = spell.costOnRelease;
+        this.costOnHold = spell.costOnHold;
+        this.chargeTick = spell.chargeTick;
 
-    void calculateStat()
-    {
-        costOnHold = effectOnHold.stream().mapToDouble(ISpellCost::manaCost).sum();
-        costOnRelease = effectOnRelease.stream().mapToDouble(ISpellCost::manaCost).sum();
-        chargeTick = effectOnRelease.stream().mapToInt(ISpellEffectOnRelease::chargeTick).max().orElse(0);
-    }
+        this.name = spell.name;
+        this.incantations = spell.incantations;
 
-    @Override
-    public ListNBT serializeNBT()
-    {
-        return spell;
-    }
-
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void deserializeNBT(ListNBT nbt)
-    {
-        if (nbt.getTagType() == 8)
-        {
-            this.spell = nbt.copy();
-            parse((List<String>) ReflectHelper.getListNBTValues(nbt, 8), this);
-        }
-    }
-
-    public static void parse(List<String> incantations, Spell spell)
-    {
-        try
-        {
-            for (String incantation :
-                    incantations)
-            {
-                SPELL_DISPATCHER.execute(incantation, spell);
-            }
-            spell.calculateStat();
-        }catch (CommandSyntaxException e)
-        {
-            spell.clear();
-        }
-
-    }
-
-    public Object getVariable(String name)
-    {
-        return variables.get(name);
-    }
-
-    public void setVariable(String name, Object obj)
-    {
-        variables.put(name, obj);
+        this.effectOnRelease = spell.effectOnRelease;
+        this.effectOnHold = spell.effectOnHold;
+        this.effectOnImpact = spell.effectOnImpact;
     }
 }
