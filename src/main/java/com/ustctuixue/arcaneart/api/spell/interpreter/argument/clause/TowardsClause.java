@@ -3,10 +3,11 @@ package com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionVariableArgument;
 
-public class TowardsClause extends Clause<DirectionBuilder>
+public class TowardsClause extends Clause<Variable<DirectionBuilder>>
 {
     @Override
     protected SpellKeyWord getInductor()
@@ -15,14 +16,14 @@ public class TowardsClause extends Clause<DirectionBuilder>
     }
 
     @Override
-    protected ArgumentType<DirectionBuilder> getArgumentType()
+    protected ArgumentType<Variable<DirectionBuilder>> getArgumentType()
     {
-        return new DirectionArgument();
+        return new DirectionVariableArgument();
     }
 
     @Override
-    protected DirectionBuilder defaultValue()
+    protected Variable<DirectionBuilder> defaultValue()
     {
-        return new DirectionBuilder();
+        return new Variable<>(new DirectionBuilder());
     }
 }
