@@ -3,8 +3,8 @@ package com.ustctuixue.arcaneart.automation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class EnvironmentHelper {
-    private EnvironmentHelper envHelper = new EnvironmentHelper();
+public class EnvHelper {
+    private EnvHelper envHelper = new EnvHelper();
 
     public static double getTemperature(World world, BlockPos pos){
         //return the Temperature of the given world and pos
