@@ -3,14 +3,11 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.spell.Spell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import joptsimple.internal.Strings;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.util.*;
@@ -22,12 +19,16 @@ public class LanguageProfile
     @Getter
     private final String name;
     private final Map<SpellKeyWord, String> keyWordMap = Maps.newHashMap();
+
+    // To refer to variables
     @Setter @Getter
-    private String leftQuote = "";
+    private String leftQuote = "\"";
     @Setter @Getter
-    private String rightQuote = "";
+    private String rightQuote = "\"";
+
+    // To divide incantations
     @Setter @Getter
-    private String period = "";
+    private String semicolon = ";";
 
     LanguageProfile(String name)
     {
@@ -73,7 +74,7 @@ public class LanguageProfile
         keyWordMap.replaceAll((k, v) -> (String) config.getOptional(k.getTranslationPath()).orElseGet(()->keyWordMap.get(k)));
         this.leftQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote").orElse(this.leftQuote);
         this.rightQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote").orElse(this.rightQuote);
-        this.period = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.period").orElse(this.period);
+        this.semicolon = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.period").orElse(this.semicolon);
 
         for (Map.Entry<SpellKeyWord, String> entry:
                 this.keyWordMap.entrySet())
@@ -83,14 +84,14 @@ public class LanguageProfile
         }
         config.add(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote", this.leftQuote);
         config.add(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote", this.rightQuote);
-        config.add(ArcaneArtAPI.MOD_ID + ".punctuation.period", this.period);
+        config.add(ArcaneArtAPI.MOD_ID + ".punctuation.period", this.semicolon);
         config.save();
         config.close();
     }
 
-    String getAllPatterns()
+    Pattern getAllPatterns()
     {
-        return Strings.join(keyWordMap.values(), "|");
+        return Pattern.compile(Strings.join(keyWordMap.values(), "|"));
     }
 
     /**
@@ -98,7 +99,7 @@ public class LanguageProfile
      * @param sentence 语句
      * @return 翻译后的语句
      */
-    String translate(String sentence)
+    List<String> translate(String sentence)
     {
         String m = sentence;
         for (Map.Entry<SpellKeyWord, String> entry :
@@ -110,7 +111,11 @@ public class LanguageProfile
             Pattern pattern = Pattern.compile(entry.getValue());
             m = pattern.matcher(m).replaceAll(rl.toString());
         }
-        return m;
+        m = m.replaceAll(this.leftQuote, "\"");
+        m = m.replaceAll(this.rightQuote, "\"");
+        m = m.replaceAll(this.semicolon, ";");
+        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Translated: "+m);
+        return Arrays.asList(m.split(";"));
     }
 
     /**
@@ -176,6 +181,11 @@ public class LanguageProfile
     public LanguageProfile addTranslationFor(String keyWord, String translation, String... translations)
     {
         return this.addTranslationFor(new ResourceLocation(keyWord), translation, translations);
+    }
+
+    public String getVariableRegex()
+    {
+        return "[" + this.leftQuote + "]" + "[^" + this.leftQuote + this.rightQuote +"]*[" + this.rightQuote + "]";
     }
 
 }
