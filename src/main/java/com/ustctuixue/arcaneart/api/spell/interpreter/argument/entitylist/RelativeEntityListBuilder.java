@@ -2,7 +2,7 @@ package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.IRelativeArgumentBuilder;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListBuilder;
 import com.ustctuixue.arcaneart.api.util.EntityList;
 import com.ustctuixue.arcaneart.api.util.MinMaxBound;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
     @Setter @Getter
     protected MinMaxBound<Double> distance = MinMaxBound.unBounded();
     @Setter
-    protected RelativeVec3dBuilder originPos = new RelativeVec3dBuilder();
+    protected RelativeVec3dListBuilder originPos = new RelativeVec3dListBuilder();
     @Setter
     protected int limit = 1;
 
@@ -51,6 +51,11 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
     {
         EntityList list = new EntityList();
 
+        if (self)
+        {
+            list.add(source.getEntity());
+            return list;
+        }
         Vec3d pivot = originPos.build(source).next();
 
         if (aabb != null)
@@ -58,7 +63,6 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
             list.addAll(source.getWorld().getEntitiesWithinAABB(type, aabb.offset(pivot), this.summarizedPredicate(pivot)));
         }
         source.getWorld().getEntities(type, this.summarizedPredicate(pivot));
-
         return list;
     }
 

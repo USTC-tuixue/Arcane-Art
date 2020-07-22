@@ -4,23 +4,20 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause.FromClause;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
-import com.ustctuixue.arcaneart.api.util.Vec3dList;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListBuilder;
 
-public class DirectionArgument implements ArgumentType<RayTraceBuilder>
+
+public class DirectionArgument implements ArgumentType<DirectionBuilder>
 {
-    private RelativeVec3dBuilder targetList;
-    private RelativeVec3dBuilder pivotList;
+
 
     @Override
-    public RayTraceBuilder parse(StringReader reader) throws CommandSyntaxException
+    public DirectionBuilder parse(StringReader reader) throws CommandSyntaxException
     {
-        targetList = new RelativeVec3dArgument().parse(reader);
-        pivotList = new FromClause().parse(reader);
-        return new RayTraceBuilder();
+        RelativeVec3dListBuilder targetList = new RelativeVec3dListArgument().parse(reader);
+        RelativeVec3dListBuilder pivot = new FromClause().parse(reader);
+        return new DirectionBuilder(targetList, pivot);
     }
 
 }
