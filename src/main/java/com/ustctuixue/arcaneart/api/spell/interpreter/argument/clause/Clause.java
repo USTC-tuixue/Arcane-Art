@@ -1,9 +1,10 @@
-package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.ArgumentUtil;
 
 
 public abstract class Clause<T> implements ArgumentType<T>

@@ -22,8 +22,6 @@ public class TestEventHandler
     @SubscribeEvent
     public void onCommonSetup(FMLLoadCompleteEvent event)
     {
-        SpellKeyWord.REGISTRY.getValues().forEach(e -> ArcaneArtAPI.LOGGER.debug(Spell.MARKER, e.getRegistryName()));
         SpellKeyWords.addAllTranslations();
-
     }
 }

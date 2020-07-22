@@ -1,8 +1,11 @@
 package com.ustctuixue.arcaneart.api.spell;
 
+import com.google.common.collect.Lists;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
@@ -19,6 +22,7 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemSpellCaster extends Item
 {
@@ -38,14 +42,28 @@ public class ItemSpellCaster extends Item
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft)
     {
-        LazyOptional<IManaBar> optionalBar = entityLiving.getCapability(CapabilityMP.MANA_BAR_CAP);
-        // TODO
+        if (!(entityLiving instanceof PlayerEntity))
+            return;
+        SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+        TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
+        List<String> commands = Lists.newArrayList();
+        commands.addAll(spell.getCommonSentences());
+        commands.addAll(spell.getOnReleaseSentences());
+        commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity player, int count)
+    public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int count)
     {
-        // TODO
+        if (!(entityLiving instanceof PlayerEntity))
+            return;
+        World worldIn = entityLiving.getEntityWorld();
+        SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+        TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
+        List<String> commands = Lists.newArrayList();
+        commands.addAll(spell.getCommonSentences());
+        commands.addAll(spell.getOnHoldSentences());
+        commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
     }
 
     @Override
@@ -61,12 +79,13 @@ public class ItemSpellCaster extends Item
     }
 
     @Nonnull
-    public static TranslatedSpell getSpell(PlayerEntity player, int slot)
+    private static TranslatedSpell getSpell(PlayerEntity player, int slot)
     {
         ISpellInventory inventory = player.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY).orElse(new SpellInventory());
         ItemStack itemSpellStack = inventory.getShortcut(slot);
-
-        return itemSpellStack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(TranslatedSpell::new);
+        if (itemSpellStack.getItem() instanceof ItemSpell)
+            return ((ItemSpell) itemSpellStack.getItem()).getSpell(itemSpellStack);
+        return new TranslatedSpell();
     }
 
     public void setSpellSlot(ItemStack stack, int slot)

@@ -17,6 +17,5 @@ public class RelativeBlockPosArgument implements ArgumentType<RelativeBlockPosBu
         reader.skipWhitespace();
         z = reader.readInt();
         return new RelativeBlockPosBuilder(x, y, z);
-
     }
 }

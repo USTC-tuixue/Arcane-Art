@@ -1,12 +1,17 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.IRelativeArgumentBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
-@AllArgsConstructor
+import javax.annotation.Nonnull;
+
+@AllArgsConstructor @Data
 public class RelativeBlockPosBuilder implements IRelativeArgumentBuilder<BlockPos>
 {
     @Getter @Setter
@@ -22,12 +27,10 @@ public class RelativeBlockPosBuilder implements IRelativeArgumentBuilder<BlockPo
         relativeCoordinate = new BlockPos(x, y, z);
     }
 
-    @Override
-    public BlockPos build(SpellBuilder source)
-    {
-        return null;
-    }
 
-    public static RelativeBlockPosBuilder ZERO =
-            new RelativeBlockPosBuilder(BlockPos.ZERO);
+    @Override
+    public BlockPos build(@Nonnull SpellCasterSource source)
+    {
+        return new BlockPos(source.getPos().add(new Vec3d(relativeCoordinate)));
+    }
 }

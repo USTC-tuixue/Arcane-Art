@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 
@@ -29,6 +30,17 @@ public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
         public SpellDispatcher getDispatcher()
         {
             return DISPATCHER;
+        }
+    }
+
+    public static void executeSpell(String spell, SpellCasterSource source)
+    {
+        try
+        {
+            DISPATCHER.execute(DISPATCHER.parse(spell, source));
+        }catch (CommandSyntaxException e)
+        {
+            e.printStackTrace();
         }
     }
 }

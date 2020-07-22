@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter.argument;
 
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,9 @@ public class Variable<T>
 
     private T value = null;
 
-    public T getValueFromSpellBuilder(SpellBuilder builder)
+    public T getValueFromSpellBuilder(SpellCasterSource source)
     {
-        return builder.getVariable(this.name, type);
+        return source.getVariable(this.name, type);
     }
 
     public T get()

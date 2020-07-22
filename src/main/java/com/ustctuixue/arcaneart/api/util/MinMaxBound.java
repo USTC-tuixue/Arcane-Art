@@ -16,9 +16,15 @@ public class MinMaxBound<T extends Comparable<T>>
     @Getter
     private final T max;
 
-    public boolean validate(T value)
+    public boolean test(T value)
     {
         return (min == null || min.compareTo(value) <= 0) && (max == null || max.compareTo(value) >= 0);
+    }
+
+
+    public boolean isUnbounded()
+    {
+        return min == null && max == null;
     }
 
     public static <T extends Comparable<T>> MinMaxBound<T> atLeast(T min)
