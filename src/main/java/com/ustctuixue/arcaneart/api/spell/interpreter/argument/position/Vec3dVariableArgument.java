@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell.interpreter.argument.vec3d;
+package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.VariableArgument;
@@ -14,6 +14,6 @@ public class Vec3dVariableArgument extends VariableArgument<RelativeVec3dBuilder
     @Override
     protected ArgumentType<RelativeVec3dBuilder> getArgumentType()
     {
-        return new Vec3dArgument();
+        return new RelativeVec3dArgument();
     }
 }
