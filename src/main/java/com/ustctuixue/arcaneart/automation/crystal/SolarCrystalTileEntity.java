@@ -1,15 +1,14 @@
-package com.ustctuixue.arcaneart.automation;
+package com.ustctuixue.arcaneart.automation.crystal;
 
 import com.udojava.evalex.Expression;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import com.ustctuixue.arcaneart.automation.AutomationConfig;
+import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 
 import java.math.BigDecimal;
 
 public class SolarCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
-    public SolarCrystalTileEntity(TileEntityType<? extends AbstractCollectiveCrystalTileEntity> entityType)
-    {
-        super(entityType);
+    public SolarCrystalTileEntity() {
+        super(AutomationRegistry.SOLAR_CRYSTAL_TILEENTITY.get());
     }
 
     @Override
