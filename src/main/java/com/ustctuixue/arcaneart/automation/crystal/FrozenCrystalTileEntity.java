@@ -8,14 +8,14 @@ import net.minecraft.util.math.BlockPos;
 
 import java.math.BigDecimal;
 
-public class SolarCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
-    public SolarCrystalTileEntity() {
-        super(AutomationRegistry.SOLAR_CRYSTAL_TILEENTITY.get());
+public class FrozenCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
+    public FrozenCrystalTileEntity() {
+        super(AutomationRegistry.FROZEN_CRYSTAL_TILEENTITY.get());
     }
 
     @Override
     public double crystalRegenRatio(){
-        BigDecimal regenRatio = new Expression(AutomationConfig.Crystal.SOLAR_CRYSTAL_REGEN_RATIO.get()).with("T", new BigDecimal(EnvironmentHelper.getTemperature(world, this.pos))).eval();
+        BigDecimal regenRatio = new Expression(AutomationConfig.Crystal.FROZEN_CRYSTAL_REGEN_RATIO.get()).with("T", new BigDecimal(EnvironmentHelper.getTemperature(world, this.pos))).eval();
         return (regenRatio.doubleValue())/20;//从每秒恢复速率转换为每tick
     }
 }
