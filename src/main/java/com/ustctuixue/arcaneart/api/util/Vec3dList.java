@@ -24,7 +24,11 @@ public class Vec3dList extends IteratingNonNullList<Vec3d>
 
     public Vec3dList transform(Function<? super Vec3d, ? extends Vec3d> transformer)
     {
-        return this.stream().map(transformer).collect(NonNullListCollectors.toNonNullList());
+        Vec3dList list = new Vec3dList();
+        this.forEach( v ->
+                list.add(transformer.apply(v))
+        );
+        return list;
     }
 
     public Vec3dList vectorScale(double factor)

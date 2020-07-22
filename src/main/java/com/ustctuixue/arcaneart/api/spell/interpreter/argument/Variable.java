@@ -28,6 +28,12 @@ public class Variable<T>
         this.value = value;
     }
 
+    public Variable(Class<T> cls, T value)
+    {
+        this.type = cls;
+        this.value = value;
+    }
+
     public T getValueFromSpellBuilder(SpellCasterSource source)
     {
         return source.getVariable(this.name, type);

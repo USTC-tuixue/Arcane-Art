@@ -126,7 +126,7 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
 
     private static RelativeVec3dListBuilder getOriginPos(StringReader reader) throws CommandSyntaxException
     {
-        return new FromClause().parse(reader);
+        return new FromClause().parse(reader).get();
     }
 
     private static int getNumberLimit(StringReader reader) throws CommandSyntaxException

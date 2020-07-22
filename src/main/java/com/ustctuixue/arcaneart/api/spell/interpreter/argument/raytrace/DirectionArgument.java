@@ -16,7 +16,7 @@ public class DirectionArgument implements ArgumentType<DirectionBuilder>
     public DirectionBuilder parse(StringReader reader) throws CommandSyntaxException
     {
         RelativeVec3dListBuilder targetList = new RelativeVec3dListArgument().parse(reader);
-        RelativeVec3dListBuilder pivot = new FromClause().parse(reader);
+        RelativeVec3dListBuilder pivot = new FromClause().parse(reader).get();
         return new DirectionBuilder(targetList, pivot);
     }
 

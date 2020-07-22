@@ -15,7 +15,8 @@ public class NonNullListCollectors
                 (l, r) -> {
                     l.addAll(r);
                     return l;
-                }
+                },
+                Collector.Characteristics.IDENTITY_FINISH
         );
     }
 }

@@ -44,12 +44,16 @@ public class ItemSpellCaster extends Item
     {
         if (!(entityLiving instanceof PlayerEntity))
             return;
-        SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
-        TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
-        List<String> commands = Lists.newArrayList();
-        commands.addAll(spell.getCommonSentences());
-        commands.addAll(spell.getOnReleaseSentences());
-        commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+        if (!worldIn.isRemote)
+        {
+            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+            TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
+            List<String> commands = Lists.newArrayList();
+            commands.addAll(spell.getCommonSentences());
+            commands.addAll(spell.getOnReleaseSentences());
+            commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+        }
+
     }
 
     @Override
@@ -58,12 +62,15 @@ public class ItemSpellCaster extends Item
         if (!(entityLiving instanceof PlayerEntity))
             return;
         World worldIn = entityLiving.getEntityWorld();
-        SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
-        TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
-        List<String> commands = Lists.newArrayList();
-        commands.addAll(spell.getCommonSentences());
-        commands.addAll(spell.getOnHoldSentences());
-        commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+        if (!worldIn.isRemote())
+        {
+            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+            TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
+            List<String> commands = Lists.newArrayList();
+            commands.addAll(spell.getCommonSentences());
+            commands.addAll(spell.getOnHoldSentences());
+            commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+        }
     }
 
     @Override
