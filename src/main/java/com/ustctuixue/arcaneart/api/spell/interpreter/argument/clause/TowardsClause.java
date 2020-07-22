@@ -5,8 +5,10 @@ import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionArgument;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.RayTraceBuilder;
 
-public class TowardsClause extends Clause<RelativeVec3dBuilder>
+public class TowardsClause extends Clause<RayTraceBuilder>
 {
     @Override
     protected SpellKeyWord getInductor()
@@ -15,14 +17,14 @@ public class TowardsClause extends Clause<RelativeVec3dBuilder>
     }
 
     @Override
-    protected ArgumentType<RelativeVec3dBuilder> getArgumentType()
+    protected ArgumentType<RayTraceBuilder> getArgumentType()
     {
-        return new RelativeVec3dArgument();
+        return new DirectionArgument();
     }
 
     @Override
-    protected RelativeVec3dBuilder defaultValue()
+    protected RayTraceBuilder defaultValue()
     {
-        return super.defaultValue();
+        return new RayTraceBuilder();
     }
 }

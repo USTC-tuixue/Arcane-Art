@@ -18,6 +18,6 @@ public class AutomationRegistry {
     public static RegistryObject<Item> COLLECTIVE_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("collective_crystal", () -> new BlockItem(AutomationRegistry.COLLECTIVE_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
 
     public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_TYPE_DEFERRED_REGISTER = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, "arcaneart");
-    public static RegistryObject<TileEntityType<AbstractCollectiveCrystalTileEntity>> COLLECTIVE_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("collective_crystal_tileentity", () -> TileEntityType.Builder.create(AbstractCollectiveCrystalTileEntity::new, AutomationRegistry.COLLECTIVE_CRYSTAL_BLOCK.get()).build(null));
+//    public static RegistryObject<TileEntityType<AbstractCollectiveCrystalTileEntity>> COLLECTIVE_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("collective_crystal_tileentity", () -> TileEntityType.Builder.create(AbstractCollectiveCrystalTileEntity::new, AutomationRegistry.COLLECTIVE_CRYSTAL_BLOCK.get()).build(null));
 
 }

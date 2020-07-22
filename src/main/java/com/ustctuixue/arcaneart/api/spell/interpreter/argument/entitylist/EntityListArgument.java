@@ -10,6 +10,7 @@ import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.interpreter.CommandExceptionTypes;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.ArgumentUtil;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause.FromClause;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosBuilder;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
@@ -120,11 +121,7 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
 
     private static RelativeVec3dBuilder getOriginPos(StringReader reader) throws CommandSyntaxException
     {
-        if (ArgumentUtil.validateSpellKeyWord(reader, SpellKeyWords.FROM))
-        {
-            return new RelativeVec3dArgument().parse(reader);
-        }
-        return new RelativeVec3dBuilder();
+        return new FromClause().parse(reader);
     }
 
     private static int getNumberLimit(StringReader reader) throws CommandSyntaxException
