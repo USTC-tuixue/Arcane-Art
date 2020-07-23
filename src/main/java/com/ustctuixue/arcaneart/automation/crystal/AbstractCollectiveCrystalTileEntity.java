@@ -21,27 +21,22 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
         super(entityType);
     }
 
-
+    public MPStorage CrystalMPStorage = createMPStorage();
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         return cap == CapabilityMPStorage.MP_STORAGE_CAP ? LazyOptional.of(()->{
-            return this.getOrCreateMPStorage();
-        }).cast() : LazyOptional.empty();
+            return this.CrystalMPStorage;
+        }).cast() : super.getCapability(cap, side);
     }
-
-    public MPStorage CrystalMPStorage;
-
-    private MPStorage getOrCreateMPStorage(){
-        if (CrystalMPStorage == null){
-            MPStorage mps = new MPStorage();
-            mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
-            mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
-            mps.setInputRateLimit(0.0D);
-            this.CrystalMPStorage = mps;
-        }
-        return this.CrystalMPStorage;
+    
+    private MPStorage createMPStorage(){
+        MPStorage mps = new MPStorage();
+        mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
+        mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
+        mps.setInputRateLimit(0.0D);
+        return mps;
     }
 
     @Override
