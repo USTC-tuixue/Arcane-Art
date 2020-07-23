@@ -3,6 +3,7 @@ package com.ustctuixue.arcaneart.misc.tileentity;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.misc.block.BookShelf;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -12,62 +13,57 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.state.IProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+
 public class BookShelfContainer extends Container {
-	Inventory book;
-	BlockPos thisis;
-	World where;
+
+	private Inventory book;
+	private BlockPos pos;
+	private World world;
+
     public BookShelfContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world) {
         super(ContainerTypeRegistry.bookShelfContainer.get(), id);
         BookShelfTileEntity bookShelfTileEntity = (BookShelfTileEntity) world.getTileEntity(pos);
-        this.book=bookShelfTileEntity.getInventory();
+
+        assert bookShelfTileEntity != null;
+
+        this.book = bookShelfTileEntity.getInventory();
         layoutPlayerInventorySlots(playerInventory, 8, 69);
         addSlotBox(book,0,44,20,5,18,2,18);
-        this.thisis=pos;
-        this.where=world;
+        this.pos = pos;
+        this.world = world;
     }
-    void orState(int i,World w,BlockPos b,IntegerProperty s) {
-    	if(this.inventorySlots.get(i+36).getStack()!=ItemStack.EMPTY)
-    		this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(s, 1));
-    	else
-    		this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(s, 0));
-    }	
-    void refreshState() {
-        orState(0,this.where,this.thisis,BookShelf.STATE1);
-        orState(1,this.where,this.thisis,BookShelf.STATE2);
-        orState(2,this.where,this.thisis,BookShelf.STATE3);
-        orState(3,this.where,this.thisis,BookShelf.STATE4);
-        orState(4,this.where,this.thisis,BookShelf.STATE5);
-        orState(5,this.where,this.thisis,BookShelf.STATE6);
-        orState(6,this.where,this.thisis,BookShelf.STATE7);
-        int c=0;
-        for (int i=7;i<10;i++) 
-        	if(this.inventorySlots.get(i+36).getStack()!=ItemStack.EMPTY)c++;
-        if(c==0) {
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE8, 0));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE9, 0));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATEX, 0));
-        }else if(c==1) {
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE8, 0));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE9, 0));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATEX, 1));
-        }else if(c==2) {
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE8, 0));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE9, 1));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATEX, 1));
-        }else if(c==3) {
 
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE8, 1));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE9, 1));
-        	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATEX, 1));
+    private void refreshState() {
+        BlockState state = this.world.getBlockState(pos);
+        for (int i = 0; i < 7; i++)
+        {
+            state = state.with(BookShelf.BOOKS[i],
+                    this.inventorySlots.get(i + 36).getHasStack());
         }
+
+        int c = 7;
+        for (int i = 7; i < 10; i++)
+        {
+            if (this.inventorySlots.get(i + 36).getHasStack())
+            {
+                state = state.with(BookShelf.BOOKS[c], true);
+                c++;
+            }
+        }
+        for (; c < 10; c++)
+        {
+            state = state.with(BookShelf.BOOKS[c], false);
+        }
+
+        this.world.setBlockState(pos, state);
+
     }
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         return true;
     }
     @Override
@@ -76,6 +72,7 @@ public class BookShelfContainer extends Container {
 	        this.refreshState();
      }
     
+    @Nonnull
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         return ItemStack.EMPTY;
@@ -89,12 +86,13 @@ public class BookShelfContainer extends Container {
         }
         return index;
     }
+
     @Override
     public boolean canDragIntoSlot(Slot slotIn) {
-        if(slotIn.inventory==this.book)
-        	return false;
-        return true;
-     }
+        return slotIn.inventory != this.book;
+    }
+
+    @Nonnull
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
     	if(slotId>=36) {
@@ -103,6 +101,7 @@ public class BookShelfContainer extends Container {
     	}
     	return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
+
     private int addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(inventory, index, x, y, horAmount, dx);
