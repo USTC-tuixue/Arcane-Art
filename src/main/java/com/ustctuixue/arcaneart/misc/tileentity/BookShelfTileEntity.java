@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.misc.tileentity;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,11 +11,8 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 
@@ -25,6 +23,7 @@ public class BookShelfTileEntity extends TileEntity implements INamedContainerPr
         super(TileEntityTypeRegistry.bookShelfTileEntity.get());
     }
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return new TranslationTextComponent("title.arcaneart.bookshelf");
@@ -32,7 +31,8 @@ public class BookShelfTileEntity extends TileEntity implements INamedContainerPr
 
     @Nullable
     @Override
-    public Container createMenu(int sycID, PlayerInventory inv, PlayerEntity player) {
+    public Container createMenu(int sycID, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
+        assert this.world != null;
         return new BookShelfContainer(sycID, inv, this.pos, this.world);
     }
 
@@ -46,9 +46,9 @@ public class BookShelfTileEntity extends TileEntity implements INamedContainerPr
         super.read(compound);
     }
 
+    @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT compound) {
-        ItemStack itemStack = this.inventory.getStackInSlot(0).copy();
         ListNBT list=new ListNBT();
         for(int i=0;i<10;i++) {
         	CompoundNBT compoundnbt=new CompoundNBT();
