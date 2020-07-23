@@ -31,7 +31,7 @@ public class BookShelfContainer extends Container {
         this.where=world;
     }
     void orState(int i,World w,BlockPos b,IntegerProperty s) {
-    	if(book.getStackInSlot(i)!=ItemStack.EMPTY)
+    	if(this.inventorySlots.get(i+36).getStack()!=ItemStack.EMPTY)
     		this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(s, 1));
     	else
     		this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(s, 0));
@@ -46,7 +46,7 @@ public class BookShelfContainer extends Container {
         orState(6,this.where,this.thisis,BookShelf.STATE7);
         int c=0;
         for (int i=7;i<10;i++) 
-        	if(book.getStackInSlot(i)!=ItemStack.EMPTY)c++;
+        	if(this.inventorySlots.get(i+36).getStack()!=ItemStack.EMPTY)c++;
         if(c==0) {
         	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE8, 0));
         	this.where.setBlockState(thisis,this.where.getBlockState(thisis).with(BookShelf.STATE9, 0));
@@ -73,6 +73,7 @@ public class BookShelfContainer extends Container {
     @Override
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
+	        this.refreshState();
      }
     
     @Override
@@ -99,7 +100,6 @@ public class BookShelfContainer extends Container {
     	if(slotId>=36) {
    			if(player.inventory.getItemStack().getItem()!=Items.WRITTEN_BOOK&&!player.inventory.getItemStack().isEmpty())
    				return ItemStack.EMPTY;
-   	        this.refreshState();
     	}
     	return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
