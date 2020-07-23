@@ -1,26 +1,17 @@
 package com.ustctuixue.arcaneart.misc.block;
 
-import javax.annotation.Nullable;
-
 import com.ustctuixue.arcaneart.misc.tileentity.BookShelfTileEntity;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -31,21 +22,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfTileEntity;
+
+import javax.annotation.Nullable;
 
 public class BookShelf extends Block {
 	public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty[] BOOKS = new BooleanProperty[10];
 
 	static {
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 9; i++)
         {
-            BOOKS[i] = BooleanProperty.create("book" + i);
+            BOOKS[i] = BooleanProperty.create("book" + (i + 1));
         }
+        BOOKS[9] = BooleanProperty.create("bookx");
     }
 
     public BookShelf() {
