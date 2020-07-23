@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.gui.hud;
 
-
 import com.ustctuixue.arcaneart.gui.hud.Manabar.ManaBar;
 
 import net.minecraft.client.Minecraft;

@@ -42,7 +42,7 @@ public class BookShelfContainer extends Container {
         for (int i = 0; i < 7; i++)
         {
             state = state.with(BookShelf.BOOKS[i],
-                    !this.inventorySlots.get(i + 36).getHasStack());
+                    this.inventorySlots.get(i + 36).getHasStack());
         }
 
         int c = 7;
