@@ -12,10 +12,7 @@ public abstract class Clause<T> implements ArgumentType<T>
     protected abstract SpellKeyWord getInductor();
     protected abstract ArgumentType<T> getArgumentType();
 
-    protected T defaultValue()
-    {
-        return null;
-    }
+    protected abstract T defaultValue();
 
     public T parse(StringReader reader) throws CommandSyntaxException
     {

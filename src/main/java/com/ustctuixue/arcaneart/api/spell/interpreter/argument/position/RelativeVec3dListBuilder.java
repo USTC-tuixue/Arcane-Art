@@ -13,17 +13,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Data @AllArgsConstructor
-public class RelativeVec3dBuilder implements IRelativeArgumentBuilder<Vec3dList>
+public class RelativeVec3dListBuilder implements IRelativeArgumentBuilder<Vec3dList>
 {
     private final Vec3dList relativeVec = new Vec3dList();
     @Nullable
     private RelativeEntityListBuilder entityListBuilder = null;
 
-    public RelativeVec3dBuilder()
+    public RelativeVec3dListBuilder()
     {
+        relativeVec.add(Vec3d.ZERO);
     }
 
-    public RelativeVec3dBuilder(double x, double y, double z)
+    public RelativeVec3dListBuilder(double x, double y, double z)
     {
         relativeVec.add(new Vec3d(x, y, z));
     }
