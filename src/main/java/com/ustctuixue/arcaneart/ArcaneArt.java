@@ -1,11 +1,8 @@
 package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.events.InGameAPIEventHandler;
-import com.ustctuixue.arcaneart.api.events.InGameMPEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
-import com.ustctuixue.arcaneart.api.events.InGameAPIClientEventHandler;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
@@ -52,10 +49,12 @@ public class ArcaneArt
         modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();
 
+        modLoadingEventBus.addListener(this::commonSetup);
+        modLoadingEventBus.addListener(this::clientSetup);
+
 
         MinecraftForge.EVENT_BUS.register(this);
-
-        TestObjects.register();
+        
         
         ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
