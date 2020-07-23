@@ -7,13 +7,17 @@ import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
+import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
+import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -81,9 +85,7 @@ public class ArcaneArt
     {
         KeyLoader.register();
         ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
-        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), (BookShelfContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) -> {
-            return new BookShelfScreen(screenContainer,inv,titleIn);
-        });
+        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
     }
 
 
