@@ -54,7 +54,8 @@ public class ArcaneArt
 
 
         modLoadingEventBus.register(new TestEventHandler());
-
+        modLoadingEventBus.addListener(this::commonSetup);
+        modLoadingEventBus.addListener(this::clientSetup);
 
         MinecraftForge.EVENT_BUS.register(new APIEventHandler());
         MinecraftForge.EVENT_BUS.register(new MPEventHandler());
@@ -66,7 +67,9 @@ public class ArcaneArt
         MinecraftForge.EVENT_BUS.register(new APIClientEventHandler());
 
         TestObjects.register();
-
+        
+        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
