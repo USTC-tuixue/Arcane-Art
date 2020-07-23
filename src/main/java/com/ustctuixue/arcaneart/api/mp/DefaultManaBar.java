@@ -21,14 +21,14 @@ public class DefaultManaBar implements IManaBar
     /**
      * 消耗 MP 值
      *
-     * @param mana 消耗的 MP 量
+     * @param manaIn 消耗的 MP 量
      */
     @Override
-    public boolean consumeMana(double mana)
+    public boolean consumeMana(double manaIn)
     {
-        if (this.mana >= mana)
+        if (this.mana >= manaIn)
         {
-            this.mana -= mana;
+            this.mana -= manaIn;
             return true;
         }
         return false;

@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class CapabilitySpell
 {
-    @CapabilityInject(TranslatedSpell.class)
-    public static Capability<TranslatedSpell> SPELL_CAP = null;
+    @CapabilityInject(ITranslatedSpellProvider.class)
+    public static Capability<ITranslatedSpellProvider> SPELL_CAP = null;
 
 
-    public static class Storage implements Capability.IStorage<TranslatedSpell>
+    public static class Storage implements Capability.IStorage<ITranslatedSpellProvider>
     {
         private static final String TITLE = "title";
         private static final String COMMON = "commonSentences";
@@ -28,24 +28,27 @@ public class CapabilitySpell
 
         @Nullable
         @Override
-        public INBT writeNBT(Capability<TranslatedSpell> capability, TranslatedSpell instance, Direction side)
+        public INBT writeNBT(Capability<ITranslatedSpellProvider> capability, ITranslatedSpellProvider instance, Direction side)
         {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putString(TITLE, instance.getName());
-            nbt.put(COMMON, encodeIncantation(instance.getCommonSentences()));
-            nbt.put(ON_HOLD, encodeIncantation(instance.getOnHoldSentences()));
-            nbt.put(ON_RELEASE, encodeIncantation(instance.getOnReleaseSentences()));
+            TranslatedSpell translatedSpell = instance.getSpell();
+            nbt.putString(TITLE, translatedSpell.getName());
+            nbt.put(COMMON, encodeIncantation(translatedSpell.getCommonSentences()));
+            nbt.put(ON_HOLD, encodeIncantation(translatedSpell.getOnHoldSentences()));
+            nbt.put(ON_RELEASE, encodeIncantation(translatedSpell.getOnReleaseSentences()));
             return nbt;
         }
 
         @Override
-        public void readNBT(Capability<TranslatedSpell> capability, TranslatedSpell instance, Direction side, INBT nbt)
+        public void readNBT(Capability<ITranslatedSpellProvider> capability, ITranslatedSpellProvider instance, Direction side, INBT nbt)
         {
             CompoundNBT compoundNBT = (CompoundNBT) nbt;
-            instance.setName(compoundNBT.getString(TITLE));
-            instance.addAllCommonSentences(decodeIncantation(compoundNBT.getList(COMMON, 8)));
-            instance.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
-            instance.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
+            TranslatedSpell translatedSpell = instance.getSpell();
+            translatedSpell.setName(compoundNBT.getString(TITLE));
+            translatedSpell.addAllCommonSentences(decodeIncantation(compoundNBT.getList(COMMON, 8)));
+            translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
+            translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
+            instance.setSpell(translatedSpell);
         }
 
         // Compress incantations
@@ -86,6 +89,7 @@ public class CapabilitySpell
     {
         Storage storage = new Storage();
         TranslatedSpell spell = new TranslatedSpell();
+        ITranslatedSpellProvider provider = new ITranslatedSpellProvider.Impl(spell);
 
         @Nonnull
         @Override
@@ -97,13 +101,13 @@ public class CapabilitySpell
         @Override
         public CompoundNBT serializeNBT()
         {
-            return (CompoundNBT) storage.writeNBT(SPELL_CAP, spell, null);
+            return (CompoundNBT) storage.writeNBT(SPELL_CAP, provider, null);
         }
 
         @Override
         public void deserializeNBT(CompoundNBT nbt)
         {
-            storage.readNBT(SPELL_CAP, spell, null, nbt);
+            storage.readNBT(SPELL_CAP, provider, null, nbt);
         }
     }
 

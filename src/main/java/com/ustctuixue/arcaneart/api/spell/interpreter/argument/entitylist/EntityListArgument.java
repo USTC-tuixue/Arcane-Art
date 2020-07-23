@@ -8,12 +8,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.interpreter.CommandExceptionTypes;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.ArgumentUtil;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosArgument;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeBlockPosBuilder;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause.FromClause;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListBuilder;
 import com.ustctuixue.arcaneart.api.util.MinMaxBound;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -64,7 +61,15 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
         RelativeEntityListBuilder list = new RelativeEntityListBuilder();
         if (reader.canRead())
         {
-            list.setPredicate(getPredicate(reader));
+            if (ArgumentUtil.validateSpellKeyWord(reader, SpellKeyWords.SELF))
+            {
+                list.setSelf(true);
+                list.predicate = IEntityPredicate.SELF;
+            }
+            else
+            {
+                list.setPredicate(getPredicate(reader));
+            }
             list.setDistance(getMinMaxDistance(reader));
             list.setOriginPos(getOriginPos(reader));
             list.setLimit(getNumberLimit(reader));
@@ -84,6 +89,7 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
             throw CommandExceptionTypes.INVALID_SPELL_WORD.createWithContext(reader);
         }
         entityPredicate = ENTITY_PREDICATE.getOrDefault(keyWord, null);
+
         if (entityPredicate == null)
         {
             reader.setCursor(cursor);
@@ -118,13 +124,9 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
         return MinMaxBound.of(minDistance, maxDistance);
     }
 
-    private static RelativeVec3dBuilder getOriginPos(StringReader reader) throws CommandSyntaxException
+    private static RelativeVec3dListBuilder getOriginPos(StringReader reader) throws CommandSyntaxException
     {
-        if (ArgumentUtil.validateSpellKeyWord(reader, SpellKeyWords.FROM))
-        {
-            return new RelativeVec3dArgument().parse(reader);
-        }
-        return new RelativeVec3dBuilder();
+        return new FromClause().parse(reader).get();
     }
 
     private static int getNumberLimit(StringReader reader) throws CommandSyntaxException
