@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
@@ -9,8 +10,11 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
+import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
@@ -26,9 +30,12 @@ import java.util.List;
 
 public class ItemSpellCaster extends Item
 {
-    public ItemSpellCaster(Properties properties)
+    @Getter
+    private final int tier;
+    public ItemSpellCaster(Properties properties, int tierIn)
     {
         super(properties);
+        this.tier = tierIn;
     }
 
     @Override @Nonnull
@@ -46,14 +53,25 @@ public class ItemSpellCaster extends Item
             return;
         if (!worldIn.isRemote)
         {
-            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
             TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
             List<String> commands = Lists.newArrayList();
             commands.addAll(spell.getCommonSentences());
             commands.addAll(spell.getOnReleaseSentences());
             commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
         }
+    }
 
+    @Nonnull
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
+    {
+        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
+        if (slot == EquipmentSlotType.MAINHAND || slot == EquipmentSlotType.OFFHAND)
+        {
+            multimap.put(SpellCasterTiers.CASTER_TIER.getName(), new AttributeModifier(null, "Caster Modifier", this.tier, AttributeModifier.Operation.ADDITION));
+        }
+        return multimap;
     }
 
     @Override
@@ -64,7 +82,7 @@ public class ItemSpellCaster extends Item
         World worldIn = entityLiving.getEntityWorld();
         if (!worldIn.isRemote())
         {
-            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null);
+            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
             TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
             List<String> commands = Lists.newArrayList();
             commands.addAll(spell.getCommonSentences());

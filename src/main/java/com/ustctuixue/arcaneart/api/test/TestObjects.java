@@ -14,7 +14,8 @@ public class TestObjects
 
     public static final RegistryObject<Item> TEST_CASTER = ITEM.register("test_caster", () ->
             new ItemSpellCaster(
-                    new Item.Properties().setNoRepair().maxStackSize(1)
+                    new Item.Properties().setNoRepair().maxStackSize(1),
+                    0
             ));
 
     public static void register()

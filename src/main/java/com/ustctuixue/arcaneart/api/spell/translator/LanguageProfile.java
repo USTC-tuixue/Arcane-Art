@@ -99,7 +99,7 @@ public class LanguageProfile
      * @param sentence 语句
      * @return 翻译后的语句
      */
-    List<String> translate(String sentence)
+    public List<String> translate(String sentence)
     {
         String m = sentence;
         for (Map.Entry<SpellKeyWord, String> entry :

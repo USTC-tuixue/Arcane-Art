@@ -1,7 +1,7 @@
 package com.ustctuixue.arcaneart.api.mp;
 
 
-public interface IManaBar
+public interface IManaBar extends IMPConsumer
 {
     /**
      * @return 获取生物当前 MP 值
@@ -14,13 +14,6 @@ public interface IManaBar
      */
     void setMana(double mana);
 
-
-    /**
-     * 消耗 MP 值
-     * @param mana 消耗的 MP 量
-     * @return 有足够的 MP 供消耗则返回 true，否则为 false
-     */
-    boolean consumeMana(double mana);
 
     /**
      *

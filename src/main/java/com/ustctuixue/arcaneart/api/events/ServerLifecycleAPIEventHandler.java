@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.events;
 
+import com.ustctuixue.arcaneart.api.command.CommandLoader;
 import com.ustctuixue.arcaneart.api.network.PacketHandler;
 import com.ustctuixue.arcaneart.api.spell.Spells;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
@@ -19,6 +20,7 @@ public class ServerLifecycleAPIEventHandler
     {
         packetHandler.initialize();
         LanguageManager.getInstance().readFromConfig();
+        CommandLoader.registerAll(event.getCommandDispatcher());
         MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
     }
 
