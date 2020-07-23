@@ -81,6 +81,9 @@ public class ArcaneArt
     {
         KeyLoader.register();
         ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
+        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), (BookShelfContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) -> {
+            return new BookShelfScreen(screenContainer,inv,titleIn);
+        });
     }
 
 
