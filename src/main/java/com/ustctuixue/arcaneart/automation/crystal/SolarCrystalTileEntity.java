@@ -14,7 +14,11 @@ public class SolarCrystalTileEntity extends AbstractCollectiveCrystalTileEntity 
 
     @Override
     public double crystalRegenRatio(){
-        BigDecimal regenRatio = new Expression(AutomationConfig.Crystal.SOLAR_CRYSTAL_REGEN_RATIO.get()).with("T", new BigDecimal(EnvHelper.getTemperature(world, this.pos))).eval();
-        return (regenRatio.doubleValue())/20;//从每秒恢复速率转换为每tick
+        if (world == null)
+            return 0;
+        BigDecimal regenRatio
+                = new Expression(AutomationConfig.Crystal.SOLAR_CRYSTAL_REGEN_RATIO.get())
+                .with("T", new BigDecimal(EnvHelper.getTemperature(world, this.pos))).eval();
+        return regenRatio.doubleValue() / 20;//从每秒恢复速率转换为每tick
     }
 }

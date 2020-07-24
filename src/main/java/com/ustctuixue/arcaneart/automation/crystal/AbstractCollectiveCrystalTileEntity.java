@@ -26,19 +26,17 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityMPStorage.MP_STORAGE_CAP) {
-            return LazyOptional.of(() -> {
-                return new MPStorage();
-            }).cast();
+            return LazyOptional.of(MPStorage::new).cast();
         }
-        return LazyOptional.empty();
+        return super.getCapability(cap, side);
     }
 
     @Override
     public void tick() {
-        if (!world.isRemote) {
+        if (this.world != null && !world.isRemote) {
             //这里是服务器逻辑
-            LazyOptional<MPStorage> MPStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-            MPStorageCapLazyOptional.ifPresent((s) -> {
+            LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+            mpStorageCapLazyOptional.ifPresent((s) -> {
                 double regenRatio = crystalRegenRatio();
                 if (regenRatio == 0)
                     return;
