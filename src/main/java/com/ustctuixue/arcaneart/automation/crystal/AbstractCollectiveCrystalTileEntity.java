@@ -21,35 +21,30 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
         super(entityType);
     }
 
-
+    public MPStorage CrystalMPStorage = createMPStorage();
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         return cap == CapabilityMPStorage.MP_STORAGE_CAP ? LazyOptional.of(()->{
-            return this.getOrCreateMPStorage();
-        }).cast() : LazyOptional.empty();
+            return this.CrystalMPStorage;
+        }).cast() : super.getCapability(cap, side);
     }
 
-    public MPStorage CrystalMPStorage;
-
-    private MPStorage getOrCreateMPStorage(){
-        if (CrystalMPStorage == null){
-            MPStorage mps = new MPStorage();
-            mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
-            mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
-            mps.setInputRateLimit(0.0D);
-            this.CrystalMPStorage = mps;
-        }
-        return this.CrystalMPStorage;
+    private MPStorage createMPStorage(){
+        MPStorage mps = new MPStorage();
+        mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
+        mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
+        mps.setInputRateLimit(0.0D);
+        return mps;
     }
 
     @Override
     public void tick() {
-        if (!world.isRemote) {
+        if (this.world != null && !world.isRemote) {
             //这里是服务器逻辑
-            LazyOptional<MPStorage> MPStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-            MPStorageCapLazyOptional.ifPresent((s) -> {
+            LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+            mpStorageCapLazyOptional.ifPresent((s) -> {
                 double regenRatio = crystalRegenRatio();
                 if (regenRatio == 0)
                     return;
