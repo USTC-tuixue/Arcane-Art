@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.automation.crystal;
 
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -20,15 +21,22 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
         super(entityType);
     }
 
-
+    public MPStorage CrystalMPStorage = createMPStorage();
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityMPStorage.MP_STORAGE_CAP) {
-            return LazyOptional.of(MPStorage::new).cast();
-        }
-        return super.getCapability(cap, side);
+        return cap == CapabilityMPStorage.MP_STORAGE_CAP ? LazyOptional.of(()->{
+            return this.CrystalMPStorage;
+        }).cast() : super.getCapability(cap, side);
+    }
+
+    private MPStorage createMPStorage(){
+        MPStorage mps = new MPStorage();
+        mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
+        mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
+        mps.setInputRateLimit(0.0D);
+        return mps;
     }
 
     @Override
