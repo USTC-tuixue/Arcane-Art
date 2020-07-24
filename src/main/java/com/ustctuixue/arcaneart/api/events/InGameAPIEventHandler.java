@@ -43,6 +43,7 @@ public class InGameAPIEventHandler
 {
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void attachAttribute(@Nonnull EntityEvent.EntityConstructing event)
     {
         Entity entity = event.getEntity();
@@ -58,6 +59,7 @@ public class InGameAPIEventHandler
 
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void attachCapabilityEntity(@Nonnull AttachCapabilitiesEvent<Entity> event)
     {
         if (event.getObject() instanceof LivingEntity)
@@ -71,7 +73,9 @@ public class InGameAPIEventHandler
     		}
         }
     }
+
 	@SubscribeEvent
+    @SuppressWarnings("unused")
 	public static void onPlayerCloned(@Nonnull PlayerEvent.Clone event) {
 		LazyOptional<ISpellInventory> oldSpeedCap = event.getOriginal()
 				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
@@ -85,8 +89,10 @@ public class InGameAPIEventHandler
 				});
 			});
 		}
-	}	
+	}
+
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void attachCapabilityItemStack(@Nonnull AttachCapabilitiesEvent<ItemStack> event)
     {
         Item item = event.getObject().getItem();
@@ -100,6 +106,7 @@ public class InGameAPIEventHandler
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void registerConfig(@Nonnull ModConfig.Reloading event)
     {
         ((CommentedFileConfig)event.getConfig().getConfigData()).load();

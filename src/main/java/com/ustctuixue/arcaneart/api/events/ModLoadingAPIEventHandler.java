@@ -30,7 +30,8 @@ import javax.annotation.Nonnull;
 public class ModLoadingAPIEventHandler
 {
     private static final Marker SETUP = MarkerManager.getMarker("API_SETUP");
-    @SubscribeEvent
+
+    @SubscribeEvent @SuppressWarnings("unused")
     public void setup(final FMLCommonSetupEvent event)
     {
         ArcaneArtAPI.LOGGER.info(SETUP, "setup");
@@ -47,7 +48,7 @@ public class ModLoadingAPIEventHandler
         }, SpellInventory::new);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void createRegistry(RegistryEvent.NewRegistry event)
     {
         ArcaneArtAPI.LOGGER.info(MarkerManager.getMarker("NewRegistry"), "Creating registry");
@@ -56,19 +57,19 @@ public class ModLoadingAPIEventHandler
     }
 
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void registerSpellKeyWords(@Nonnull RegistryEvent.Register<SpellKeyWord> event)
     {
         SpellKeyWords.registerAll(event.getRegistry());
     }
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void registerEntityType(@Nonnull RegistryEvent.Register<EntityType<?>> event)
     {
         event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void registerItems(@Nonnull RegistryEvent.Register<Item> event)
     {
         event.getRegistry().register(APIRegistries.Items.ITEM_SPELL.setRegistryName(ArcaneArtAPI.getResourceLocation("item_spell")));

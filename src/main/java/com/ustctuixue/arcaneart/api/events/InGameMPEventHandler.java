@@ -19,6 +19,7 @@ public class InGameMPEventHandler
      * @param event
      */
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void persistOnDeath(PlayerEvent.Clone event)
     {
         if (event.isWasDeath())
@@ -40,6 +41,7 @@ public class InGameMPEventHandler
      * @param event
      */
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void resetRegenTimer(LivingDamageEvent event)
     {
         event.getEntityLiving().getCapability(CapabilityMP.MANA_BAR_CAP).ifPresent((iManaBar -> {
@@ -52,6 +54,7 @@ public class InGameMPEventHandler
      * @param event
      */
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void regenMP(TickEvent.PlayerTickEvent event)
     {
         // Disable according to config

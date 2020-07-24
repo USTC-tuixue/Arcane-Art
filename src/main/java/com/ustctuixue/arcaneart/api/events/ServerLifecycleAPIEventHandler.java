@@ -15,7 +15,7 @@ public class ServerLifecycleAPIEventHandler
 {
     public static final PacketHandler packetHandler = new PacketHandler();
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void onServerStart(@Nonnull FMLServerStartingEvent event)
     {
         packetHandler.initialize();
@@ -24,7 +24,7 @@ public class ServerLifecycleAPIEventHandler
         MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void registerNewSpell(@Nonnull SpellDispatcher.NewSpellEvent event)
     {
         Spells.registerAll(event.getDispatcher());
