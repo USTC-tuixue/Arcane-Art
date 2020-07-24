@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.gui.hud.Manabar;
+package com.ustctuixue.arcaneart.gui.hud.manabar;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ustctuixue.arcaneart.ArcaneArt;
