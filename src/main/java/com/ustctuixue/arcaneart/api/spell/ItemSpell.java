@@ -21,9 +21,16 @@ public class ItemSpell extends Item
         return new StringTextComponent(getSpell(stack).getName());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell getSpell(ItemStack stack)
     {
-        return stack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(ITranslatedSpellProvider.Impl::new).getSpell();
+        return getSpellProvider(stack).getSpell();
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public ITranslatedSpellProvider getSpellProvider(ItemStack stack)
+    {
+        return stack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(ITranslatedSpellProvider.Impl::new);
     }
 
     public void setSpell(ItemStack stack, TranslatedSpell spell)

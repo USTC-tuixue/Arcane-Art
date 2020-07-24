@@ -12,8 +12,30 @@ public interface ITranslatedSpellProvider
     TranslatedSpell getSpell();
     ITranslatedSpellProvider setSpell(TranslatedSpell spellIn);
 
-    void compile(SpellCasterSource source);
+    /**
+     * Execute common sentences
+     * @param source compile source
+     */
+    void preCompile(SpellCasterSource source);
 
+    /**
+     * Force re-parsing persistent sentences and store parsed results
+     *
+     * @param source compile source
+     */
+    void parseOnHold(SpellCasterSource source);
+
+    /**
+     * Retrieve parsed persistent sentences results
+     * If this provider is not parsed or source is not equal to previously used in parsing,
+     * this function will re-parse first, then return parse results.
+     *
+     * Because parsed results is relative to SpellCasterSource,
+     * you should re-compile if source does not match.
+     *
+     * @param source compile source
+     * @return parsed results
+     */
     List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source);
 
     class Impl implements ITranslatedSpellProvider
@@ -23,6 +45,8 @@ public interface ITranslatedSpellProvider
 
         private boolean parsed = false;
         private List<ParseResults<SpellCasterSource>> parseResults;
+
+        private SpellCasterSource previousSource = null;
 
         public Impl()
         {
@@ -43,19 +67,26 @@ public interface ITranslatedSpellProvider
         }
 
         @Override
-        public void compile(SpellCasterSource source)
+        public void preCompile(SpellCasterSource source)
         {
             SpellDispatcher.executeSpell(spell.getCommonSentences(), source);
-            SpellDispatcher.parseSpell(spell.getOnHoldSentences(), source);
+        }
+
+        @Override
+        public void parseOnHold(SpellCasterSource source)
+        {
+            parseResults = SpellDispatcher.parseSpell(spell.getOnHoldSentences(), source);
+            previousSource = source;
             parsed = true;
         }
 
         @Override
         public List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source)
         {
-            if (!parsed)
+            if (!parsed || previousSource != source)
             {
-                compile(source);
+                preCompile(source);
+                parseOnHold(source);
             }
             return parseResults;
         }

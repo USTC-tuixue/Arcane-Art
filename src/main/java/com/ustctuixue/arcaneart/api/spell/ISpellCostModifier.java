@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface ISpellCostModifier
 {
     default double getAddition(double originalCost, LivingEntity entity, World world)

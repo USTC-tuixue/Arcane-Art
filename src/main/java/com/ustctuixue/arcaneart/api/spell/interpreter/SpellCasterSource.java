@@ -18,6 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,10 +56,10 @@ public class SpellCasterSource
     private final int casterTier;
 
 
-    public SpellCasterSource(World worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
+    public SpellCasterSource(ServerWorld worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
     {
         this(entityIn.getPositionVec(), entityIn.getPitchYaw(),
-                Objects.requireNonNull(worldIn.getServer()).getWorld(worldIn.getDimension().getType()),
+                worldIn,
                 worldIn.getServer(), entityIn, mpStorageIn, tierIn
         );
     }

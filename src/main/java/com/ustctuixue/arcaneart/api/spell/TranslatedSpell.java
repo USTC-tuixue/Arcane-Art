@@ -30,17 +30,19 @@ public class TranslatedSpell
     @Getter @Nonnull
     private final List<String> onReleaseSentences = Lists.newArrayList();
 
+    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell()
     {
         this("");
     }
 
+    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell(String name)
     {
         this.name = name;
     }
 
-
+    @SuppressWarnings(value={"WeakerAccess", ""})
     public TranslatedSpell addCommonSentence(String s)
     {
         commonSentences.add(s);

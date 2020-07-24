@@ -15,9 +15,10 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.Relative
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+@SuppressWarnings("WeakerAccess")
 public class Spells
 {
-    public static Marker REGISTER_SPELL = MarkerManager.getMarker("REGISTER SPELL");
+    private static Marker REGISTER_SPELL = MarkerManager.getMarker("REGISTER SPELL");
     public static void registerAll(SpellDispatcher dispatcher)
     {
         new DefineVariable(dispatcher);
