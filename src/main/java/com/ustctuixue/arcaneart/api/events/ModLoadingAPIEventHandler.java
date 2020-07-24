@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.events;
 
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
@@ -11,6 +12,8 @@ import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.INBT;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -58,4 +61,17 @@ public class ModLoadingAPIEventHandler
     {
         SpellKeyWords.registerAll(event.getRegistry());
     }
+
+    @SubscribeEvent
+    public void registerEntityType(@Nonnull RegistryEvent.Register<EntityType<?>> event)
+    {
+        event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
+    }
+
+    @SubscribeEvent
+    public void registerItems(@Nonnull RegistryEvent.Register<Item> event)
+    {
+        event.getRegistry().register(APIRegistries.Items.ITEM_SPELL.setRegistryName(ArcaneArtAPI.getResourceLocation("item_spell")));
+    }
+
 }

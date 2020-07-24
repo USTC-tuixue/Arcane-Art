@@ -4,7 +4,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -111,14 +110,4 @@ public class CapabilitySpell
         }
     }
 
-    public static class Provider implements ICapabilityProvider
-    {
-        TranslatedSpell spell = new TranslatedSpell();
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-        {
-            return cap == SPELL_CAP ? LazyOptional.of(()->spell).cast() : LazyOptional.empty();
-        }
-    }
 }

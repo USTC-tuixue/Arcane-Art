@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
+import javax.annotation.Nonnull;
+
 public class ItemSpell extends Item
 {
     public ItemSpell(Properties properties)
@@ -12,8 +14,9 @@ public class ItemSpell extends Item
         super(properties);
     }
 
+    @Nonnull
     @Override
-    public ITextComponent getDisplayName(ItemStack stack)
+    public ITextComponent getDisplayName(@Nonnull ItemStack stack)
     {
         return new StringTextComponent(getSpell(stack).getName());
     }
