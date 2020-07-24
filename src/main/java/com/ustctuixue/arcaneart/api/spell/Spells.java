@@ -32,6 +32,12 @@ public class Spells
                     "Keyword \"" + keyWord.toString() + "\" is not registered."
             );
         }
+        else if (keyWord.getType() == SpellKeyWord.ExecuteType.NOT_EXECUTABLE)
+        {
+            ArcaneArtAPI.LOGGER.error(REGISTER_SPELL,
+                    "Keyword \"" + keyWord.toString() + "\" is not executable."
+            );
+        }
         return LiteralArgumentBuilder.literal(keyWord.toString());
     }
 

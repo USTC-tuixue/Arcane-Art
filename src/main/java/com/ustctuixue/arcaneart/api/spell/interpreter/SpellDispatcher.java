@@ -2,8 +2,12 @@ package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.CommandNode;
+import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
+import com.ustctuixue.arcaneart.api.spell.interpreter.tree.SpellLiteralCommandNode;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 
@@ -12,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
 {
-    public static SpellDispatcher DISPATCHER = new SpellDispatcher();
+    private static SpellDispatcher DISPATCHER = new SpellDispatcher();
 
     /**
      * Check if spell get any errors
@@ -23,6 +27,45 @@ public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
     public boolean checkSpellSentence(String spell, SpellCasterSource source)
     {
         return parse(spell, source).getExceptions().size() == 0;
+    }
+
+
+    @Override
+    public int execute(ParseResults<SpellCasterSource> parse) throws CommandSyntaxException
+    {
+        SpellCasterSource spellCasterSource = parse.getContext().getSource();
+        IMPConsumer consumer = spellCasterSource.getMpConsumer();
+        List<ParsedCommandNode<SpellCasterSource>> nodes = parse.getContext().getNodes();
+        ISpellEffectProvider spellSideEffectProvider = null;
+
+        for (ParsedCommandNode<SpellCasterSource> spellCasterSourceParsedCommandNode : nodes)
+        {
+            CommandNode<SpellCasterSource> node = spellCasterSourceParsedCommandNode.getNode();
+            if (node instanceof SpellLiteralCommandNode)
+            {
+                if (((SpellLiteralCommandNode) node).hasSideEffectProvider())
+                {
+                    spellSideEffectProvider = ((SpellLiteralCommandNode) node).getSpellEffectProvider();
+                    break;
+                }
+            }
+        }
+
+        if (spellSideEffectProvider != null)
+        {
+            SpellSideEffect spellSideEffect = spellSideEffectProvider.build(spellCasterSource);
+            if (consumer.consumeMana(spellSideEffect.getMpCost()))
+            {
+                return super.execute(parse);
+            }
+        }
+        else
+        {
+            return super.execute(parse);
+        }
+
+
+        return 0;
     }
 
     public static boolean checkSpell(TranslatedSpell spell, SpellCasterSource source)
@@ -64,7 +107,7 @@ public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
         boolean f = true;
         for (String spell : spells)
         {
-            f = f &&  executeSpell(spell, source) != 0;
+            f = f && executeSpell(spell, source) != 0;
         }
         return f ? 1 : 0;
     }

@@ -1,40 +1,23 @@
 package com.ustctuixue.arcaneart.api.events;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.*;
-import com.ustctuixue.arcaneart.api.mp.tile.*;
 import com.ustctuixue.arcaneart.api.spell.*;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryProvider;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
-import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
 
@@ -55,9 +38,6 @@ public class InGameAPIEventHandler
         }
     }
 
-
-
-
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void attachCapabilityEntity(@Nonnull AttachCapabilitiesEvent<Entity> event)
@@ -68,7 +48,7 @@ public class InGameAPIEventHandler
                     ArcaneArt.getResourceLocation("mp"),
                     new CapabilityMP.Provider()
             );
-		if (event.getObject() instanceof PlayerEntity) {
+		    if (event.getObject() instanceof PlayerEntity) {
     			event.addCapability(ArcaneArt.getResourceLocation("spellinv"), new SpellInventoryProvider());
     		}
         }
@@ -83,11 +63,11 @@ public class InGameAPIEventHandler
 				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
 
 		if (oldSpeedCap.isPresent() && newSpeedCap.isPresent()) {
-			newSpeedCap.ifPresent((newCap) -> {
-				oldSpeedCap.ifPresent((oldCap) -> {
-					newCap.deserializeNBT(oldCap.serializeNBT());
-				});
-			});
+			newSpeedCap.ifPresent((newCap) ->
+                    oldSpeedCap.ifPresent((oldCap) ->
+                            newCap.deserializeNBT(oldCap.serializeNBT())
+                    )
+            );
 		}
 	}
 
@@ -105,14 +85,10 @@ public class InGameAPIEventHandler
         }
     }
 
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void registerConfig(@Nonnull ModConfig.Reloading event)
+    @SubscribeEvent @SuppressWarnings("unused")
+    public void playerUsedSpell(@Nonnull MPEvent.CastSpell.Post event)
     {
-        ((CommentedFileConfig)event.getConfig().getConfigData()).load();
     }
-
-
 
 
 }

@@ -52,7 +52,7 @@ public class ItemSpellCaster extends Item
         if (!(entityLiving instanceof PlayerEntity))
             return;
         // Fire pre instant spell event, will not be executed if cancelled
-        if (!worldIn.isRemote && MinecraftForge.EVENT_BUS.post(new MPEvent.CastInstantSpell.Pre(entityLiving)))
+        if (!worldIn.isRemote && MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(entityLiving, true)))
         {
             ServerWorld serverWorld = (ServerWorld) worldIn;
             SpellCasterSource source = new SpellCasterSource(serverWorld, entityLiving, null, tier);
@@ -62,7 +62,7 @@ public class ItemSpellCaster extends Item
             SpellDispatcher.executeSpell(spellProvider.getSpell().getOnReleaseSentences(), source);
 
             // Fire post instant spell event
-            MinecraftForge.EVENT_BUS.post(new MPEvent.CastInstantSpell.Post(entityLiving));
+            MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(entityLiving, true));
         }
     }
 
@@ -92,7 +92,7 @@ public class ItemSpellCaster extends Item
             return;
         // Fire pre persistent spell event, if cancelled, spell will not be executed
         ServerWorld worldIn = (ServerWorld) entityLiving.getEntityWorld();
-        if (!worldIn.isRemote() && MinecraftForge.EVENT_BUS.post(new MPEvent.CastPersistentSpell.Pre(entityLiving)))
+        if (!worldIn.isRemote() && MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(entityLiving, true)))
         {
             SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
             ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
@@ -102,7 +102,7 @@ public class ItemSpellCaster extends Item
             // OnHold sentences will be executed every tick
             SpellDispatcher.executeSpell(parseResults);
             // Fire post persistent spell event
-            MinecraftForge.EVENT_BUS.post(new MPEvent.CastPersistentSpell.Post(entityLiving));
+            MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(entityLiving, true));
         }
     }
 

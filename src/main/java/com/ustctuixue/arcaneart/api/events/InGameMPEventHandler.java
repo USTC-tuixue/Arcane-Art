@@ -70,7 +70,6 @@ public class InGameMPEventHandler
                 MPEvent.MPRegen regenEvent =
                         new MPEvent.MPRegen(event.player,
                                 regen * maxMP * APIConfig.MP.Regeneration.REGEN_RATE.get()
-
                         );
                 if (!MinecraftForge.EVENT_BUS.post(regenEvent))
                 {

@@ -32,55 +32,32 @@ public class MPEvent extends LivingEvent
         }
     }
 
-    public static class CastPersistentSpell extends MPEvent
+    public static class CastSpell extends MPEvent
     {
-        public CastPersistentSpell(LivingEntity livingEntity)
+        @Getter
+        private final boolean isPersistent;
+        public CastSpell(LivingEntity livingEntity, boolean isPersistent)
         {
             super(livingEntity);
+            this.isPersistent = isPersistent;
         }
 
         @Cancelable
-        public static class Pre extends CastPersistentSpell
+        public static class Pre extends CastSpell
         {
-            public Pre(LivingEntity livingEntity)
+            public Pre(LivingEntity livingEntity, boolean isPersistent)
             {
-                super(livingEntity);
+                super(livingEntity, isPersistent);
             }
         }
 
-        public static class Post extends CastPersistentSpell
+        public static class Post extends CastSpell
         {
-            public Post(LivingEntity livingEntity)
+            public Post(LivingEntity livingEntity, boolean isPersistent)
             {
-                super(livingEntity);
-            }
-        }
-    }
-
-    public static class CastInstantSpell extends MPEvent
-    {
-        public CastInstantSpell(LivingEntity livingEntity)
-        {
-            super(livingEntity);
-        }
-
-        @Cancelable
-        public static class Pre extends CastInstantSpell
-        {
-            public Pre(LivingEntity livingEntity)
-            {
-                super(livingEntity);
-            }
-        }
-
-        public static class Post extends CastInstantSpell
-        {
-            public Post(LivingEntity livingEntity)
-            {
-                super(livingEntity);
+                super(livingEntity, isPersistent);
             }
         }
     }
-
 
 }
