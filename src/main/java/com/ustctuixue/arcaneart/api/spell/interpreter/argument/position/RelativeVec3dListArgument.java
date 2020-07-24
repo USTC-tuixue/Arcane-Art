@@ -9,15 +9,15 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.Relati
 /**
  * Also accept position of the first entity in EntityList
  */
-public class RelativeVec3dArgument implements ArgumentType<RelativeVec3dBuilder>
+public class RelativeVec3dListArgument implements ArgumentType<RelativeVec3dListBuilder>
 {
     @Override
-    public RelativeVec3dBuilder parse(StringReader reader) throws CommandSyntaxException
+    public RelativeVec3dListBuilder parse(StringReader reader) throws CommandSyntaxException
     {
 
         try{
             RelativeEntityListBuilder builder = new EntityListArgument().parse(reader);
-            return new RelativeVec3dBuilder(builder);
+            return new RelativeVec3dListBuilder(builder);
         }catch (CommandSyntaxException e)
         {
             double x, y, z;
@@ -27,7 +27,7 @@ public class RelativeVec3dArgument implements ArgumentType<RelativeVec3dBuilder>
             y = reader.readDouble();
             reader.skipWhitespace();
             z = reader.readDouble();
-            return new RelativeVec3dBuilder(x, y, z);
+            return new RelativeVec3dListBuilder(x, y, z);
         }
 
     }

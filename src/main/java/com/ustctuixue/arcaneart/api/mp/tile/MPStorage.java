@@ -1,10 +1,11 @@
 package com.ustctuixue.arcaneart.api.mp.tile;
 
+import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.math.MathHelper;
 
-public class MPStorage
+public class MPStorage implements IMPConsumer
 {
     @Getter
     double mana;
@@ -23,4 +24,21 @@ public class MPStorage
         this.mana = MathHelper.clamp(mana, 0, maxMP);
     }
 
+    /**
+     * 消耗 MP 值
+     *
+     * @param manaIn 消耗的 MP 量
+     * @return 有足够的 MP 供消耗则返回 true，否则为 false
+     */
+    @Override
+    public boolean consumeMana(double manaIn)
+    {
+        if (manaIn > this.getMana())
+            return false;
+        else
+        {
+            this.setMana(this.mana - manaIn);
+            return true;
+        }
+    }
 }

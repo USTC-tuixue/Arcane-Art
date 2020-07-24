@@ -14,20 +14,25 @@ public class Variable<T>
 
     @Getter @NonNull
     Class<T> type;
-
+    private T value = null;
     public Variable(String name, Class<T> clazz)
     {
         this.name = name;
         this.type = clazz;
     }
 
-    public Variable(Class<T> clazz, T value)
+    @SuppressWarnings("unchecked")
+    public Variable(T value)
     {
-        this.type = clazz;
+        this.type = (Class<T>) value.getClass();
         this.value = value;
     }
 
-    private T value = null;
+    public Variable(Class<T> cls, T value)
+    {
+        this.type = cls;
+        this.value = value;
+    }
 
     public T getValueFromSpellBuilder(SpellCasterSource source)
     {

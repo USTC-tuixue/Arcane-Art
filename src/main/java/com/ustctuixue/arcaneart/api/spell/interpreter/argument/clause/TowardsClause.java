@@ -3,10 +3,11 @@ package com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionVariableArgument;
 
-public class TowardsClause extends Clause<RelativeVec3dBuilder>
+public class TowardsClause extends Clause<Variable<DirectionBuilder>>
 {
     @Override
     protected SpellKeyWord getInductor()
@@ -15,14 +16,14 @@ public class TowardsClause extends Clause<RelativeVec3dBuilder>
     }
 
     @Override
-    protected ArgumentType<RelativeVec3dBuilder> getArgumentType()
+    protected ArgumentType<Variable<DirectionBuilder>> getArgumentType()
     {
-        return new RelativeVec3dArgument();
+        return new DirectionVariableArgument();
     }
 
     @Override
-    protected RelativeVec3dBuilder defaultValue()
+    protected Variable<DirectionBuilder> defaultValue()
     {
-        return super.defaultValue();
+        return new Variable<>(new DirectionBuilder());
     }
 }
