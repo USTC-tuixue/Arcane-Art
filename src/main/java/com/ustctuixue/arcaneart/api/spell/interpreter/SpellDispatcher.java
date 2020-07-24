@@ -1,16 +1,18 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
 {
-    static SpellDispatcher DISPATCHER = new SpellDispatcher();
+    public static SpellDispatcher DISPATCHER = new SpellDispatcher();
 
     /**
      * Check if spell get any errors
@@ -66,4 +68,26 @@ public class SpellDispatcher extends CommandDispatcher<SpellCasterSource>
         }
         return f ? 1 : 0;
     }
+
+    public static List<ParseResults<SpellCasterSource>> parseSpell(List<String> spells, SpellCasterSource source)
+    {
+        return spells.stream().map(spell -> DISPATCHER.parse(spell, source)).collect(Collectors.toList());
+    }
+
+    public static int executeSpell(List<ParseResults<SpellCasterSource>> parseResults)
+    {
+        boolean f = true;
+        for (ParseResults<SpellCasterSource> parseResult : parseResults)
+        {
+            try
+            {
+                f = f && DISPATCHER.execute(parseResult) != 0;
+            } catch (CommandSyntaxException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return f ? 1 : 0;
+    }
+
 }

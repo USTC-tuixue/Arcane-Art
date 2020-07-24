@@ -39,14 +39,17 @@ public class SpellCasterSource
     @Getter
     private final MinecraftServer server;
 
+    /**
+     * 直接执行法术的实体
+     */
     @Getter
     private final Entity entity;
 
+    /**
+     * MP 的来源
+     */
     @Getter
     private final IMPConsumer mpConsumer;
-
-    @Getter
-    private final ItemStack spellCasterStack;
 
     @Getter
     private final int casterTier;
@@ -76,12 +79,10 @@ public class SpellCasterSource
             LazyOptional<IManaBar> optionalManaBar = entityIn.getCapability(CapabilityMP.MANA_BAR_CAP);
             boolean hasManaBar = optionalManaBar.isPresent();
             this.mpConsumer = hasManaBar? optionalManaBar.orElseGet(DefaultManaBar::new) : null;
-            spellCasterStack = (entityIn instanceof LivingEntity)?((LivingEntity) entityIn).getActiveItemStack():null;
         }
         else
         {
             this.mpConsumer = mpStorageIn;
-            spellCasterStack = null;
         }
     }
 
@@ -110,7 +111,7 @@ public class SpellCasterSource
     {
         return new SpellCasterSource(
                 source.getPos(), source.getRotation(), source.getWorld(), source.getServer(),
-                source.getEntity(), null, null, SpellCasterTiers.MAX_TIER
+                source.getEntity(), null, SpellCasterTiers.MAX_TIER
         );
     }
 }
