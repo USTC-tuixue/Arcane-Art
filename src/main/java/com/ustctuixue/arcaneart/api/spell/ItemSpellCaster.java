@@ -91,9 +91,10 @@ public class ItemSpellCaster extends Item
         if (!(entityLiving instanceof PlayerEntity))
             return;
         // Fire pre persistent spell event, if cancelled, spell will not be executed
-        ServerWorld worldIn = (ServerWorld) entityLiving.getEntityWorld();
-        if (!worldIn.isRemote() && MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(entityLiving, true)))
+
+        if (!entityLiving.getEntityWorld().isRemote() && MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(entityLiving, true)))
         {
+            ServerWorld worldIn = (ServerWorld) entityLiving.getEntityWorld();
             SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
             ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
             // Common sentences will be only executed once!

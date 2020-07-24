@@ -48,7 +48,7 @@ public class SpellKeyWords
                 (
                         registry,
                         AT, TOWARDS, NEAREST_ENEMY, NEAREST_ENTITY, NEAREST_ITEM,
-                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE, MAKE
+                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE, MAKE, SELF
                 );
     }
 

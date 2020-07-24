@@ -115,4 +115,12 @@ public class SpellCasterSource
                 source.getEntity(), null, SpellCasterTiers.MAX_TIER
         );
     }
+
+    @Getter
+    private final SpellSideEffect sideEffect = new SpellSideEffect();
+
+    public void setSideEffect(SpellSideEffect sideEffect)
+    {
+        this.sideEffect.set(sideEffect);
+    }
 }
