@@ -19,6 +19,7 @@ public class LanguageManager
 {
     private static final String PROFILE_DIR_NAME = "Incantation Languages";
     private static final File PROFILE_DIR = new File(FMLPaths.CONFIGDIR.get().toFile(), PROFILE_DIR_NAME);
+    public static Marker LANGUAGE = MarkerManager.getMarker("INCANTATION_LANGUAGES");
 
     private LanguageManager()
     {}
@@ -49,7 +50,7 @@ public class LanguageManager
         }
         return new File(PROFILE_DIR, languageName + ".toml");
     }
-    static Marker LANGUAGE = MarkerManager.getMarker("INCANTATION_LANGUAGES");
+
 
     // Must run at server start, when registries are frozen
     public void readFromConfig()

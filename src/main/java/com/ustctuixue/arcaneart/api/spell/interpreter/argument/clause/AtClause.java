@@ -3,10 +3,11 @@ package com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dArgument;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListBuilder;
+import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListVariableArgument;
 
-public class AtClause extends Clause<RelativeVec3dBuilder>
+public class AtClause extends Clause<Variable<RelativeVec3dListBuilder>>
 {
     @Override
     protected SpellKeyWord getInductor()
@@ -15,14 +16,14 @@ public class AtClause extends Clause<RelativeVec3dBuilder>
     }
 
     @Override
-    protected ArgumentType<RelativeVec3dBuilder> getArgumentType()
+    protected RelativeVec3dListVariableArgument getArgumentType()
     {
-        return new RelativeVec3dArgument();
+        return new RelativeVec3dListVariableArgument();
     }
 
     @Override
-    protected RelativeVec3dBuilder defaultValue()
+    protected Variable<RelativeVec3dListBuilder> defaultValue()
     {
-        return new RelativeVec3dBuilder();
+        return new Variable<>(new RelativeVec3dListBuilder());
     }
 }

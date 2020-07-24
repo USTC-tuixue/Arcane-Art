@@ -1,6 +1,8 @@
-package com.ustctuixue.arcaneart.api.mp;
+package com.ustctuixue.arcaneart.api.events;
 
 import com.ustctuixue.arcaneart.api.APIConfig;
+import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
+import com.ustctuixue.arcaneart.api.mp.MPEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -10,7 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class MPEventHandler
+public class InGameMPEventHandler
 {
     /**
      * 玩家死亡时保留 MP 数据

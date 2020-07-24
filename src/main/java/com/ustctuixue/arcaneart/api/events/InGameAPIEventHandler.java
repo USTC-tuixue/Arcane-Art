@@ -1,7 +1,8 @@
-package com.ustctuixue.arcaneart.api;
+package com.ustctuixue.arcaneart.api.events;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.*;
 import com.ustctuixue.arcaneart.api.mp.tile.*;
 import com.ustctuixue.arcaneart.api.spell.*;
@@ -10,6 +11,7 @@ import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryProvider;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,31 +39,8 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nonnull;
 
 @Mod.EventBusSubscriber
-public class APIEventHandler
+public class InGameAPIEventHandler
 {
-    private static final Marker SETUP = MarkerManager.getMarker("SetUp");
-
-    public APIEventHandler()
-    {
-        ArcaneArtAPI.LOGGER.info(SETUP, "New APIEventHandler");
-    }
-
-    @SubscribeEvent
-    public void setup(final FMLCommonSetupEvent event)
-    {
-        ArcaneArtAPI.LOGGER.info(SETUP, "setup");
-        CapabilityManager.INSTANCE.register(IManaBar.class, new CapabilityMP.Storage(), DefaultManaBar::new);
-        CapabilityManager.INSTANCE.register(MPStorage.class, new CapabilityMPStorage.Storage(), MPStorage::new);
-        CapabilityManager.INSTANCE.register(ISpellInventory.class, new Capability.IStorage<ISpellInventory>() {
-			@Override
-			public INBT writeNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
-                                 net.minecraft.util.Direction side) {return null;}
-
-			@Override
-			public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
-					net.minecraft.util.Direction side, INBT nbt) {}
-		}, SpellInventory::new);
-    }
 
     @SubscribeEvent
     public void attachAttribute(@Nonnull EntityEvent.EntityConstructing event)
@@ -71,8 +50,10 @@ public class APIEventHandler
         {
             ((LivingEntity) entity).getAttributes().registerAttribute(CapabilityMP.MAX_MANA);
             ((LivingEntity) entity).getAttributes().registerAttribute(CapabilityMP.REGEN_RATE);
+            ((LivingEntity) entity).getAttributes().registerAttribute(SpellCasterTiers.CASTER_TIER);
         }
     }
+
 
 
 
@@ -124,23 +105,7 @@ public class APIEventHandler
         ((CommentedFileConfig)event.getConfig().getConfigData()).load();
     }
 
-    @SubscribeEvent
-    public void createRegistry(RegistryEvent.NewRegistry event)
-    {
-        ArcaneArtAPI.LOGGER.info(MarkerManager.getMarker("NewRegistry"), "Creating registry");
-        RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
-        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.setType(SpellKeyWord.class).setName(ArcaneArt.getResourceLocation("spell_words")).create();
-    }
 
 
-    @SubscribeEvent
-    public void registerSpellKeyWords(@Nonnull RegistryEvent.Register<SpellKeyWord> event)
-    {
-        SpellKeyWords.registerAll(event.getRegistry());
-    }
 
-    public void onServerStart(@Nonnull FMLServerStartingEvent event)
-    {
-        MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
-    }
 }

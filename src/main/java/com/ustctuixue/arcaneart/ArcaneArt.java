@@ -1,11 +1,8 @@
 package com.ustctuixue.arcaneart;
 
-import com.ustctuixue.arcaneart.api.APIEventHandler;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.mp.MPEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
-import com.ustctuixue.arcaneart.api.client.APIClientEventHandler;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
@@ -24,6 +21,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
+import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,25 +47,18 @@ public class ArcaneArt
 
         IEventBus modLoadingEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modLoadingEventBus.register(this);
-        modLoadingEventBus.register(new APIEventHandler());
-        modLoadingEventBus.register(new MPEventHandler());
-
-
+        new ArcaneArtAPI().registerEventHandlers();
         modLoadingEventBus.register(new TestEventHandler());
-
-
-        MinecraftForge.EVENT_BUS.register(new APIEventHandler());
-        MinecraftForge.EVENT_BUS.register(new MPEventHandler());
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new ArcaneArtAPI());
-
-        MinecraftForge.EVENT_BUS.register(new TestEventHandler());
-
-        MinecraftForge.EVENT_BUS.register(new APIClientEventHandler());
-
         TestObjects.register();
 
+        modLoadingEventBus.addListener(this::commonSetup);
+        modLoadingEventBus.addListener(this::clientSetup);
+
+
+        MinecraftForge.EVENT_BUS.register(this);
+        
+        
+        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());

@@ -20,6 +20,13 @@ public class ItemSpell extends Item
 
     public TranslatedSpell getSpell(ItemStack stack)
     {
-        return stack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(TranslatedSpell::new);
+        return stack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(ITranslatedSpellProvider.Impl::new).getSpell();
+    }
+
+    public void setSpell(ItemStack stack, TranslatedSpell spell)
+    {
+        stack.getCapability(CapabilitySpell.SPELL_CAP).ifPresent( spellProvider ->
+                spellProvider.setSpell(spell)
+        );
     }
 }
