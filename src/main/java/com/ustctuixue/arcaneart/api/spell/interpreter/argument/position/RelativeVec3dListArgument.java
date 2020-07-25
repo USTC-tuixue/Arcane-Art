@@ -3,6 +3,7 @@ package com.ustctuixue.arcaneart.api.spell.interpreter.argument.position;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.EntityListArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.RelativeEntityListBuilder;
 
@@ -21,6 +22,7 @@ public class RelativeVec3dListArgument implements ArgumentType<RelativeVec3dList
         }catch (CommandSyntaxException e)
         {
             double x, y, z;
+            ArcaneArtAPI.LOGGER.debug(reader.getRemaining());
             reader.skipWhitespace();
             x = reader.readDouble();
             reader.skipWhitespace();

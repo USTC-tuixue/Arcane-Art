@@ -16,7 +16,6 @@ public class SpellModule extends Module
     protected Object[] getCommonEventHandler()
     {
         return new Object[]{
-                new SpellModuleRegistries.SpellRegister(),
                 new SpellModuleRegistries.SpellTranslations()
         };
     }

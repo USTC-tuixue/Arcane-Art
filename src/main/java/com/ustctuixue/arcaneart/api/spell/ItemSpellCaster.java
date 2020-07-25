@@ -5,7 +5,7 @@ import com.mojang.brigadier.ParseResults;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import com.ustctuixue.arcaneart.api.mp.MPEvent;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
@@ -58,9 +58,9 @@ public class ItemSpellCaster extends Item
             SpellCasterSource source = new SpellCasterSource(serverWorld, entityLiving, null, tier);
             ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
             // Execute common spell sentences first
-            spellProvider.preCompile(source);
-            SpellDispatcher.executeSpell(spellProvider.getSpell().getOnReleaseSentences(), source);
-
+            SpellContainer container = spellProvider.getCompiled(source);
+            container.executePreProcess(source);
+            container.executeOnRelease(source);
             // Fire post instant spell event
             MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(entityLiving, true));
         }
@@ -98,10 +98,9 @@ public class ItemSpellCaster extends Item
             SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
             ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
             // Common sentences will be only executed once!
-            List<ParseResults<SpellCasterSource>> parseResults =
-                    spellProvider.getCompileResults(source);
-            // OnHold sentences will be executed every tick
-            SpellDispatcher.executeSpell(parseResults);
+            SpellContainer container = spellProvider.getCompiled(source);
+            container.executePreProcess(source);
+            container.executeOnHold(source);
             // Fire post persistent spell event
             MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(entityLiving, true));
         }

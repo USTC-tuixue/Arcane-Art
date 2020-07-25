@@ -7,6 +7,6 @@ public class CommandLoader
 {
     public static void registerAll(CommandDispatcher<CommandSource> dispatcher)
     {
-        new TestSpellCommand(dispatcher);
+        new CastSpellCommand(dispatcher);
     }
 }

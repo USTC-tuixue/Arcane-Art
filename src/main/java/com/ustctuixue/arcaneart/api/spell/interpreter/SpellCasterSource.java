@@ -7,23 +7,20 @@ import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.SpellCasterTiers;
+import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
 import lombok.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Objects;
 
 @AllArgsConstructor
 public class SpellCasterSource
@@ -87,6 +84,7 @@ public class SpellCasterSource
         }
     }
 
+    @Getter
     private final Map<String, Object> variables = Maps.newHashMap();
 
     /**
@@ -116,11 +114,4 @@ public class SpellCasterSource
         );
     }
 
-    @Getter
-    private final SpellSideEffect sideEffect = new SpellSideEffect();
-
-    public void setSideEffect(SpellSideEffect sideEffect)
-    {
-        this.sideEffect.set(sideEffect);
-    }
 }

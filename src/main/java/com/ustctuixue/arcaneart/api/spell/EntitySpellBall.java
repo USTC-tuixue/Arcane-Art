@@ -3,14 +3,11 @@ package com.ustctuixue.arcaneart.api.spell;
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -70,7 +67,7 @@ public class EntitySpellBall extends DamagingProjectileEntity
         if (!this.world.isRemote)
         {
             TranslatedSpell spell = this.translatedSpellProvider.getSpell();
-            SpellDispatcher.executeSpell(spell.getOnReleaseSentences(), source);
+            this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
         }
     }
 
@@ -82,7 +79,7 @@ public class EntitySpellBall extends DamagingProjectileEntity
         super.tick();
         if (!this.world.isRemote)
         {
-            SpellDispatcher.executeSpell(this.translatedSpellProvider.getCompileResults(source));
+            this.translatedSpellProvider.getCompiled(source).executeOnHold(source);
         }
     }
 

@@ -1,50 +1,29 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.mojang.brigadier.ParseResults;
+import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import lombok.Getter;
-
-import java.util.List;
 
 public interface ITranslatedSpellProvider
 {
     TranslatedSpell getSpell();
     ITranslatedSpellProvider setSpell(TranslatedSpell spellIn);
 
-    /**
-     * Execute common sentences
-     * @param source compile source
-     */
-    void preCompile(SpellCasterSource source);
+    SpellContainer getCompiled(SpellCasterSource source);
 
-    /**
-     * Force re-parsing persistent sentences and store parsed results
-     *
-     * @param source compile source
-     */
-    void parseOnHold(SpellCasterSource source);
+    @Deprecated
+    ITranslatedSpellProvider setCompiled(SpellContainer compiled);
 
-    /**
-     * Retrieve parsed persistent sentences results
-     * If this provider is not parsed or source is not equal to previously used in parsing,
-     * this function will re-parse first, then return parse results.
-     *
-     * Because parsed results is relative to SpellCasterSource,
-     * you should re-compile if source does not match.
-     *
-     * @param source compile source
-     * @return parsed results
-     */
-    List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source);
+    void compile(SpellCasterSource source);
 
     class Impl implements ITranslatedSpellProvider
     {
         @Getter
         private TranslatedSpell spell;
 
-        private boolean parsed = false;
-        private List<ParseResults<SpellCasterSource>> parseResults;
+        private boolean dirty = true;
+        private SpellContainer compiled;
 
         private SpellCasterSource previousSource = null;
 
@@ -62,33 +41,33 @@ public interface ITranslatedSpellProvider
         public ITranslatedSpellProvider setSpell(TranslatedSpell spellIn)
         {
             this.spell = spellIn;
-            parsed = false;
+            dirty = true;
             return this;
         }
 
         @Override
-        public void preCompile(SpellCasterSource source)
+        public SpellContainer getCompiled(SpellCasterSource source)
         {
-            SpellDispatcher.executeSpell(spell.getCommonSentences(), source);
-        }
-
-        @Override
-        public void parseOnHold(SpellCasterSource source)
-        {
-            parseResults = SpellDispatcher.parseSpell(spell.getOnHoldSentences(), source);
-            previousSource = source;
-            parsed = true;
-        }
-
-        @Override
-        public List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source)
-        {
-            if (!parsed || previousSource != source)
+            if (this.dirty || this.previousSource != source)
             {
-                preCompile(source);
-                parseOnHold(source);
+                compile(source);
             }
-            return parseResults;
+            return this.compiled;
+        }
+
+        @Override
+        public void compile(SpellCasterSource source)
+        {
+            this.dirty = false;
+            this.compiled = Interpreter.compile(this.spell, source);
+            this.previousSource = source;
+        }
+
+        @Override
+        public ITranslatedSpellProvider setCompiled(SpellContainer compiled)
+        {
+            this.compiled = compiled;
+            return this;
         }
     }
 }
