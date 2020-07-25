@@ -108,7 +108,8 @@ public class LanguageProfile
             ResourceLocation rl = entry.getKey().getRegistryName();
             Objects.requireNonNull(rl);
 
-            Pattern pattern = Pattern.compile(entry.getValue());
+            Pattern pattern = Pattern.compile("\\b"+entry.getValue()+"\\b");
+            ArcaneArtAPI.LOGGER.debug(pattern.pattern());
             m = pattern.matcher(m).replaceAll(rl.toString());
         }
         m = m.replaceAll(this.leftQuote, "\"");
@@ -129,7 +130,7 @@ public class LanguageProfile
     {
         if (translations.length != 0)
         {
-            this.keyWordMap.put(keyword, String.join("|", translation, String.join("|", translations)));
+            this.keyWordMap.put(keyword, String.join("\\b|\\b", translation, String.join("\\b|\\b", translations)));
         }
         else
         {
@@ -151,12 +152,12 @@ public class LanguageProfile
         String newTranslations = translation;
         if (translations.length != 0)
         {
-            newTranslations = String.join("|", translation, String.join("|", translations));
+            newTranslations = String.join("\\b|\\b", translation, String.join("\\b|\\b", translations));
         }
 
         if (keyWordMap.containsKey(keyword) && !keyWordMap.get(keyword).isEmpty())
         {
-            newTranslations = String.join("|", keyWordMap.get(keyword), newTranslations);
+            newTranslations = String.join("\\b|\\b", keyWordMap.get(keyword), newTranslations);
         }
         this.keyWordMap.put(keyword, newTranslations);
         ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Updated translation: " + keyword + "=" + newTranslations);

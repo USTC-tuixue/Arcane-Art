@@ -22,28 +22,6 @@ public class MPEvent extends LivingEvent
     }
 
     @Cancelable
-    public static class MPConsumeStart extends MPEvent
-    {
-        /**
-         * 单位是 MP / tick
-         */
-        private final double rate;
-        public MPConsumeStart(LivingEntity livingEntity, double rate)
-        {
-            super(livingEntity);
-            this.rate = rate;
-        }
-    }
-
-    public static class MPConsumeEnd extends MPEvent
-    {
-        public MPConsumeEnd (LivingEntity entity)
-        {
-            super(entity);
-        }
-    }
-
-    @Cancelable
     public static class MPRegen extends MPEvent
     {
         public final double mana;
@@ -53,4 +31,33 @@ public class MPEvent extends LivingEvent
             this.mana = mana;
         }
     }
+
+    public static class CastSpell extends MPEvent
+    {
+        @Getter
+        private final boolean isPersistent;
+        public CastSpell(LivingEntity livingEntity, boolean isPersistent)
+        {
+            super(livingEntity);
+            this.isPersistent = isPersistent;
+        }
+
+        @Cancelable
+        public static class Pre extends CastSpell
+        {
+            public Pre(LivingEntity livingEntity, boolean isPersistent)
+            {
+                super(livingEntity, isPersistent);
+            }
+        }
+
+        public static class Post extends CastSpell
+        {
+            public Post(LivingEntity livingEntity, boolean isPersistent)
+            {
+                super(livingEntity, isPersistent);
+            }
+        }
+    }
+
 }

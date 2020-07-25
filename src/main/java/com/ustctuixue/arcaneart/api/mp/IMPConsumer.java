@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.mp;
 
+@SuppressWarnings("unused")
 public interface IMPConsumer
 {
     /**

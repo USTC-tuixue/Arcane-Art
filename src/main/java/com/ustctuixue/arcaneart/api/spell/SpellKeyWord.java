@@ -103,7 +103,7 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 
     @NoArgsConstructor
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-
+    @SuppressWarnings("WeakerAccess")
     public static class Property
     {
         @Getter @With @Nonnull
@@ -113,6 +113,6 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 
     public enum ExecuteType
     {
-        COMMON, ON_HOLD, ON_RELEASE, NOT_EXECUTABLE
+        PRE_PROCESS, ON_HOLD, ON_RELEASE, NOT_EXECUTABLE
     }
 }

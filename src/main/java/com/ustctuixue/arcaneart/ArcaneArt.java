@@ -9,6 +9,7 @@ import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
+import com.ustctuixue.arcaneart.spell.SpellModule;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -46,6 +47,8 @@ public class ArcaneArt
         IEventBus modLoadingEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         new ArcaneArtAPI().registerEventHandlers();
+        new SpellModule().registerEventHandlers();
+
         modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();
 
