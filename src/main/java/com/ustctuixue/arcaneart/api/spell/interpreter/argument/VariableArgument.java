@@ -28,7 +28,7 @@ public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
             }
             else                                // If not a variable form
             {
-                return new Variable<T>(this.getType(), this.getArgumentType().parse(reader));
+                return new Variable<>(this.getType(), this.getArgumentType().parse(reader));
             }
         }
         throw INCONSISTENT_QUOTES.createWithContext(reader);

@@ -1,17 +1,24 @@
 package com.ustctuixue.arcaneart.api.spell;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import lombok.*;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 {
-    public static ForgeRegistry<SpellKeyWord> REGISTRY;
+    public static ForgeRegistry<SpellKeyWord> REGISTRY
+            = (ForgeRegistry<SpellKeyWord>) new RegistryBuilder<SpellKeyWord>()
+            .setType(SpellKeyWord.class)
+            .setName(ArcaneArtAPI.getResourceLocation("spell_words"))
+            .create();
 
     @Getter
     private final ExecuteType type;
@@ -108,6 +115,11 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
     {
         @Getter @With @Nonnull
         private ExecuteType type = ExecuteType.NOT_EXECUTABLE;
+
+        public Supplier<? extends SpellKeyWord> getSupplier()
+        {
+            return () -> new SpellKeyWord(this);
+        }
 
     }
 

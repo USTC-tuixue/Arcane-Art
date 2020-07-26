@@ -48,14 +48,6 @@ public class ModLoadingAPIEventHandler
         }, SpellInventory::new);
     }
 
-    @SubscribeEvent @SuppressWarnings("unused")
-    public void createRegistry(RegistryEvent.NewRegistry event)
-    {
-        ArcaneArtAPI.LOGGER.info(MarkerManager.getMarker("NewRegistry"), "Creating registry");
-        RegistryBuilder<SpellKeyWord> builder = new RegistryBuilder<>();
-        SpellKeyWord.REGISTRY = (ForgeRegistry<SpellKeyWord>) builder.setType(SpellKeyWord.class).setName(ArcaneArt.getResourceLocation("spell_words")).create();
-    }
-
 
     @SubscribeEvent @SuppressWarnings("unused")
     public void registerSpellKeyWords(@Nonnull RegistryEvent.Register<SpellKeyWord> event)

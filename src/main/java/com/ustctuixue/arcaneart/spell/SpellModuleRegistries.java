@@ -1,11 +1,12 @@
 package com.ustctuixue.arcaneart.spell;
 
 import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -30,18 +31,21 @@ public class SpellModuleRegistries
                 )
                 .setRegistryName(ArcaneArt.getResourceLocation("summon"));
 
-        public static final SpellKeyWord EFFECT
-                = new SpellKeyWord
-                (
-                        new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE)
-                )
-                .setRegistryName(ArcaneArt.getResourceLocation("effect"));
+        public static final RegistryObject<SpellKeyWord> EFFECT
+                = SPELL_KEY_WORD_DEFERRED_REGISTER.register("effect",
+                new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE).getSupplier()
+        );
+//                = new SpellKeyWord
+//                (
+//                        new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE)
+//                )
+//                .setRegistryName(ArcaneArt.getResourceLocation("effect"));
 
-        @SubscribeEvent
-        public void registerWords(RegistryEvent.Register<SpellKeyWord> event)
-        {
-            event.getRegistry().register(EFFECT);
-        }
+//        @SubscribeEvent
+//        public void registerWords(RegistryEvent.Register<SpellKeyWord> event)
+//        {
+//            event.getRegistry().register(EFFECT);
+//        }
     }
 
     public static class SpellTranslations
@@ -51,7 +55,7 @@ public class SpellModuleRegistries
         @SubscribeEvent
         public void addTranslations(FMLCommonSetupEvent event)
         {
-            EN_US.addTranslationFor(SpellKeyWords.EFFECT, "effect");
+            EN_US.addTranslationFor(SpellKeyWords.EFFECT.get(), "effect");
         }
     }
 }
