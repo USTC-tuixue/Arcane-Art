@@ -5,6 +5,7 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 
+import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -33,4 +34,13 @@ public interface ISpellCostModifier
         return result;
     }
 
+    static void addModifier(ISpellCostModifier modifier)
+    {
+        MODIFIERS.add(modifier);
+    }
+
+    static void addAllModifiers(Collection<ISpellCostModifier> modifiers)
+    {
+        MODIFIERS.addAll(modifiers);
+    }
 }
