@@ -7,11 +7,15 @@ import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.DeferredRegister;
 
 public class SpellModuleRegistries
 {
     public static class SpellKeyWords
     {
+        public static final DeferredRegister<SpellKeyWord> SPELL_KEY_WORD_DEFERRED_REGISTER
+                = new DeferredRegister<>(SpellKeyWord.REGISTRY, ArcaneArt.MOD_ID);
+
         public static final SpellKeyWord GRAB
                 = new SpellKeyWord
                 (
