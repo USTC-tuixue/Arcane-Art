@@ -3,6 +3,8 @@ package com.ustctuixue.arcaneart.api.spell;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 
+import java.util.UUID;
+
 public class SpellCasterTiers
 {
     public static final int MAX_TIER = 999;

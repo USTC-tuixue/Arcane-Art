@@ -1,28 +1,31 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.mojang.brigadier.ParseResults;
+import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import lombok.Getter;
-
-import java.util.List;
 
 public interface ITranslatedSpellProvider
 {
     TranslatedSpell getSpell();
     ITranslatedSpellProvider setSpell(TranslatedSpell spellIn);
 
-    void compile(SpellCasterSource source);
+    SpellContainer getCompiled(SpellCasterSource source);
 
-    List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source);
+    @Deprecated
+    ITranslatedSpellProvider setCompiled(SpellContainer compiled);
+
+    void compile(SpellCasterSource source);
 
     class Impl implements ITranslatedSpellProvider
     {
         @Getter
         private TranslatedSpell spell;
 
-        private boolean parsed = false;
-        private List<ParseResults<SpellCasterSource>> parseResults;
+        private boolean dirty = true;
+        private SpellContainer compiled;
+
+        private SpellCasterSource previousSource = null;
 
         public Impl()
         {
@@ -38,26 +41,33 @@ public interface ITranslatedSpellProvider
         public ITranslatedSpellProvider setSpell(TranslatedSpell spellIn)
         {
             this.spell = spellIn;
-            parsed = false;
+            dirty = true;
             return this;
+        }
+
+        @Override
+        public SpellContainer getCompiled(SpellCasterSource source)
+        {
+            if (this.dirty || this.previousSource != source)
+            {
+                compile(source);
+            }
+            return this.compiled;
         }
 
         @Override
         public void compile(SpellCasterSource source)
         {
-            SpellDispatcher.executeSpell(spell.getCommonSentences(), source);
-            SpellDispatcher.parseSpell(spell.getOnHoldSentences(), source);
-            parsed = true;
+            this.dirty = false;
+            this.compiled = Interpreter.compile(this.spell, source);
+            this.previousSource = source;
         }
 
         @Override
-        public List<ParseResults<SpellCasterSource>> getCompileResults(SpellCasterSource source)
+        public ITranslatedSpellProvider setCompiled(SpellContainer compiled)
         {
-            if (!parsed)
-            {
-                compile(source);
-            }
-            return parseResults;
+            this.compiled = compiled;
+            return this;
         }
     }
 }

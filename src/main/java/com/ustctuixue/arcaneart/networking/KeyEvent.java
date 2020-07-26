@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.networking;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -12,7 +13,7 @@ public class KeyEvent {
     }
     public static void registerMessage() {
         INSTANCE = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation("arcaneart" + ":key_event"),
+                ArcaneArt.getResourceLocation(":key_event"),
                 () -> "1.0",
                 (s) -> true,
                 (s) -> true
@@ -20,15 +21,9 @@ public class KeyEvent {
         INSTANCE.registerMessage(
                 nextID(),
                 KeyPack.class,
-                (pack, buffer) -> {
-                    pack.toBytes(buffer);
-                },
-                (buffer) -> {
-                    return new KeyPack(buffer);
-                },
-                (pack,ctx) ->{
-                    pack.handler(ctx);
-                }
+                KeyPack::toBytes,
+                KeyPack::new,
+                KeyPack::handler
         );
     }
 }

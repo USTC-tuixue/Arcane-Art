@@ -1,12 +1,15 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.google.common.collect.Lists;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.util.ResourceLocation;
@@ -30,17 +33,19 @@ public class TranslatedSpell
     @Getter @Nonnull
     private final List<String> onReleaseSentences = Lists.newArrayList();
 
+    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell()
     {
         this("");
     }
 
+    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell(String name)
     {
         this.name = name;
     }
 
-
+    @SuppressWarnings(value={"WeakerAccess", ""})
     public TranslatedSpell addCommonSentence(String s)
     {
         commonSentences.add(s);
@@ -95,13 +100,26 @@ public class TranslatedSpell
         return null;
     }
 
-    private static SpellKeyWord getFirstKeyWord(final String translatedSentence)
+    public static SpellKeyWord getFirstKeyWord(final String translatedSentence)
     {
-        int wordEnd = translatedSentence.indexOf(' ');
-        wordEnd = wordEnd == -1? translatedSentence.length():wordEnd;
-        String rl = translatedSentence.substring(0, wordEnd);
-        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "First word: " + rl);
-        return SpellKeyWord.REGISTRY.getValue(new ResourceLocation(rl));
+        StringReader reader = new StringReader(translatedSentence);
+        reader.skipWhitespace();
+        try
+        {
+            return getFirstKeyWord(reader);
+        } catch (CommandSyntaxException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public static SpellKeyWord getFirstKeyWord(StringReader reader) throws CommandSyntaxException
+    {
+        reader.skipWhitespace();
+        ResourceLocation resourceLocation = ResourceLocationArgument.resourceLocation().parse(reader);
+        return SpellKeyWord.REGISTRY.getValue(resourceLocation);
     }
 
     @Nullable

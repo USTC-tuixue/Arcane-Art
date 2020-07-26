@@ -2,8 +2,9 @@ package com.ustctuixue.arcaneart.api.events;
 
 import com.ustctuixue.arcaneart.api.command.CommandLoader;
 import com.ustctuixue.arcaneart.api.network.PacketHandler;
-import com.ustctuixue.arcaneart.api.spell.Spells;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
+import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
+import com.ustctuixue.arcaneart.api.spell.impl.DefineVariableSpell;
+import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,18 +16,18 @@ public class ServerLifecycleAPIEventHandler
 {
     public static final PacketHandler packetHandler = new PacketHandler();
 
-    @SubscribeEvent
+    @SubscribeEvent @SuppressWarnings("unused")
     public void onServerStart(@Nonnull FMLServerStartingEvent event)
     {
         packetHandler.initialize();
         LanguageManager.getInstance().readFromConfig();
         CommandLoader.registerAll(event.getCommandDispatcher());
-        MinecraftForge.EVENT_BUS.post(new SpellDispatcher.NewSpellEvent(event.getServer()));
+        MinecraftForge.EVENT_BUS.post(new NewSpellEvent(event.getServer()));
     }
 
-    @SubscribeEvent
-    public void registerNewSpell(@Nonnull SpellDispatcher.NewSpellEvent event)
+    @SubscribeEvent @SuppressWarnings("unused")
+    public void registerNewSpell(@Nonnull NewSpellEvent event)
     {
-        Spells.registerAll(event.getDispatcher());
+        Interpreter.SPELLS.put(SpellKeyWords.MAKE, DefineVariableSpell::new);
     }
 }

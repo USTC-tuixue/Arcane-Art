@@ -11,20 +11,24 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class HUDClientEvent {
-	@SubscribeEvent
-	public static void onOverlayRender(RenderGameOverlayEvent event) {
-		if(event.getType() != RenderGameOverlayEvent.ElementType.ALL){
-			return;
-		}
-		ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
-		if(playerEntity == null) {
-			return;
-		}
-		ManaBar manabar = new ManaBar(
-				playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).orElseGet(DefaultManaBar::new).getMana()
-				/ playerEntity.getAttribute(CapabilityMP.MAX_MANA).getValue()
-		);
-		manabar.render();
-	}
+public class HUDClientEvent
+{
+    @SubscribeEvent
+    public static void onOverlayRender(RenderGameOverlayEvent event)
+    {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL)
+        {
+            return;
+        }
+        ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
+        if (playerEntity == null)
+        {
+            return;
+        }
+        ManaBar manabar = new ManaBar(
+                playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).orElseGet(DefaultManaBar::new).getMana()
+                        / playerEntity.getAttribute(CapabilityMP.MAX_MANA).getValue()
+        );
+        manabar.render();
+    }
 }

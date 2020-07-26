@@ -40,7 +40,7 @@ public class SpellKeyWords
     public static final SpellKeyWord MAX_COUNT = create("with_max_count");
     public static final SpellKeyWord SELF = create("self");
 
-    public static final SpellKeyWord MAKE = create("make", new Property().withType(SpellKeyWord.ExecuteType.COMMON));
+    public static final SpellKeyWord MAKE = create("make", new Property().withType(SpellKeyWord.ExecuteType.PRE_PROCESS));
 
     public static void registerAll(IForgeRegistry<SpellKeyWord> registry)
     {
@@ -48,7 +48,7 @@ public class SpellKeyWords
                 (
                         registry,
                         AT, TOWARDS, NEAREST_ENEMY, NEAREST_ENTITY, NEAREST_ITEM,
-                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE, MAKE
+                        NEAREST_ANIMAL, NEAREST_PLAYER, NEAREST_PROJECTILE, MAKE, SELF
                 );
     }
 
