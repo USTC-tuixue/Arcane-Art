@@ -8,7 +8,6 @@ public class SpellModule extends Module
     protected Object[] getModLoadingEventHandler()
     {
         return new Object[]{
-                new SpellModuleRegistries.SpellKeyWords()
         };
     }
 

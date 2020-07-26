@@ -1,13 +1,13 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import lombok.*;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 {
@@ -108,6 +108,11 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
     {
         @Getter @With @Nonnull
         private ExecuteType type = ExecuteType.NOT_EXECUTABLE;
+
+        public Supplier<SpellKeyWord> getSupplier()
+        {
+            return () -> new SpellKeyWord(this);
+        }
 
     }
 
