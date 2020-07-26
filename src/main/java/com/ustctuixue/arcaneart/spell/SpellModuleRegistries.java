@@ -15,7 +15,7 @@ public class SpellModuleRegistries
     public static class SpellKeyWords
     {
         public static final DeferredRegister<SpellKeyWord> SPELL_KEY_WORD_DEFERRED_REGISTER
-                = SpellModule.getInstance().getDeferredRegister(SpellKeyWord.REGISTRY, ArcaneArt.MOD_ID);
+                = new DeferredRegister<>(SpellKeyWord.REGISTRY, ArcaneArt.MOD_ID);
 
         public static final SpellKeyWord GRAB
                 = new SpellKeyWord

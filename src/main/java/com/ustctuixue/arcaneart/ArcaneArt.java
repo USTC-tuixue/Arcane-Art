@@ -10,6 +10,7 @@ import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import com.ustctuixue.arcaneart.spell.SpellModule;
+import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -50,6 +51,7 @@ public class ArcaneArt
         new SpellModule().registerModule();
 
         modLoadingEventBus.register(new TestEventHandler());
+        SpellModuleRegistries.SpellKeyWords.SPELL_KEY_WORD_DEFERRED_REGISTER.register(modLoadingEventBus);
         TestObjects.register();
 
         modLoadingEventBus.addListener(this::commonSetup);

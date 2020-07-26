@@ -1,7 +1,6 @@
 package com.ustctuixue.arcaneart.spell;
 
 import com.ustctuixue.arcaneart.api.util.Module;
-import lombok.Getter;
 
 public class SpellModule extends Module
 {
@@ -9,7 +8,6 @@ public class SpellModule extends Module
     protected Object[] getModLoadingEventHandler()
     {
         return new Object[]{
-                new SpellModuleRegistries.SpellKeyWords()
         };
     }
 
@@ -19,11 +17,5 @@ public class SpellModule extends Module
         return new Object[]{
                 new SpellModuleRegistries.SpellTranslations()
         };
-    }
-
-    private static final SpellModule INSTANCE = new SpellModule();
-    public static SpellModule getInstance()
-    {
-        return INSTANCE;
     }
 }

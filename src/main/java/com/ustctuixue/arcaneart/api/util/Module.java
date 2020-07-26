@@ -15,14 +15,6 @@ public abstract class Module
     protected abstract Object[] getModLoadingEventHandler();
     protected abstract Object[] getCommonEventHandler();
 
-    private List<DeferredRegister<?>> deferredRegisters = Lists.newArrayList();
-
-    public <T extends IForgeRegistryEntry<T>> DeferredRegister<T> getDeferredRegister(IForgeRegistry<T> registry, String modid)
-    {
-        DeferredRegister<T> result = new DeferredRegister<>(registry, modid);
-        deferredRegisters.add(result);
-        return result;
-    }
 
     public void registerModule()
     {
@@ -31,7 +23,6 @@ public abstract class Module
         {
             loadingBus.register(getModLoadingEventHandler()[i]);
         }
-        deferredRegisters.forEach(deferredRegister -> deferredRegister.register(loadingBus));
         for (int i = 0; i < getCommonEventHandler().length; i++)
         {
             MinecraftForge.EVENT_BUS.register(getCommonEventHandler()[i]);

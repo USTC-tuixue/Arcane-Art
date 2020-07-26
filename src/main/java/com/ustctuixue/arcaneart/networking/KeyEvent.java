@@ -13,7 +13,7 @@ public class KeyEvent {
     }
     public static void registerMessage() {
         INSTANCE = NetworkRegistry.newSimpleChannel(
-                ArcaneArt.getResourceLocation(":key_event"),
+                ArcaneArt.getResourceLocation("key_event"),
                 () -> "1.0",
                 (s) -> true,
                 (s) -> true
