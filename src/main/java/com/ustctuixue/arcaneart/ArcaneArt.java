@@ -46,8 +46,8 @@ public class ArcaneArt
 
         IEventBus modLoadingEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        new ArcaneArtAPI().registerEventHandlers();
-        new SpellModule().registerEventHandlers();
+        new ArcaneArtAPI().registerModule();
+        new SpellModule().registerModule();
 
         modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();
