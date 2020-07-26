@@ -3,7 +3,6 @@ package com.ustctuixue.arcaneart.ritual;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.ritual.device.DingBlock;
 import com.ustctuixue.arcaneart.ritual.device.DingTileEntity;
-import com.ustctuixue.arcaneart.ritual.device.DingTileEntity.DingCircleTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -15,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class RitualRegistry {
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, ArcaneArt.MOD_ID);
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, ArcaneArt.MOD_ID);
-    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, ArcaneArt.MOD_ID);
+    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, ArcaneArt.MOD_ID);
 
     public static RegistryObject<Block> dingBlockCircle = BLOCKS.register("ding_circle", ()->{
         return new DingBlock(DingBlock.EnumShape.CIRCLE);
@@ -38,17 +37,17 @@ public class RitualRegistry {
     });
 
     public static RegistryObject<TileEntityType<? extends DingTileEntity>> dingCircleTileEntity
-            = TILE_ENTITY.register("ding_circle_tile_entity", ()->{
+            = TILE_ENTITIES.register("ding_circle_tile_entity", ()->{
         return TileEntityType.Builder.create(DingTileEntity.DingCircleTileEntity::new, dingBlockCircle.get()).build(null);
     });
 
     public static RegistryObject<TileEntityType<? extends DingTileEntity>> dingSquareTileEntity
-            = TILE_ENTITY.register("ding_circle_tile_entity", ()->{
-        return TileEntityType.Builder.create(DingTileEntity.DingSquareTileEntity::new, dingBlockCircle.get()).build(null);
+            = TILE_ENTITIES.register("ding_square_tile_entity", ()->{
+        return TileEntityType.Builder.create(DingTileEntity.DingSquareTileEntity::new, dingBlockSquare.get()).build(null);
     });
 
     public static RegistryObject<TileEntityType<? extends DingTileEntity>> dingCenterTileEntity
-            = TILE_ENTITY.register("ding_circle_tile_entity", ()->{
-        return TileEntityType.Builder.create(DingTileEntity.DingCenterTileEntity::new, dingBlockCircle.get()).build(null);
+            = TILE_ENTITIES.register("ding_center_tile_entity", ()->{
+        return TileEntityType.Builder.create(DingTileEntity.DingCenterTileEntity::new, dingBlockCenter.get()).build(null);
     });
 }
