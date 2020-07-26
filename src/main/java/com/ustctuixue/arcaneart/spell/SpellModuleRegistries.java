@@ -1,9 +1,11 @@
 package com.ustctuixue.arcaneart.spell;
 
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.events.NewSpellEvent;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
+import com.ustctuixue.arcaneart.spell.spell.EffectSpell;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -35,17 +37,7 @@ public class SpellModuleRegistries
                 = SPELL_KEY_WORD_DEFERRED_REGISTER.register("effect",
                 new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE).getSupplier()
         );
-//                = new SpellKeyWord
-//                (
-//                        new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE)
-//                )
-//                .setRegistryName(ArcaneArt.getResourceLocation("effect"));
 
-//        @SubscribeEvent
-//        public void registerWords(RegistryEvent.Register<SpellKeyWord> event)
-//        {
-//            event.getRegistry().register(EFFECT);
-//        }
     }
 
     public static class SpellTranslations
@@ -57,5 +49,11 @@ public class SpellModuleRegistries
         {
             EN_US.addTranslationFor(SpellKeyWords.EFFECT.get(), "effect");
         }
+    }
+
+    @SubscribeEvent
+    public void registerSpells(NewSpellEvent event)
+    {
+        event.register(SpellKeyWords.EFFECT.get(), EffectSpell::new);
     }
 }

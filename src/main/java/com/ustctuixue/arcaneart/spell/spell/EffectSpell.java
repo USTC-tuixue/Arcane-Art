@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.spell.spell;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -8,19 +7,13 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.ISpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.EntityListVariableArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.RelativeEntityListBuilder;
-import com.ustctuixue.arcaneart.api.util.EntityList;
+import com.ustctuixue.arcaneart.spell.SpellConfig;
 import net.minecraft.command.arguments.PotionArgument;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-
-import java.util.Map;
 
 public class EffectSpell implements ISpell
 {
-    public static Map<Effect, Double> EFFECT_COST = ImmutableMap.of(
-            Effects.NIGHT_VISION, 100D
-    );
 
     private EffectInstance effectInstance;
     private RelativeEntityListBuilder target;
@@ -28,14 +21,29 @@ public class EffectSpell implements ISpell
     @Override
     public double getComplexity(SpellCasterSource source)
     {
-        return 0;
+        double amp = SpellConfig.SpellProperty.EffectSpell
+                .getComplexityAmplifier(
+                        this.effectInstance.getAmplifier(),
+                        this.effectInstance.getDuration(),
+                        this.target.build(source).size()
+                );
+        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+                .get(this.effectInstance.getPotion()).getBasicComplexity()
+                * amp;
     }
 
     @Override
     public double getManaCostBase(SpellCasterSource source)
     {
-        double amp = Math.pow(this.effectInstance.getAmplifier() + 1, 2) * effectInstance.getDuration() / 10;
-        return EFFECT_COST.get(this.effectInstance.getPotion()) * target.build(source).size() * amp;
+        double amp = SpellConfig.SpellProperty.EffectSpell
+                .getManaCostAmplifier(
+                        this.effectInstance.getAmplifier(),
+                        this.effectInstance.getDuration(),
+                        this.target.build(source).size()
+                );
+        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+                .get(this.effectInstance.getPotion()).getBasicCost()
+                * target.build(source).size() * amp;
     }
 
     @Override
