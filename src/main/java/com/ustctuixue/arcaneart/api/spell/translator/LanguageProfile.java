@@ -72,20 +72,25 @@ public class LanguageProfile
         ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "Loading file for language: " + this.name);
 
         // Load from config file
-        keyWordMap.replaceAll((k, v) ->
-                {
-                    List<String> configValue = config.get(k.getTranslationPath());
-                    if (configValue != null)
+        try
+        {
+            keyWordMap.replaceAll((k, v) ->
                     {
-                        return TranslatedWords.fromList(configValue);
+                        List<String> configValue = config.get(k.getTranslationPath());
+                        if (configValue != null)
+                        {
+                            return TranslatedWords.fromList(configValue);
+                        }
+                        return v;
                     }
-                    return v;
-                }
-        );
-        this.leftQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote").orElse(this.leftQuote);
-        this.rightQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote").orElse(this.rightQuote);
-        this.semicolon = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.period").orElse(this.semicolon);
-
+            );
+            this.leftQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote").orElse(this.leftQuote);
+            this.rightQuote = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.rightQuote").orElse(this.rightQuote);
+            this.semicolon = (String) config.getOptional(ArcaneArtAPI.MOD_ID + ".punctuation.period").orElse(this.semicolon);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         for (Map.Entry<SpellKeyWord, TranslatedWords> entry:
                 this.keyWordMap.entrySet())
         {
