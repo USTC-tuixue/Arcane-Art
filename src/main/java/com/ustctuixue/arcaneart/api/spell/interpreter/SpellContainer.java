@@ -29,4 +29,27 @@ public class SpellContainer
     {
         onRelease.forEach(iSpell -> iSpell.execute(source));
     }
+
+    public static double getManaCost(SpellCasterSource source, List<ISpell> iSpellList)
+    {
+        double cost = 0;
+        for (ISpell sp :
+                iSpellList)
+        {
+            cost += sp.getManaCost(source);
+        }
+        return cost;
+    }
+
+    public static double getComplexity(SpellCasterSource source, List<ISpell> iSpellList)
+    {
+        double cost = 0;
+        for (ISpell sp :
+                iSpellList)
+        {
+            cost += sp.getComplexity(source);
+        }
+        return cost;
+    }
+
 }

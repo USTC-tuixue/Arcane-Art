@@ -36,26 +36,33 @@ public class MPEvent extends LivingEvent
     {
         @Getter
         private final boolean isPersistent;
-        public CastSpell(LivingEntity livingEntity, boolean isPersistent)
+        @Getter
+        private final double manaCost;
+        @Getter
+        private final double complexity;
+
+        CastSpell(LivingEntity livingEntity, boolean isPersistent, double manaCostIn, double complexityIn)
         {
             super(livingEntity);
             this.isPersistent = isPersistent;
+            this.manaCost = manaCostIn;
+            this.complexity = complexityIn;
         }
 
         @Cancelable
         public static class Pre extends CastSpell
         {
-            public Pre(LivingEntity livingEntity, boolean isPersistent)
+            public Pre(LivingEntity livingEntity, boolean isPersistent, double manaCostIn, double complexityIn)
             {
-                super(livingEntity, isPersistent);
+                super(livingEntity, isPersistent, manaCostIn, complexityIn);
             }
         }
 
         public static class Post extends CastSpell
         {
-            public Post(LivingEntity livingEntity, boolean isPersistent)
+            public Post(LivingEntity livingEntity, boolean isPersistent, double manaCostIn, double complexityIn)
             {
-                super(livingEntity, isPersistent);
+                super(livingEntity, isPersistent, manaCostIn, complexityIn);
             }
         }
     }

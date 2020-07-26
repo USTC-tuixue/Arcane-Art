@@ -33,7 +33,8 @@ public class EffectSpell implements ISpell
     }
 
     @Override
-    public void execute(SpellCasterSource source){
+    public void execute(SpellCasterSource source)
+    {
     }
 
     /**

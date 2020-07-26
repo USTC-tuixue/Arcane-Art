@@ -15,27 +15,34 @@ import net.minecraftforge.common.ForgeConfig.Server;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class KeyPack {
+public class KeyPack
+{
     private String message;
 
-    public KeyPack(PacketBuffer buffer) {
+    public KeyPack(PacketBuffer buffer)
+    {
         this.message = buffer.readString();
     }
 
-    public KeyPack(String message) {
+    public KeyPack(String message)
+    {
         this.message = message;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(PacketBuffer buf)
+    {
         buf.writeString(this.message);
     }
 
-    public void handler(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-        	PlayerEntity player = ctx.get().getSender();
-        	if(message.equals("OpenMagicMenu")) {
-        		NetworkHooks.openGui((ServerPlayerEntity)player,new com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider() );
-        	}
+    public void handler(Supplier<NetworkEvent.Context> ctx)
+    {
+        ctx.get().enqueueWork(() ->
+        {
+            ServerPlayerEntity player = ctx.get().getSender();
+            if (message.equals("OpenMagicMenu") && player != null)
+            {
+                NetworkHooks.openGui(player, new com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider());
+            }
         });
         ctx.get().setPacketHandled(true);
     }

@@ -20,12 +20,16 @@ import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkHooks;
+
 @Mod.EventBusSubscriber
-public class GUIKeyHandler {
-	@SubscribeEvent
-	public static void onKeyInput(KeyInputEvent event) {
-		if(KeyLoader.showMagicMenu.isPressed()&&Minecraft.getInstance().isGameFocused()) {
-		    KeyEvent.INSTANCE.sendToServer(new KeyPack("OpenMagicMenu"));
-		}
-	}
+public class GUIKeyHandler
+{
+    @SubscribeEvent
+    public static void onKeyInput(KeyInputEvent event)
+    {
+        if (KeyLoader.showMagicMenu.isPressed() && Minecraft.getInstance().isGameFocused())
+        {
+            KeyEvent.INSTANCE.sendToServer(new KeyPack("OpenMagicMenu"));
+        }
+    }
 }
