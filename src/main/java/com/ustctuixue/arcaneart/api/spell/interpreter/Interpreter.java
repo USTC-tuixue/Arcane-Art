@@ -3,10 +3,12 @@ package com.ustctuixue.arcaneart.api.spell.interpreter;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
+import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -70,7 +72,7 @@ public class Interpreter
     }
 
     @Nonnull
-    public static SpellContainer compile(TranslatedSpell spell)
+    public static SpellContainer compile(@Nonnull TranslatedSpell spell)
     {
         SpellContainer container = new SpellContainer();
         compilePerProcess(spell.getPreProcessSentences(), container.preProcess);
@@ -79,8 +81,13 @@ public class Interpreter
         return container;
     }
 
-    public static ItemStack getItemSpell(TranslatedSpell spell, SpellCasterSource caster, @Nonnull ItemSpell itemSpell)
+    public static ItemStack getItemSpell(TranslatedSpell spell, @Nonnull ItemSpell itemSpell)
     {
+        if (spell == null)
+        {
+            return ItemStack.EMPTY;
+        }
+
         SpellContainer container = compile(spell);
         if (!container.isEmpty())
         {
@@ -103,4 +110,9 @@ public class Interpreter
         return 1;
     }
 
+    public static ItemStack fromWrittenBook(ItemStack book)
+    {
+        TranslatedSpell spell = TranslatedSpell.fromWrittenBook(book);
+        return getItemSpell(spell, APIRegistries.Items.ITEM_SPELL);
+    }
 }
