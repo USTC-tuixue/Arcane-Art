@@ -8,6 +8,7 @@ public class SpellModule extends Module
     protected Object[] getModLoadingEventHandler()
     {
         return new Object[]{
+                new SpellModuleRegistries()
         };
     }
 
@@ -15,7 +16,8 @@ public class SpellModule extends Module
     protected Object[] getCommonEventHandler()
     {
         return new Object[]{
-                new SpellModuleRegistries.SpellTranslations()
+                new SpellModuleRegistries.SpellTranslations(),
+                new SpellModuleRegistries()
         };
     }
 }

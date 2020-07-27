@@ -28,6 +28,6 @@ public class ServerLifecycleAPIEventHandler
     @SubscribeEvent @SuppressWarnings("unused")
     public void registerNewSpell(@Nonnull NewSpellEvent event)
     {
-        Interpreter.SPELLS.put(SpellKeyWords.MAKE, DefineVariableSpell::new);
+        event.register(SpellKeyWords.MAKE, DefineVariableSpell::new);
     }
 }

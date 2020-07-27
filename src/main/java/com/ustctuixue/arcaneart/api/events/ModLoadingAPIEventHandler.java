@@ -19,7 +19,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.Marker;
@@ -67,4 +71,10 @@ public class ModLoadingAPIEventHandler
         event.getRegistry().register(APIRegistries.Items.ITEM_SPELL.setRegistryName(ArcaneArtAPI.getResourceLocation("item_spell")));
     }
 
+    @SubscribeEvent @SuppressWarnings("unused")
+    public void onLoadFinish(FMLLoadCompleteEvent event)
+    {
+        FMLJavaModLoadingContext.get().getModEventBus().post(new NewSpellTranslationEvent(ModLoadingContext.get().getActiveContainer()));
+        SpellKeyWords.addAllTranslations();
+    }
 }

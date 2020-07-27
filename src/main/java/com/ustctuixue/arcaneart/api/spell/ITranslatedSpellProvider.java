@@ -59,7 +59,7 @@ public interface ITranslatedSpellProvider
         public void compile(SpellCasterSource source)
         {
             this.dirty = false;
-            this.compiled = Interpreter.compile(this.spell, source);
+            this.compiled = Interpreter.compile(this.spell);
             this.previousSource = source;
         }
 

@@ -21,8 +21,7 @@ public class TranslatedWords
     public Pattern getPattern()
     {
         return Pattern.compile("\\b" +
-                String.join("\\b|\\b", (String[])words.toArray()) + "\\b",
-                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
+                String.join("\\b|\\b", words) + "\\b"
         );
     }
 

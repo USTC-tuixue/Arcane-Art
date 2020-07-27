@@ -1,47 +1,74 @@
 package com.ustctuixue.arcaneart.spell.spell;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.spell.interpreter.ISpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.EntityListVariableArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.RelativeEntityListBuilder;
 import com.ustctuixue.arcaneart.api.util.EntityList;
+import com.ustctuixue.arcaneart.spell.SpellConfig;
 import net.minecraft.command.arguments.PotionArgument;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-
-import java.util.Map;
 
 public class EffectSpell implements ISpell
 {
-    public static Map<Effect, Double> EFFECT_COST = ImmutableMap.of(
-            Effects.NIGHT_VISION, 100D
-    );
-
     private EffectInstance effectInstance;
     private RelativeEntityListBuilder target;
 
     @Override
     public double getComplexity(SpellCasterSource source)
     {
-        return 0;
+        double amp = SpellConfig.SpellProperty.EffectSpell
+                .getComplexityAmplifier(
+                        this.effectInstance.getAmplifier(),
+                        this.effectInstance.getDuration(),
+                        this.target.build(source).size()
+                );
+        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+                .get(this.effectInstance.getPotion()).getBasicComplexity()
+                * amp;
     }
 
     @Override
     public double getManaCostBase(SpellCasterSource source)
     {
-        double amp = Math.pow(this.effectInstance.getAmplifier() + 1, 2) * effectInstance.getDuration() / 10;
-        return EFFECT_COST.get(this.effectInstance.getPotion()) * target.build(source).size() * amp;
+        double amp = SpellConfig.SpellProperty.EffectSpell
+                .getManaCostAmplifier(
+                        this.effectInstance.getAmplifier(),
+                        this.effectInstance.getDuration(),
+                        this.target.build(source).size()
+                );
+        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+                .get(this.effectInstance.getPotion()).getBasicCost()
+                * target.build(source).size() * amp;
     }
 
     @Override
     public void execute(SpellCasterSource source)
     {
+        if (this.effectInstance != null)
+        {
+            EntityList targetList = this.target.build(source);
 
+            for (Entity entity : targetList)
+            {
+                if (entity instanceof LivingEntity)
+                {
+                    LivingEntity entityLiving = (LivingEntity) entity;
+                    if (effectInstance.getPotion().isInstant()) {
+                        effectInstance.getPotion().affectEntity(source.getEntity(), source.getEntity(), entityLiving, effectInstance.getAmplifier(), 1.0D);
+                    } else {
+                        entityLiving.addPotionEffect(new EffectInstance(effectInstance));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -58,19 +85,25 @@ public class EffectSpell implements ISpell
             target = new EntityListVariableArgument().parse(reader).get();
             reader.skipWhitespace();
             Effect effect = new PotionArgument().parse(reader);
+
             int amplifier = 0;
             int duration = 10;
-            try
+            if (reader.canRead())
             {
-                reader.skipWhitespace();
-                duration = IntegerArgumentType.integer(0).parse(reader);
-                reader.skipWhitespace();
-                amplifier = IntegerArgumentType.integer(0).parse(reader);
-            }catch (CommandSyntaxException e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    reader.skipWhitespace();
+                    duration = IntegerArgumentType.integer(0).parse(reader);
+                    reader.skipWhitespace();
+                    amplifier = IntegerArgumentType.integer(0).parse(reader);
+                } catch (CommandSyntaxException e)
+                {
+                    e.printStackTrace();
+                    return false;
+                }
             }
             this.effectInstance = new EffectInstance(effect, duration, amplifier);
+            ArcaneArt.LOGGER.info(this.effectInstance.toString());
             return true;
         } catch (CommandSyntaxException e)
         {

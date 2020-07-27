@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.interpreter.CommandExceptionTypes;
@@ -57,10 +58,11 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
     @Override
     public RelativeEntityListBuilder parse(StringReader reader) throws CommandSyntaxException
     {
-
+        ArcaneArtAPI.LOGGER.info("Parsing EntityList");
         RelativeEntityListBuilder list = new RelativeEntityListBuilder();
         if (reader.canRead())
         {
+            reader.skipWhitespace();
             if (ArgumentUtil.validateSpellKeyWord(reader, SpellKeyWords.SELF))
             {
                 list.setSelf(true);
@@ -69,10 +71,10 @@ public class EntityListArgument implements ArgumentType<RelativeEntityListBuilde
             else
             {
                 list.setPredicate(getPredicate(reader));
+                list.setDistance(getMinMaxDistance(reader));
+                list.setOriginPos(getOriginPos(reader));
+                list.setLimit(getNumberLimit(reader));
             }
-            list.setDistance(getMinMaxDistance(reader));
-            list.setOriginPos(getOriginPos(reader));
-            list.setLimit(getNumberLimit(reader));
         }
         return list;
     }

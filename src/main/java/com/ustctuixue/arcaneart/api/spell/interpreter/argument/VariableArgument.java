@@ -4,6 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
@@ -24,10 +25,12 @@ public abstract class VariableArgument<T> implements ArgumentType<Variable<T>>
             char next = reader.peek();
             if (StringReader.isQuotedStringStart(next))                  // If is a variable
             {
+                ArcaneArtAPI.LOGGER.info("variable");
                 return new Variable<>(reader.readStringUntil(next), this.getType());
             }
             else                                // If not a variable form
             {
+                ArcaneArtAPI.LOGGER.info("Not a variable");
                 return new Variable<>(this.getType(), this.getArgumentType().parse(reader));
             }
         }
