@@ -1,9 +1,6 @@
 package com.ustctuixue.arcaneart.api;
 
-import com.ustctuixue.arcaneart.api.events.InGameAPIClientEventHandler;
-import com.ustctuixue.arcaneart.api.events.InGameAPIEventHandler;
-import com.ustctuixue.arcaneart.api.events.InGameMPEventHandler;
-import com.ustctuixue.arcaneart.api.events.ModLoadingAPIEventHandler;
+import com.ustctuixue.arcaneart.api.events.*;
 import com.ustctuixue.arcaneart.api.util.Module;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +37,8 @@ public class ArcaneArtAPI
         return new Object[]{
                 new InGameMPEventHandler(),
                 new InGameAPIEventHandler(),
-                new InGameAPIClientEventHandler()
+                new InGameAPIClientEventHandler(),
+                new ServerLifecycleAPIEventHandler()
         };
     }
 }

@@ -4,13 +4,16 @@ import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
+import com.ustctuixue.arcaneart.gui.magicmenu.MagicContainer;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
-import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
+import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
 import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
+import com.ustctuixue.arcaneart.spell.SpellModule;
+import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -51,7 +54,9 @@ public class ArcaneArt
 
         IEventBus modLoadingEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        new ArcaneArtAPI().registerEventHandlers();
+        new ArcaneArtAPI().registerModule();
+        new SpellModule().registerModule();
+
         modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();
 
@@ -60,8 +65,10 @@ public class ArcaneArt
 
 
         MinecraftForge.EVENT_BUS.register(this);
-        
-        
+
+        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
+
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -86,8 +93,8 @@ public class ArcaneArt
     public void clientSetup(FMLClientSetupEvent event)
     {
         KeyLoader.register();
-        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
         ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
+        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
     }
 
 

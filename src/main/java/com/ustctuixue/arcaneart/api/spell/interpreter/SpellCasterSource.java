@@ -7,22 +7,20 @@ import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.SpellCasterTiers;
+import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
 import lombok.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Objects;
 
 @AllArgsConstructor
 public class SpellCasterSource
@@ -39,23 +37,26 @@ public class SpellCasterSource
     @Getter
     private final MinecraftServer server;
 
+    /**
+     * 直接执行法术的实体
+     */
     @Getter
     private final Entity entity;
 
+    /**
+     * MP 的来源
+     */
     @Getter
     private final IMPConsumer mpConsumer;
-
-    @Getter
-    private final ItemStack spellCasterStack;
 
     @Getter
     private final int casterTier;
 
 
-    public SpellCasterSource(World worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
+    public SpellCasterSource(ServerWorld worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
     {
         this(entityIn.getPositionVec(), entityIn.getPitchYaw(),
-                Objects.requireNonNull(worldIn.getServer()).getWorld(worldIn.getDimension().getType()),
+                worldIn,
                 worldIn.getServer(), entityIn, mpStorageIn, tierIn
         );
     }
@@ -76,15 +77,14 @@ public class SpellCasterSource
             LazyOptional<IManaBar> optionalManaBar = entityIn.getCapability(CapabilityMP.MANA_BAR_CAP);
             boolean hasManaBar = optionalManaBar.isPresent();
             this.mpConsumer = hasManaBar? optionalManaBar.orElseGet(DefaultManaBar::new) : null;
-            spellCasterStack = (entityIn instanceof LivingEntity)?((LivingEntity) entityIn).getActiveItemStack():null;
         }
         else
         {
             this.mpConsumer = mpStorageIn;
-            spellCasterStack = null;
         }
     }
 
+    @Getter
     private final Map<String, Object> variables = Maps.newHashMap();
 
     /**
@@ -110,7 +110,8 @@ public class SpellCasterSource
     {
         return new SpellCasterSource(
                 source.getPos(), source.getRotation(), source.getWorld(), source.getServer(),
-                source.getEntity(), null, null, SpellCasterTiers.MAX_TIER
+                source.getEntity(), null, SpellCasterTiers.MAX_TIER
         );
     }
+
 }

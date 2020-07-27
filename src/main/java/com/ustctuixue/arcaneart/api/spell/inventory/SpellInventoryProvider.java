@@ -9,29 +9,37 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 
-public class SpellInventoryProvider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
-	private ISpellInventory spellInventoryCapability;
-	@Override
-	public CompoundNBT serializeNBT() {
-		return getOrCreateCapability().serializeNBT();
-	}
+public class SpellInventoryProvider implements ICapabilityProvider, INBTSerializable<CompoundNBT>
+{
+    private ISpellInventory spellInventoryCapability;
 
-	@Override
-	public void deserializeNBT(CompoundNBT nbt) {
-		getOrCreateCapability().deserializeNBT(nbt);
-	}
+    @Override
+    public CompoundNBT serializeNBT()
+    {
+        return getOrCreateCapability().serializeNBT();
+    }
 
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        return cap == SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY ? LazyOptional.of(this::getOrCreateCapability).cast() : LazyOptional.empty();
-	}
+    @Override
+    public void deserializeNBT(CompoundNBT nbt)
+    {
+        getOrCreateCapability().deserializeNBT(nbt);
+    }
 
-	@Nonnull
-	private ISpellInventory getOrCreateCapability() {        
-		if (spellInventoryCapability == null) {
-			this.spellInventoryCapability = new SpellInventory();
-		}
-		return this.spellInventoryCapability;
-	}
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side)
+    {
+        return cap == SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY ?
+				LazyOptional.of(this::getOrCreateCapability).cast() : LazyOptional.empty();
+    }
+
+    @Nonnull
+    private ISpellInventory getOrCreateCapability()
+    {
+        if (spellInventoryCapability == null)
+        {
+            this.spellInventoryCapability = new SpellInventory();
+        }
+        return this.spellInventoryCapability;
+    }
 }
