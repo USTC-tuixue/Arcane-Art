@@ -3,18 +3,21 @@ package com.ustctuixue.arcaneart.spell.spell;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.spell.interpreter.ISpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.EntityListVariableArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.RelativeEntityListBuilder;
+import com.ustctuixue.arcaneart.api.util.EntityList;
 import com.ustctuixue.arcaneart.spell.SpellConfig;
 import net.minecraft.command.arguments.PotionArgument;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 
 public class EffectSpell implements ISpell
 {
-
     private EffectInstance effectInstance;
     private RelativeEntityListBuilder target;
 
@@ -49,7 +52,23 @@ public class EffectSpell implements ISpell
     @Override
     public void execute(SpellCasterSource source)
     {
+        if (this.effectInstance != null)
+        {
+            EntityList targetList = this.target.build(source);
 
+            for (Entity entity : targetList)
+            {
+                if (entity instanceof LivingEntity)
+                {
+                    LivingEntity entityLiving = (LivingEntity) entity;
+                    if (effectInstance.getPotion().isInstant()) {
+                        effectInstance.getPotion().affectEntity(source.getEntity(), source.getEntity(), entityLiving, effectInstance.getAmplifier(), 1.0D);
+                    } else {
+                        entityLiving.addPotionEffect(new EffectInstance(effectInstance));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -66,19 +85,25 @@ public class EffectSpell implements ISpell
             target = new EntityListVariableArgument().parse(reader).get();
             reader.skipWhitespace();
             Effect effect = new PotionArgument().parse(reader);
+
             int amplifier = 0;
             int duration = 10;
-            try
+            if (reader.canRead())
             {
-                reader.skipWhitespace();
-                duration = IntegerArgumentType.integer(0).parse(reader);
-                reader.skipWhitespace();
-                amplifier = IntegerArgumentType.integer(0).parse(reader);
-            }catch (CommandSyntaxException e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    reader.skipWhitespace();
+                    duration = IntegerArgumentType.integer(0).parse(reader);
+                    reader.skipWhitespace();
+                    amplifier = IntegerArgumentType.integer(0).parse(reader);
+                } catch (CommandSyntaxException e)
+                {
+                    e.printStackTrace();
+                    return false;
+                }
             }
             this.effectInstance = new EffectInstance(effect, duration, amplifier);
+            ArcaneArt.LOGGER.info(this.effectInstance.toString());
             return true;
         } catch (CommandSyntaxException e)
         {

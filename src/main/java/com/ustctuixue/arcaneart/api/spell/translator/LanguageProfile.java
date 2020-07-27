@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.toml.TomlFormat;
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
@@ -35,40 +36,32 @@ public class LanguageProfile
         this.name = name;
     }
 
+    private void dump()
+    {
+        ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "language: " + this.name);
+        keyWordMap.forEach(((keyWord, translatedWords) ->
+                ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE,
+                        keyWord.toString() + " = " + translatedWords.toString())
+                ));
+    }
+
     private void loadFromRegistry()
     {
         Set<ResourceLocation> keyWords = SpellKeyWord.REGISTRY.getKeys();
-        keyWordMap.putAll(
-                Maps.asMap(
-                        keyWords
-                                .stream()
-                                .filter(
-                                    resourceLocation -> {
-                                        SpellKeyWord kw = SpellKeyWord.REGISTRY.getValue(resourceLocation);
-                                        return !keyWordMap.containsKey(kw);
-                                    }
-                                )
-                                .map(
-                                    (kw)->
-                                            SpellKeyWord.REGISTRY.getValue(kw)
-                                )
-                                .collect(Collectors.toSet()),
-                        (k) ->
-                        {
-                            // I don't know how you registered a null into a Forge registry.
-                            Objects.requireNonNull(k);
-                            Objects.requireNonNull(k.getRegistryName());
-                            return TranslatedWords.singleton(k.toString());
-                        }
-                )
-        );
+        for (ResourceLocation rl :
+                keyWords)
+        {
+            keyWordMap.putIfAbsent(SpellKeyWord.REGISTRY.getRaw(rl), TranslatedWords.singleton(rl.toString()));
+        }
     }
 
     void load(File file)
     {
         CommentedFileConfig config = CommentedFileConfig.of(file);
         config.load();
+        dump();
         loadFromRegistry();
+        dump();
         ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "Loading file for language: " + this.name);
 
         // Load from config file
@@ -91,10 +84,10 @@ public class LanguageProfile
         {
             e.printStackTrace();
         }
+        dump();
         for (Map.Entry<SpellKeyWord, TranslatedWords> entry:
                 this.keyWordMap.entrySet())
         {
-            ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, entry.getKey().getTranslationPath() + " = " + entry.getValue());
             config.add(entry.getKey().getTranslationPath(), entry.getValue().toList());
         }
         config.add(ArcaneArtAPI.MOD_ID + ".punctuation.leftQuote", this.leftQuote);
@@ -111,7 +104,7 @@ public class LanguageProfile
                         .map(translatedWords -> translatedWords.getPattern().pattern())
                         .collect(Collectors.toSet()),
                 "|"
-        ), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        ));
 
     }
 
@@ -168,6 +161,10 @@ public class LanguageProfile
         if (keyWordMap.containsKey(keyword) && keyWordMap.get(keyword) != null)
         {
             this.keyWordMap.get(keyword).add(translation).addAll(translations);
+        }
+        else
+        {
+            this.keyWordMap.put(keyword, TranslatedWords.fromStrings(translations).add(translation));
         }
         ArcaneArtAPI.LOGGER.debug(LanguageManager.LANGUAGE, "Updated translation: " + keyword + "=" + this.keyWordMap.get(keyword));
         return this;

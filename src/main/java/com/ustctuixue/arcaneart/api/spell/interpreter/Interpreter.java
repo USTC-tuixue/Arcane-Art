@@ -3,13 +3,14 @@ package com.ustctuixue.arcaneart.api.spell.interpreter;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -19,23 +20,28 @@ public class Interpreter
 
     public static Map<SpellKeyWord, Supplier<ISpell>> SPELLS = Maps.newHashMap();
 
-    @Nullable
-    public static SpellContainer compile(TranslatedSpell spell, SpellCasterSource caster)
+    private static int compilePerProcess(List<String> processSpellList, List<ISpell> processCompiledSpells)
     {
-        SpellContainer container = new SpellContainer();
-        for (String s :
-                spell.getCommonSentences())
+        int succeeded = 0;
+        for (String s : processSpellList)
         {
             StringReader reader = new StringReader(s);
+
+            // Get effective keyword
             SpellKeyWord kw;
             try
             {
                 kw = TranslatedSpell.getFirstKeyWord(reader);
+                ArcaneArtAPI.LOGGER.debug("Spell keyword: " + kw);
             } catch (CommandSyntaxException e)
             {
+                reader.skipWhitespace();
+                ArcaneArtAPI.LOGGER.debug("Ineffective keyword: " + reader.getRemaining());
                 e.printStackTrace();
-                return null;
+                return succeeded;
             }
+
+            // Get spell supplier
             Supplier<ISpell> spellSupplier = SPELLS.getOrDefault(kw, null);
             if (spellSupplier != null)
             {
@@ -43,89 +49,40 @@ public class Interpreter
                 boolean flag = compiledSpell.parse(reader);
                 if (flag)
                 {
-                    container.preProcess.add(compiledSpell);
+                    ArcaneArtAPI.LOGGER.info("Successfully parsed spell");
+                    processCompiledSpells.add(compiledSpell);
+                    succeeded++;
                 }
                 else
                 {
-                    return null;
+                    ArcaneArtAPI.LOGGER.info("Parse failed for spell: " + kw);
+                    ArcaneArtAPI.LOGGER.info("Spell: " + reader.getString());
+                    return succeeded;
                 }
             }
             else
             {
-                return null;
+                ArcaneArtAPI.LOGGER.info("Keyword " + kw + " cannot provide a spell parser!");
+                return succeeded;
             }
         }
-        for (String s :
-                spell.getOnReleaseSentences())
-        {
-            StringReader reader = new StringReader(s);
-            SpellKeyWord kw;
-            try
-            {
-                kw = TranslatedSpell.getFirstKeyWord(reader);
-            } catch (CommandSyntaxException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-            Supplier<ISpell> spellSupplier = SPELLS.get(kw);
-            if (spellSupplier != null)
-            {
-                ISpell compiledSpell = spellSupplier.get();
-                boolean flag = compiledSpell.parse(reader);
-                if (flag)
-                {
-                    container.onRelease.add(compiledSpell);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        for (String s :
-                spell.getOnHoldSentences())
-        {
-            StringReader reader = new StringReader(s);
-            SpellKeyWord kw;
-            try
-            {
-                kw = TranslatedSpell.getFirstKeyWord(reader);
-            } catch (CommandSyntaxException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-            Supplier<ISpell> spellSupplier = SPELLS.get(kw);
-            if (spellSupplier != null)
-            {
-                ISpell compiledSpell = spellSupplier.get();
-                boolean flag = compiledSpell.parse(reader);
-                if (flag)
-                {
-                    container.onHold.add(compiledSpell);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
+        return succeeded;
+    }
+
+    @Nonnull
+    public static SpellContainer compile(TranslatedSpell spell)
+    {
+        SpellContainer container = new SpellContainer();
+        compilePerProcess(spell.getPreProcessSentences(), container.preProcess);
+        compilePerProcess(spell.getOnHoldSentences(), container.onHold);
+        compilePerProcess(spell.getOnReleaseSentences(), container.onRelease);
         return container;
     }
 
     public static ItemStack getItemSpell(TranslatedSpell spell, SpellCasterSource caster, @Nonnull ItemSpell itemSpell)
     {
-        SpellContainer container = compile(spell, caster);
-        if (container != null && !container.isEmpty())
+        SpellContainer container = compile(spell);
+        if (!container.isEmpty())
         {
             ItemStack stack = new ItemStack(itemSpell);
             itemSpell.setSpell(stack, spell, container);
@@ -136,15 +93,14 @@ public class Interpreter
 
     public static int executeSpell(TranslatedSpell spell, SpellCasterSource source)
     {
-        SpellContainer container = compile(spell, source);
-        if (container != null)
-        {
-            container.executePreProcess(source);
-            container.executeOnHold(source);
-            container.executeOnRelease(source);
-            return 1;
-        }
-        return 0;
+        SpellContainer container = compile(spell);
+        ArcaneArtAPI.LOGGER.debug("Executing pre processors");
+        container.executePreProcess(source);
+        ArcaneArtAPI.LOGGER.debug("Executing on holds");
+        container.executeOnHold(source);
+        ArcaneArtAPI.LOGGER.debug("Executing on release");
+        container.executeOnRelease(source);
+        return 1;
     }
 
 }

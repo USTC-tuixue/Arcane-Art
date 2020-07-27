@@ -40,7 +40,7 @@ public class TestCommands
                 try
                 {
                     source.sendFeedback(new TranslationTextComponent("Common:"), true);
-                    for (String t : spell.getCommonSentences())
+                    for (String t : spell.getPreProcessSentences())
                     {
                         ITextComponent component = new TranslationTextComponent(t);
                         source.sendFeedback(component, true);
