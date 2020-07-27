@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +32,8 @@ public class ItemSpell extends Item
     @SuppressWarnings("WeakerAccess")
     public ITranslatedSpellProvider getSpellProvider(ItemStack stack)
     {
-        return stack.getCapability(CapabilitySpell.SPELL_CAP).orElseGet(ITranslatedSpellProvider.Impl::new);
+        LazyOptional<ITranslatedSpellProvider> provider = stack.getCapability(CapabilitySpell.SPELL_CAP).cast();
+        return provider.orElse(new ITranslatedSpellProvider.Impl());
     }
 
     public void setSpell(ItemStack stack, TranslatedSpell spell, SpellContainer container)

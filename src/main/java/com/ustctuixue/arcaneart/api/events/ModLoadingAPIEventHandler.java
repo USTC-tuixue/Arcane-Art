@@ -8,6 +8,8 @@ import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
+import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
@@ -50,6 +52,9 @@ public class ModLoadingAPIEventHandler
             public void readNBT(Capability<ISpellInventory> capability, ISpellInventory instance,
                                 net.minecraft.util.Direction side, INBT nbt) {}
         }, SpellInventory::new);
+        CapabilityManager.INSTANCE.register(
+                ITranslatedSpellProvider.class, new CapabilitySpell.Storage(), ITranslatedSpellProvider.Impl::new
+        );
     }
 
 

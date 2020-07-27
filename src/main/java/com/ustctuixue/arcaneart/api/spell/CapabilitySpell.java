@@ -95,7 +95,7 @@ public class CapabilitySpell
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
         {
-            return cap == SPELL_CAP ? LazyOptional.of(()->spell).cast() : LazyOptional.empty();
+            return cap == SPELL_CAP ? LazyOptional.of(()->provider).cast() : LazyOptional.empty();
         }
 
         @Override
