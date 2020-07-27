@@ -1,22 +1,16 @@
-package com.ustctuixue.arcaneart.gui.MagicMenu;
+package com.ustctuixue.arcaneart.gui.magicmenu;
 
 import java.util.ArrayList;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.types.templates.List;
 import com.ustctuixue.arcaneart.ArcaneArt;
 
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.WeightedRandom.Item;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class MagicMenu extends ContainerScreen<MagicContainer>

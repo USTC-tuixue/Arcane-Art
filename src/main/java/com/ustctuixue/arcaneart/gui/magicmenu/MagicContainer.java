@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.gui.MagicMenu;
+package com.ustctuixue.arcaneart.gui.magicmenu;
 
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;

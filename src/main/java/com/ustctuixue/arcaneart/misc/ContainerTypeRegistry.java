@@ -1,7 +1,7 @@
 package com.ustctuixue.arcaneart.misc;
 
 
-import com.ustctuixue.arcaneart.gui.MagicMenu.MagicContainer;
+import com.ustctuixue.arcaneart.gui.magicmenu.MagicContainer;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;

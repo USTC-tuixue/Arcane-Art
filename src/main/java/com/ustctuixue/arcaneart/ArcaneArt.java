@@ -5,7 +5,7 @@ import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
-import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenu;
+import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
