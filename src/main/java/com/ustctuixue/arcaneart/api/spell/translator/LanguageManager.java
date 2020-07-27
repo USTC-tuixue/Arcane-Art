@@ -113,10 +113,16 @@ public class LanguageManager
         Map<String, Integer> counts =
                 Maps.transformEntries(profiles, (profileName, profile)->
                 {
-                    if (profile == null) return 0;
+                    if (profile == null)
+                    {
+                        return 0;
+                    }
                     ArcaneArtAPI.LOGGER.debug(LANGUAGE, "Matching language " + profileName);
                     int matchCount = 0;
-                    Matcher matcher = profile.getAllPatterns().matcher(sp);
+                    Pattern pattern = profile.getAllPatterns();
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, "All Pattern:");
+                    ArcaneArtAPI.LOGGER.debug(LANGUAGE, pattern.pattern());
+                    Matcher matcher = pattern.matcher(sp);
                     while(matcher.find())
                     {
                         ++matchCount;

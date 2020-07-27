@@ -4,7 +4,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -15,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class CapabilitySpell
 {
+    @SuppressWarnings("WeakerAccess")
     @CapabilityInject(ITranslatedSpellProvider.class)
     public static Capability<ITranslatedSpellProvider> SPELL_CAP = null;
 
@@ -22,7 +22,7 @@ public class CapabilitySpell
     public static class Storage implements Capability.IStorage<ITranslatedSpellProvider>
     {
         private static final String TITLE = "title";
-        private static final String COMMON = "commonSentences";
+        private static final String PRE_PROCESS = "preProcessSentences";
         private static final String ON_HOLD = "onHoldSentences";
         private static final String ON_RELEASE = "onReleaseSentences";
 
@@ -33,7 +33,7 @@ public class CapabilitySpell
             CompoundNBT nbt = new CompoundNBT();
             TranslatedSpell translatedSpell = instance.getSpell();
             nbt.putString(TITLE, translatedSpell.getName());
-            nbt.put(COMMON, encodeIncantation(translatedSpell.getCommonSentences()));
+            nbt.put(PRE_PROCESS, encodeIncantation(translatedSpell.getPreProcessSentences()));
             nbt.put(ON_HOLD, encodeIncantation(translatedSpell.getOnHoldSentences()));
             nbt.put(ON_RELEASE, encodeIncantation(translatedSpell.getOnReleaseSentences()));
             return nbt;
@@ -45,7 +45,7 @@ public class CapabilitySpell
             CompoundNBT compoundNBT = (CompoundNBT) nbt;
             TranslatedSpell translatedSpell = instance.getSpell();
             translatedSpell.setName(compoundNBT.getString(TITLE));
-            translatedSpell.addAllCommonSentences(decodeIncantation(compoundNBT.getList(COMMON, 8)));
+            translatedSpell.addAllCommonSentences(decodeIncantation(compoundNBT.getList(PRE_PROCESS, 8)));
             translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
             translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
             instance.setSpell(translatedSpell);
@@ -95,7 +95,7 @@ public class CapabilitySpell
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
         {
-            return cap == SPELL_CAP ? LazyOptional.of(()->spell).cast() : LazyOptional.empty();
+            return cap == SPELL_CAP ? LazyOptional.of(()->provider).cast() : LazyOptional.empty();
         }
 
         @Override
@@ -111,14 +111,4 @@ public class CapabilitySpell
         }
     }
 
-    public static class Provider implements ICapabilityProvider
-    {
-        TranslatedSpell spell = new TranslatedSpell();
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-        {
-            return cap == SPELL_CAP ? LazyOptional.of(()->spell).cast() : LazyOptional.empty();
-        }
-    }
 }

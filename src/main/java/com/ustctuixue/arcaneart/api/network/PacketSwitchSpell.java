@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.network;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
 import lombok.AllArgsConstructor;
@@ -14,18 +15,18 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 public class PacketSwitchSpell
 {
-    Hand hand;
     int switchedSpell;
 
     public static void handle(PacketSwitchSpell packet, Supplier<NetworkEvent.Context> contextSupplier)
     {
+        ArcaneArtAPI.LOGGER.debug("Received spell switch packet, handling...");
         PlayerEntity playerEntity = contextSupplier.get().getSender();
         if (playerEntity == null)
         {
             return;
         }
         contextSupplier.get().enqueueWork( () -> {
-            ItemStack stack = playerEntity.getHeldItem(packet.hand);
+            ItemStack stack = playerEntity.getHeldItem(Hand.MAIN_HAND);
             if (stack.getItem() instanceof ItemSpellCaster)
             {
                 ((ItemSpellCaster) stack.getItem()).setSpellSlot(stack, packet.switchedSpell);
@@ -34,11 +35,10 @@ public class PacketSwitchSpell
     }
 
     public static void encode(PacketSwitchSpell pkt, PacketBuffer buf) {
-        buf.writeEnumValue(pkt.hand);
         buf.writeVarInt(pkt.switchedSpell);
     }
 
     public static PacketSwitchSpell decode(PacketBuffer buf) {
-        return new PacketSwitchSpell(buf.readEnumValue(Hand.class), buf.readVarInt());
+        return new PacketSwitchSpell(buf.readVarInt());
     }
 }
