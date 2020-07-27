@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist;
 
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.IRelativeArgumentBuilder;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.position.RelativeVec3dListBuilder;
@@ -54,6 +55,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
         if (self)
         {
             list.add(source.getEntity());
+            ArcaneArtAPI.LOGGER.info("Targets: " + list);
             return list;
         }
         Vec3d pivot = originPos.build(source).next();
@@ -63,6 +65,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
             list.addAll(source.getWorld().getEntitiesWithinAABB(type, aabb.offset(pivot), this.summarizedPredicate(pivot)));
         }
         source.getWorld().getEntities(type, this.summarizedPredicate(pivot));
+        ArcaneArtAPI.LOGGER.info("Targets: " + list);
         return list;
     }
 

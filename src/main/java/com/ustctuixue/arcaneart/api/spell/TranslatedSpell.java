@@ -25,7 +25,7 @@ public class TranslatedSpell
     private String name;
 
     @Getter @Nonnull
-    private final List<String> commonSentences = Lists.newArrayList();
+    private final List<String> preProcessSentences = Lists.newArrayList();
 
     @Getter @Nonnull
     private final List<String> onHoldSentences = Lists.newArrayList();
@@ -48,7 +48,7 @@ public class TranslatedSpell
     @SuppressWarnings(value={"WeakerAccess", ""})
     public TranslatedSpell addCommonSentence(String s)
     {
-        commonSentences.add(s);
+        preProcessSentences.add(s);
         return this;
     }
 
@@ -66,7 +66,7 @@ public class TranslatedSpell
 
     public TranslatedSpell addAllCommonSentences(Collection<String> sentences)
     {
-        commonSentences.addAll(sentences);
+        preProcessSentences.addAll(sentences);
         return this;
     }
 
