@@ -2,27 +2,33 @@ package com.ustctuixue.arcaneart.ritual.device;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public class DingBlock extends Block {
+public class DingBlock extends Block implements IWaterLoggable {
     public static enum EnumShape implements IStringSerializable {
         CENTER("center"), SQUARE("square"), CIRCLE("circle");
         private final String name;
@@ -39,19 +45,22 @@ public class DingBlock extends Block {
     public static final BooleanProperty LOCK = BooleanProperty.create("lock");
     public static final EnumProperty<EnumShape> SHAPE = EnumProperty.create("shape", EnumShape.class);
 
+
     public DingBlock(EnumShape shape) {
         super(Properties
                 .create(Material.IRON)
                 .hardnessAndResistance(5)
-                .notSolid());
+                .notSolid()
+                .harvestTool(ToolType.PICKAXE));
         this.setDefaultState(this.stateContainer.getBaseState()
                 .with(LOCK, false)
-                .with(SHAPE, shape));
+                .with(SHAPE, shape)
+                .with(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(LOCK).add(SHAPE);
+        builder.add(LOCK).add(SHAPE).add(BlockStateProperties.WATERLOGGED);
         super.fillStateContainer(builder);
     }
 

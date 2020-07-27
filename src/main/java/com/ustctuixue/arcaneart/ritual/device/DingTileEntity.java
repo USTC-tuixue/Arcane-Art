@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
 import com.ustctuixue.arcaneart.ritual.RitualRegistry;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -35,7 +36,7 @@ public class DingTileEntity extends TileEntity {
         }
     }
 
-    public ItemStackHandler itemStackHandler = new ItemStackHandler();
+    protected ItemStackHandler itemStackHandler = new ItemStackHandler();
 
     @Nonnull
     @Override
@@ -44,5 +45,9 @@ public class DingTileEntity extends TileEntity {
             return LazyOptional.of(()->itemStackHandler).cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    public ItemStack getItemStored() {
+        return itemStackHandler.getStackInSlot(0);
     }
 }
