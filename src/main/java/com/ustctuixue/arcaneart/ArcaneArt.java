@@ -12,9 +12,9 @@ import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
 import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
+import net.minecraft.entity.player.PlayerInventory;
 import com.ustctuixue.arcaneart.spell.SpellModule;
 import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -28,8 +28,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,10 +63,6 @@ public class ArcaneArt
 
 
         MinecraftForge.EVENT_BUS.register(this);
-
-        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -93,8 +87,8 @@ public class ArcaneArt
     public void clientSetup(FMLClientSetupEvent event)
     {
         KeyLoader.register();
-        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
         ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
+        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
     }
 
 

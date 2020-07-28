@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "block/oak_planks",
-		"particle": "block/oak_planks"
+		"1": "block/acacia_planks",
+		"particle": "block/acacia_planks"
 	},
 	"elements": [
 		{
@@ -86,7 +86,7 @@
 			"scale": [0.6, 0.6, 0.6]
 		},
 		"ground": {
-			"scale": [0.5, 0.5, 0.5]
+			"scale": [0.3, 0.3, 0.3]
 		},
 		"gui": {
 			"rotation": [15, 50, -10],
