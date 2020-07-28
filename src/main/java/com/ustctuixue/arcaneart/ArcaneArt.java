@@ -11,6 +11,7 @@ import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import com.ustctuixue.arcaneart.spell.SpellModule;
+import com.ustctuixue.arcaneart.ritual.RitualRegistry;
 import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -66,6 +67,9 @@ public class ArcaneArt
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         com.ustctuixue.arcaneart.misc.Registry.register(FMLJavaModLoadingContext.get().getModEventBus());
 
+        RitualRegistry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RitualRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RitualRegistry.TILE_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     @Nonnull
