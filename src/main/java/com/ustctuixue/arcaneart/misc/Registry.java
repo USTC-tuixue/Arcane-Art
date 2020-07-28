@@ -1,9 +1,5 @@
 package com.ustctuixue.arcaneart.misc;
 
-import com.ustctuixue.arcaneart.misc.block.BlockRegistry;
-import com.ustctuixue.arcaneart.misc.item.ItemRegistry;
-import com.ustctuixue.arcaneart.misc.tileentity.TileEntityTypeRegistry;
-
 import net.minecraftforge.eventbus.api.IEventBus;
 
 public class Registry {

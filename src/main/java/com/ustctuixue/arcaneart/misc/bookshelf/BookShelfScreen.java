@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.misc.tileentity;
+package com.ustctuixue.arcaneart.misc.bookshelf;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 

@@ -1,7 +1,6 @@
-package com.ustctuixue.arcaneart.misc.tileentity;
+package com.ustctuixue.arcaneart.misc.bookshelf;
 
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
-import com.ustctuixue.arcaneart.misc.block.BookShelf;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,7 +40,7 @@ public class BookShelfContainer extends Container {
         BlockState state = this.world.getBlockState(pos);
         for (int i = 0; i < 7; i++)
         {
-            state = state.with(BookShelf.BOOKS[i],
+            state = state.with(BookShelfBlock.BOOKS[i],
                     this.inventorySlots.get(i + 36).getHasStack());
         }
 
@@ -50,13 +49,13 @@ public class BookShelfContainer extends Container {
         {
             if (this.inventorySlots.get(i + 36).getHasStack())
             {
-                state = state.with(BookShelf.BOOKS[c], true);
+                state = state.with(BookShelfBlock.BOOKS[c], true);
                 c++;
             }
         }
         for (; c < 10; c++)
         {
-            state = state.with(BookShelf.BOOKS[c], false);
+            state = state.with(BookShelfBlock.BOOKS[c], false);
         }
 
         this.world.setBlockState(pos, state);

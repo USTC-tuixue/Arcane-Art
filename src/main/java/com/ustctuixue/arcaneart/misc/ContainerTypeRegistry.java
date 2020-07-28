@@ -1,7 +1,7 @@
 package com.ustctuixue.arcaneart.misc;
 
 
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
+import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfContainer;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicContainer;
 
 import net.minecraft.client.Minecraft;

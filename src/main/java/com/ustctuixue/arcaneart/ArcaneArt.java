@@ -4,15 +4,12 @@ import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.test.TestEventHandler;
 import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
-import com.ustctuixue.arcaneart.gui.magicmenu.MagicContainer;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfContainer;
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfScreen;
+import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
-import net.minecraft.entity.player.PlayerInventory;
 import com.ustctuixue.arcaneart.spell.SpellModule;
 import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 import net.minecraft.item.ItemGroup;
@@ -20,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -54,6 +50,8 @@ public class ArcaneArt
 
         new ArcaneArtAPI().registerModule();
         new SpellModule().registerModule();
+
+        SpellModuleRegistries.SpellKeyWords.SPELL_KEY_WORD_DEFERRED_REGISTER.register(modLoadingEventBus);
 
         modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();

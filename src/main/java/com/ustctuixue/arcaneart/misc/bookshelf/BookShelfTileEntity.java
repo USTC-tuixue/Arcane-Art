@@ -1,8 +1,9 @@
-package com.ustctuixue.arcaneart.misc.tileentity;
+package com.ustctuixue.arcaneart.misc.bookshelf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.ustctuixue.arcaneart.misc.TileEntityTypeRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;

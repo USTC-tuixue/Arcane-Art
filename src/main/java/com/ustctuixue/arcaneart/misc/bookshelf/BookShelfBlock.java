@@ -1,6 +1,5 @@
-package com.ustctuixue.arcaneart.misc.block;
+package com.ustctuixue.arcaneart.misc.bookshelf;
 
-import com.ustctuixue.arcaneart.misc.tileentity.BookShelfTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -28,7 +27,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-public class BookShelf extends Block {
+public class BookShelfBlock extends Block {
 	public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty[] BOOKS = new BooleanProperty[10];
 
@@ -40,7 +39,7 @@ public class BookShelf extends Block {
         BOOKS[9] = BooleanProperty.create("bookx");
     }
 
-    public BookShelf() {
+    public BookShelfBlock() {
         super(Properties.create(Material.WOOD).hardnessAndResistance(1.5f).notSolid());
         this.setDefaultState(this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.SOUTH));
         for (int i = 0; i < 10; i++)
