@@ -28,7 +28,7 @@ public class EffectSpell implements ISpell
                 .getComplexityAmplifier(
                         this.effectInstance.getAmplifier(),
                         this.effectInstance.getDuration(),
-                        this.target.build(source).size()
+                        this.target.build(source).size() 
                 );
         return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
                 .get(this.effectInstance.getPotion()).getBasicComplexity()
