@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,16 +67,17 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
         int id = REGISTRY.getID(new ResourceLocation(word));
         if (id != -1)
         {
-            return String.format("kw:%04d", id);
+            return String.format("kw:%04x", id);
         }
         return word;
     }
 
     static String decode(String word)
     {
-        if (word.matches("kw:[0-9]{4}"))
+        if (word.matches("kw:[0-9a-f]{4}"))
         {
-            SpellKeyWord keyWord = REGISTRY.getValue(Integer.getInteger(word.substring(3)));
+            LogManager.getLogger(SpellKeyWord.class).debug("Word id: 0x" + word.substring(3));
+            SpellKeyWord keyWord = REGISTRY.getValue(Integer.decode("0x" + word.substring(3)));
             ResourceLocation rl = keyWord.getRegistryName();
             if (rl != null)
             {
