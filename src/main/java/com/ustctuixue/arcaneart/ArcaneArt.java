@@ -7,6 +7,7 @@ import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
+import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import com.ustctuixue.arcaneart.spell.SpellModule;
@@ -50,8 +51,9 @@ public class ArcaneArt
         new ArcaneArtAPI().registerModule();
         new SpellModule().registerModule();
 
-        modLoadingEventBus.register(new TestEventHandler());
         SpellModuleRegistries.SpellKeyWords.SPELL_KEY_WORD_DEFERRED_REGISTER.register(modLoadingEventBus);
+
+        modLoadingEventBus.register(new TestEventHandler());
         TestObjects.register();
 
         modLoadingEventBus.addListener(this::commonSetup);
@@ -59,11 +61,10 @@ public class ArcaneArt
 
 
         MinecraftForge.EVENT_BUS.register(this);
-
-        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        com.ustctuixue.arcaneart.misc.Registry.register(FMLJavaModLoadingContext.get().getModEventBus());
 
     }
 
@@ -85,6 +86,7 @@ public class ArcaneArt
     {
         KeyLoader.register();
         ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
+        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
     }
 
 
