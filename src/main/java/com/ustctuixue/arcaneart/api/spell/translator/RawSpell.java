@@ -6,6 +6,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +38,28 @@ public class RawSpell
             StringBuilder buffer = new StringBuilder();
             for (INBT page : pages)
             {
-                String pageContent = page.getString();
+                String pageContent;
+                if (page instanceof CompoundNBT)
+                {
+                    CompoundNBT compoundPage = (CompoundNBT) page;
+                    if (compoundPage.contains("translate"))
+                    {
+                        pageContent = compoundPage.getString("translate");
+                    }
+                    else
+                    {
+                        pageContent = compoundPage.getString("text");
+                    }
+                }
+                else if (page instanceof StringNBT)
+                {
+                    pageContent = page.toString();
+                }
+                else
+                {
+                    break;
+                }
+
                 if (!pageContent.endsWith("-")) // 连字符
 
                 {
