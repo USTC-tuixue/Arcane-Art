@@ -45,6 +45,8 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
             //这里是服务器逻辑
             LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
             mpStorageCapLazyOptional.ifPresent((s) -> {
+                if (!world.canSeeSky(this.getPos()))
+                    return;//默认情况下水晶需要看到天空以工作
                 double regenRatio = crystalRegenRatio();
                 if (regenRatio == 0)
                     return;
