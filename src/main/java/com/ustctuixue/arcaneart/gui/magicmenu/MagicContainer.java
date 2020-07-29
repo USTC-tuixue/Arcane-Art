@@ -5,6 +5,8 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
+import com.ustctuixue.arcaneart.networking.KeyEvent;
+import com.ustctuixue.arcaneart.networking.KeyPack;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,7 +24,6 @@ public class MagicContainer extends Container {
 	private PlayerInventory inv;
 	private Inventory spellMainInventory;
 	private Inventory spellHotBar;
-	private Inventory bookIcon;
 	private Inventory deleteIcon;
 	private Inventory itchSpellSlot;
 
@@ -38,11 +39,9 @@ public class MagicContainer extends Container {
 		});
 		layoutPlayerInventorySlots(inv, 8, 140);
 		this.itchSpellSlot = new Inventory(1);
-		this.bookIcon = new Inventory(1);
 		this.deleteIcon = new Inventory(1);
 		addSlotBox(spellMainInventory, 0, 8, 18, 9, 18, 6, 18);
 		addSlotBox(spellHotBar, 0, 173, 18, 1, 18, 9, 18);
-		addSlot(new Slot(bookIcon, 0, 199, 44));
 		addSlot(new Slot(deleteIcon, 0, 199, 95));
 		addSlot(new Slot(itchSpellSlot, 0, 199, 62));
 	}
@@ -108,34 +107,20 @@ public class MagicContainer extends Container {
 			}
 
 			if (mouseItemStack.getItem() == Items.WRITTEN_BOOK) {
-				if (!(slotId < 36 || slotId == 101)) {
+				if (!(slotId < 36 || slotId == 100)) {
 					return ItemStack.EMPTY;
 				}
 			}
 
-			if (slotId == 100 && mouseItemStack.getItem() instanceof ItemSpell) {
+			if (slotId == 99 && mouseItemStack.getItem() instanceof ItemSpell) {
 				player.inventory.setItemStack(ItemStack.EMPTY);
 				return ItemStack.EMPTY;
-			}
-			if (slotId == 99) {
-				int k = getEmptySlot();
-				if (k != -1) {
-					if(!getSlot(101).getStack().isEmpty()) {
-						ItemStack i=Interpreter.fromWrittenBook(getSlot(101).getStack());
-						System.out.println(i);
-						ItemStack s=player.inventory.getItemStack().copy();
-						player.inventory.setItemStack(i);
-						super.slotClick(k, 0, ClickType.PICKUP, player);
-						player.inventory.setItemStack(s);
-					}
-				}
 			}
 			if (mouseItemStack.getItem() instanceof ItemSpell) {
 				if (!(slotId >= 36 && slotId < 99)) {
 					return ItemStack.EMPTY;
 				}
 			}
-			return super.slotClick(slotId, dragType, clickTypeIn, player);
 		}
 		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}
@@ -161,8 +146,7 @@ public class MagicContainer extends Container {
 
 	@Override
 	public boolean canDragIntoSlot(Slot slotIn) {
-		return slotIn.inventory != spellMainInventory && slotIn.inventory != spellHotBar && slotIn.inventory != bookIcon
-				&& slotIn.inventory != deleteIcon;
+		return slotIn.inventory != spellMainInventory && slotIn.inventory != spellHotBar && slotIn.inventory != deleteIcon;
 	}
 
 	private int addSlotRange(IInventory inventory, int index, int x, int y, int amount, int dx) {
