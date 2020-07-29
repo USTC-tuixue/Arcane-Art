@@ -27,7 +27,7 @@ public class TranslatedWords
 
     public TranslatedWords add(String word)
     {
-        if (this.words.contains(word))
+        if (!this.words.contains(word))
         {
             this.words.add(word);
         }
