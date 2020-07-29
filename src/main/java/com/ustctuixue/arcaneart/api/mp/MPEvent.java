@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.mp;
 
+import lombok.Data;
 import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -67,4 +68,20 @@ public class MPEvent extends LivingEvent
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
+    public static class LevelUp extends MPEvent
+    {
+        @Getter
+        private final int oldLevel;
+
+        @Getter
+        private final int newLevel;
+
+        public LevelUp(LivingEntity livingEntity, int oldLevelIn, int newLevelIn)
+        {
+            super(livingEntity);
+            this.newLevel = newLevelIn;
+            this.oldLevel = oldLevelIn;
+        }
+    }
 }

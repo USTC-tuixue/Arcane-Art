@@ -2,6 +2,9 @@ package com.ustctuixue.arcaneart.api.spell;
 
 import com.google.common.collect.Multimap;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
+import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
+import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
+import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.MPEvent;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
@@ -89,7 +92,7 @@ public class ItemSpellCaster extends Item
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
         if (slot == EquipmentSlotType.MAINHAND || slot == EquipmentSlotType.OFFHAND)
         {
-            multimap.put(SpellCasterTiers.CASTER_TIER.getName(),
+            multimap.put(CapabilityMP.CASTER_TIER.getName(),
                     new AttributeModifier(
                             UUID.randomUUID(),
                             "Caster Modifier",
@@ -114,6 +117,7 @@ public class ItemSpellCaster extends Item
 
             // Get compiled spell
             SpellContainer container = spellProvider.getCompiled(source);
+            IManaBar manaBar = entityLiving.getCapability(CapabilityMP.MANA_BAR_CAP).orElseGet(DefaultManaBar::new);
 
             // Get cost
             double cost = SpellContainer.getManaCost(source, container.preProcess);
@@ -123,9 +127,14 @@ public class ItemSpellCaster extends Item
             complexity += SpellContainer.getComplexity(source,container.onHold);
 
             // Fire pre persistent spell event, if cancelled, spell will not be executed nor cost mana
-            if (MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(
-                    entityLiving, true, cost, complexity
-            )) && source.getMpConsumer().consumeMana(cost))
+            if (
+                    MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(
+                            entityLiving, true, cost, complexity
+                            )
+                    )
+                            && manaBar.consumeMana(cost)
+                    && manaBar.canTolerate(complexity, entityLiving)
+            )
             {
                 container.executePreProcess(source);
                 container.executeOnHold(source);
