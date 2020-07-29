@@ -29,7 +29,6 @@ public class APIRegistries
                         new Item.Properties()
                                 .maxStackSize(1)
                                 .setNoRepair()
-                                .group(ArcaneArt.ARCANE_ART_ITEM_GROUP)
         );
     }
 }

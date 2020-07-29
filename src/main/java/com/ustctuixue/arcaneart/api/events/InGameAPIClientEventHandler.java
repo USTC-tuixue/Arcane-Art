@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class InGameAPIClientEventHandler
 {
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void switchSpell(InputEvent.MouseScrollEvent event)
     {
         PlayerEntity player = Minecraft.getInstance().player;

@@ -1,11 +1,11 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
+import com.google.gson.Gson;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.*;
 
 import javax.annotation.Nullable;
 
@@ -33,11 +33,39 @@ public class RawSpell
         CompoundNBT compoundNBT = itemStack.getTag();
         if (compoundNBT != null)
         {
-            ListNBT pages = itemStack.getTag().getList("pages", 8);
+            ListNBT pages = itemStack.getTag().getList("pages", 10);
             StringBuilder buffer = new StringBuilder();
             for (INBT page : pages)
             {
-                String pageContent = page.getString();
+                String pageContent;
+                if (page instanceof StringNBT)
+                {
+                    pageContent = page.toString();
+                    try
+                    {
+                        CompoundNBT pageNBT = JsonToNBT.getTagFromJson(pageContent);    // Value in pages tag is Json Text
+                        if (pageNBT.contains("translate"))
+                        {
+                            pageContent = pageNBT.getString("translate");
+                        }
+                        else if (pageNBT.contains("text"))
+                        {
+                            pageContent = pageNBT.getString("text");
+                        }
+                        else
+                        {
+                            break;                                                      // No available spell text
+                        }
+                    }catch (CommandSyntaxException e)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
                 if (!pageContent.endsWith("-")) // 连字符
 
                 {
@@ -49,6 +77,7 @@ public class RawSpell
             return new RawSpell(
                     Items.WRITTEN_BOOK.getDisplayName(itemStack).getFormattedText(),
                     buffer.toString().replaceAll("-", "")
+                    .replaceAll("\\\\n", " ")
             );
 
 

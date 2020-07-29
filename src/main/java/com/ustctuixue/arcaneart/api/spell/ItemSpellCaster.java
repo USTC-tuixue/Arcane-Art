@@ -1,15 +1,11 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
-import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
-import com.ustctuixue.arcaneart.api.mp.IManaBar;
+import com.ustctuixue.arcaneart.api.mp.MPEvent;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellDispatcher;
-import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
-import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
+import com.ustctuixue.arcaneart.api.spell.inventory.*;
 import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -22,11 +18,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
+import java.util.UUID;
 
 public class ItemSpellCaster extends Item
 {
@@ -51,25 +47,55 @@ public class ItemSpellCaster extends Item
     {
         if (!(entityLiving instanceof PlayerEntity))
             return;
+
         if (!worldIn.isRemote)
         {
-            SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
-            TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
-            List<String> commands = Lists.newArrayList();
-            commands.addAll(spell.getCommonSentences());
-            commands.addAll(spell.getOnReleaseSentences());
-            commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+            ServerWorld serverWorld = (ServerWorld) worldIn;
+            SpellCasterSource source = new SpellCasterSource(serverWorld, entityLiving, null, tier);
+            ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
+
+            // Get compiled spell
+            SpellContainer container = spellProvider.getCompiled(source);
+
+            // Get mana cost
+            double cost = SpellContainer.getManaCost(source, container.preProcess);
+            cost += SpellContainer.getManaCost(source, container.onRelease);
+            // Get complexity
+            double complexity = SpellContainer.getComplexity(source, container.preProcess);
+            complexity += SpellContainer.getComplexity(source,container.onRelease);
+
+            // Fire pre instant spell event, will not be executed nor consume mana if cancelled
+            if (MinecraftForge.EVENT_BUS.post(
+                    new MPEvent.CastSpell.Pre(
+                            entityLiving, false, cost, complexity
+                    )
+            ) && source.getMpConsumer().consumeMana(cost))
+            {
+                container.executePreProcess(source);
+                container.executeOnRelease(source);
+                // Fire post instant spell event
+                MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(
+                        entityLiving, true, cost, complexity
+                ));
+            }
         }
     }
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
     {
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
         if (slot == EquipmentSlotType.MAINHAND || slot == EquipmentSlotType.OFFHAND)
         {
-            multimap.put(SpellCasterTiers.CASTER_TIER.getName(), new AttributeModifier(null, "Caster Modifier", this.tier, AttributeModifier.Operation.ADDITION));
+            multimap.put(SpellCasterTiers.CASTER_TIER.getName(),
+                    new AttributeModifier(
+                            UUID.randomUUID(),
+                            "Caster Modifier",
+                            this.tier, AttributeModifier.Operation.ADDITION
+                    )
+            );
         }
         return multimap;
     }
@@ -79,15 +105,35 @@ public class ItemSpellCaster extends Item
     {
         if (!(entityLiving instanceof PlayerEntity))
             return;
-        World worldIn = entityLiving.getEntityWorld();
-        if (!worldIn.isRemote())
+
+        if (!entityLiving.getEntityWorld().isRemote())
         {
+            ServerWorld worldIn = (ServerWorld) entityLiving.getEntityWorld();
             SpellCasterSource source = new SpellCasterSource(worldIn, entityLiving, null, tier);
-            TranslatedSpell spell = getSpell((PlayerEntity) entityLiving, getSpellSlot(stack));
-            List<String> commands = Lists.newArrayList();
-            commands.addAll(spell.getCommonSentences());
-            commands.addAll(spell.getOnHoldSentences());
-            commands.forEach(c -> SpellDispatcher.executeSpell(c, source));
+            ITranslatedSpellProvider spellProvider = getSpellProvider((PlayerEntity) entityLiving, getSpellSlot(stack));
+
+            // Get compiled spell
+            SpellContainer container = spellProvider.getCompiled(source);
+
+            // Get cost
+            double cost = SpellContainer.getManaCost(source, container.preProcess);
+            cost += SpellContainer.getManaCost(source, container.onHold);
+            // Get complexity
+            double complexity = SpellContainer.getComplexity(source, container.preProcess);
+            complexity += SpellContainer.getComplexity(source,container.onHold);
+
+            // Fire pre persistent spell event, if cancelled, spell will not be executed nor cost mana
+            if (MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Pre(
+                    entityLiving, true, cost, complexity
+            )) && source.getMpConsumer().consumeMana(cost))
+            {
+                container.executePreProcess(source);
+                container.executeOnHold(source);
+                // Fire post persistent spell event
+                MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(
+                        entityLiving, true, cost, complexity
+                ));
+            }
         }
     }
 
@@ -104,13 +150,13 @@ public class ItemSpellCaster extends Item
     }
 
     @Nonnull
-    private static TranslatedSpell getSpell(PlayerEntity player, int slot)
+    private static ITranslatedSpellProvider getSpellProvider(PlayerEntity player, int slot)
     {
         ISpellInventory inventory = player.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY).orElse(new SpellInventory());
         ItemStack itemSpellStack = inventory.getShortcut(slot);
         if (itemSpellStack.getItem() instanceof ItemSpell)
-            return ((ItemSpell) itemSpellStack.getItem()).getSpell(itemSpellStack);
-        return new TranslatedSpell();
+            return ((ItemSpell) itemSpellStack.getItem()).getSpellProvider(itemSpellStack);
+        return new ITranslatedSpellProvider.Impl();
     }
 
     public void setSpellSlot(ItemStack stack, int slot)
