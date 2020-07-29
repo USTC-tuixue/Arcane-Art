@@ -10,6 +10,7 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import com.ustctuixue.arcaneart.api.spell.inventory.*;
 import lombok.Getter;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,11 +21,15 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 
 public class ItemSpellCaster extends Item
@@ -159,7 +164,7 @@ public class ItemSpellCaster extends Item
     }
 
     @Nonnull
-    private static ITranslatedSpellProvider getSpellProvider(PlayerEntity player, int slot)
+    public static ITranslatedSpellProvider getSpellProvider(PlayerEntity player, int slot)
     {
         ISpellInventory inventory = player.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY).orElse(new SpellInventory());
         ItemStack itemSpellStack = inventory.getShortcut(slot);
@@ -168,7 +173,7 @@ public class ItemSpellCaster extends Item
         return new ITranslatedSpellProvider.Impl();
     }
 
-    public void setSpellSlot(ItemStack stack, int slot)
+    public static void setSpellSlot(ItemStack stack, int slot)
     {
         if (slot >= 9 || slot < 0)
         {
@@ -181,7 +186,7 @@ public class ItemSpellCaster extends Item
         stack.getTag().putByte("spell_slot", (byte)slot);
     }
 
-    public int getSpellSlot(ItemStack stack)
+    public static int getSpellSlot(ItemStack stack)
     {
         if (stack.getTag() != null)
         {
@@ -191,7 +196,7 @@ public class ItemSpellCaster extends Item
                 return slot;
             }
         }
-        this.setSpellSlot(stack, 0);    // If not a valid spell slot id, set to 0
+        setSpellSlot(stack, 0);    // If not a valid spell slot id, set to 0
         return 0;
     }
 }
