@@ -33,7 +33,7 @@ public class RawSpell
         CompoundNBT compoundNBT = itemStack.getTag();
         if (compoundNBT != null)
         {
-            ListNBT pages = itemStack.getTag().getList("pages", 10);
+            ListNBT pages = itemStack.getTag().getList("pages", 8);
             StringBuilder buffer = new StringBuilder();
             for (INBT page : pages)
             {
@@ -41,6 +41,7 @@ public class RawSpell
                 if (page instanceof StringNBT)
                 {
                     pageContent = page.toString();
+                    pageContent = pageContent.substring(1, pageContent.length() - 1);
                     try
                     {
                         CompoundNBT pageNBT = JsonToNBT.getTagFromJson(pageContent);    // Value in pages tag is Json Text

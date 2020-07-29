@@ -15,7 +15,7 @@ public class GUIKeyHandler
     @SubscribeEvent
     public static void onKeyInput(KeyInputEvent event)
     {
-        if (KeyLoader.showMagicMenu.isPressed() && Minecraft.getInstance().isGameFocused())
+        if (KeyLoader.showMagicMenu.isPressed() && Minecraft.getInstance().currentScreen==null )
         {
             KeyEvent.INSTANCE.sendToServer(new KeyPack("OpenMagicMenu"));
         }
