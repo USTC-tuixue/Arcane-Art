@@ -1,11 +1,11 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
+import com.google.gson.Gson;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +34,6 @@ public class RawSpell
         if (compoundNBT != null)
         {
             ListNBT pages = itemStack.getTag().getList("pages", 8);
-            System.out.println(pages.toString());
             StringBuilder buffer = new StringBuilder();
             for (INBT page : pages)
             {
@@ -43,7 +42,6 @@ public class RawSpell
                 {
                     pageContent = page.toString();
                     pageContent = pageContent.substring(1, pageContent.length() - 1);
-                    LogManager.getLogger(RawSpell.class).info("Page Content: " + pageContent);
                     try
                     {
                         CompoundNBT pageNBT = JsonToNBT.getTagFromJson(pageContent);    // Value in pages tag is Json Text
@@ -53,7 +51,6 @@ public class RawSpell
                         }
                         else if (pageNBT.contains("text"))
                         {
-                        	System.out.println("???");
                             pageContent = pageNBT.getString("text");
                         }
                         else

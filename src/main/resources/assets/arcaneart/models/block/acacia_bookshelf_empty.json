@@ -1,0 +1,7 @@
+{
+	"parent": "arcaneart:block/bookshelf_empty",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"planks": "block/acacia_planks"
+	}
+}
