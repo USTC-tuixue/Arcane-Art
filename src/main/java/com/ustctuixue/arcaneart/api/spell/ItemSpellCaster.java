@@ -163,6 +163,13 @@ public class ItemSpellCaster extends Item
         return UseAction.BOW;
     }
 
+    public static ItemStack getSpellStack(ItemStack casterStack, PlayerEntity player)
+    {
+        int slot = getSpellSlot(casterStack);
+        ISpellInventory inventory = player.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY).orElse(new SpellInventory());
+        return inventory.getShortcut(slot);
+    }
+
     @Nonnull
     public static ITranslatedSpellProvider getSpellProvider(PlayerEntity player, int slot)
     {
