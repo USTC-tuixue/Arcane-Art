@@ -5,8 +5,25 @@ import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
 
 public interface ISpell
 {
+    /**
+     * Get spell complexity according to spell source
+     * @param source spell source
+     * @return complexity
+     */
     double getComplexity(SpellCasterSource source);
+
+    /**
+     *
+     * @param source spell source
+     * @return mana base
+     */
     double getManaCostBase(SpellCasterSource source);
+
+    /**
+     * Execute spell
+     *
+     * @param source spell source
+     */
     void execute(SpellCasterSource source);
 
     /**

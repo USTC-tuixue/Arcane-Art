@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ustctuixue.arcaneart.api.spell.SpellAuthor;
 import lombok.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,15 +17,19 @@ public class RawSpell
 
     final String incantations;
 
-    public RawSpell(String name, String incantations)
+    @Nullable
+    final SpellAuthor author;
+
+    public RawSpell(String name, String incantations, @Nullable SpellAuthor authorIn)
     {
         this.name = name;
         this.incantations = incantations;
+        this.author = authorIn;
     }
 
     public static RawSpell namelessSpell(String incantations)
     {
-        return new RawSpell("", incantations);
+        return new RawSpell("", incantations, null);
     }
 
     @Nullable
@@ -80,7 +85,8 @@ public class RawSpell
             return new RawSpell(
                     Items.WRITTEN_BOOK.getDisplayName(itemStack).getFormattedText(),
                     buffer.toString().replaceAll("-", "")
-                    .replaceAll("\\\\n", " ")
+                    .replaceAll("\\\\n", " "),
+                    new SpellAuthor(itemStack.getTag().getString("author"))
             );
 
 
