@@ -34,8 +34,8 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
     private MPStorage createMPStorage(){
         MPStorage mps = new MPStorage();
         mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
-        mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
-        mps.setInputRateLimit(0.0D);
+        //mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
+        //mps.setInputRateLimit(0.0D);
         return mps;
     }
 
