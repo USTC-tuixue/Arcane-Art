@@ -13,11 +13,14 @@ public class MPStorage implements IMPConsumer
     @Getter @Setter
     double maxMP;
 
+    /*
     @Getter @Setter
     double inputRateLimit;
 
     @Getter @Setter
     double outputRateLimit;
+    */
+    //由于无法做出好的全局单tick mana输入输出锁，删去本属性值
 
     public void setMana(double mana)
     {
