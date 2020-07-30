@@ -11,8 +11,6 @@ public class RitualClientEventHandler {
 
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntityRenderer(RitualRegistry.dingCircleTileEntity.get(), DingTileEntityRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(RitualRegistry.dingSquareTileEntity.get(), DingTileEntityRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(RitualRegistry.dingCenterTileEntity.get(), DingTileEntityRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RitualRegistries.dingTileEntity.get(), DingTileEntityRenderer::new);
     }
 }

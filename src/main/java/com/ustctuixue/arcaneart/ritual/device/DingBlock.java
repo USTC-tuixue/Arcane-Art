@@ -29,7 +29,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 
 public class DingBlock extends Block implements IWaterLoggable {
-    public static enum EnumShape implements IStringSerializable {
+    public enum EnumShape implements IStringSerializable {
         CENTER("center"), SQUARE("square"), CIRCLE("circle");
         private final String name;
 
@@ -72,14 +72,7 @@ public class DingBlock extends Block implements IWaterLoggable {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        switch(state.get(SHAPE)) {
-            case CENTER:
-                return new DingTileEntity.DingCenterTileEntity();
-            case SQUARE:
-                return new DingTileEntity.DingSquareTileEntity();
-            default:
-                return new DingTileEntity.DingCircleTileEntity();
-        }
+        return new DingTileEntity();
     }
 
     @Override
@@ -104,4 +97,5 @@ public class DingBlock extends Block implements IWaterLoggable {
         }
         return ActionResultType.PASS;
     }
+
 }

@@ -1,25 +1,22 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
-import com.ustctuixue.arcaneart.ritual.RitualRegistry;
+import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
 public class DingTileEntity extends TileEntity {
 
-    public DingTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public DingTileEntity() {
+        super(RitualRegistries.dingTileEntity.get());
     }
-
+/*
     public static class DingCircleTileEntity extends DingTileEntity {
         public DingCircleTileEntity() {
             super(RitualRegistry.dingCircleTileEntity.get());
@@ -35,7 +32,7 @@ public class DingTileEntity extends TileEntity {
             super(RitualRegistry.dingCenterTileEntity.get());
         }
     }
-
+*/
     protected ItemStackHandler itemStackHandler = new ItemStackHandler();
 
     @Nonnull

@@ -46,5 +46,7 @@ public interface IRitual
      * @param simulate 是否模拟，true 时不应消耗牺牲
      * @return 消耗是否成功
      */
-    boolean consumeSacrifice(World world, BlockPos pos, boolean simulate);
+    default boolean consumeSacrifice(World world, BlockPos pos, boolean simulate) {
+        return true;
+    };
 }
