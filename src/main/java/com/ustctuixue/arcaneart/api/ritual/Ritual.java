@@ -1,8 +1,7 @@
 package com.ustctuixue.arcaneart.api.ritual;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
@@ -13,9 +12,10 @@ import net.minecraftforge.registries.RegistryBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.function.Supplier;
 
-public class Ritual implements IForgeRegistryEntry<Ritual> {
+@Builder
+public class Ritual implements IForgeRegistryEntry<Ritual>
+{
 
     public static ForgeRegistry<Ritual> REGISTRY
             = (ForgeRegistry<Ritual>) new RegistryBuilder<Ritual>()
@@ -23,38 +23,19 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             .setName(ArcaneArtAPI.getResourceLocation("ritual"))
             .create();
 
-    private ResourceLocation name;
     private static final int MAX_DING_NUMBER = 9;
 
-    public Ritual(IRitual iRitual, @Nonnull Item... ingredients) {
-        this.setIngredients(ingredients).setExecRitual(iRitual);
-    }
+    private final Item[] ingredients;
 
-    @Getter
-    private Item[] ingredients;
+    private final IRitualEffect execRitual;
 
-    @Getter @Setter
-    private IRitual execRitual = null;
+    private final boolean rotatable;
 
-    @Getter @Setter
-    private boolean rotatable = true;
+    private final boolean flippable;
 
-    @Getter @Setter
-    private boolean flippable = false;
+    private final int cost;
 
-    @Getter @Setter
-    private int cost = 5000;
-
-    @Getter @Setter
-    private int consumeSpeed = 50;
-
-    public Ritual setIngredients(@Nonnull Item... ingredients) {
-        if(isValidIngredients(ingredients)) {
-            this.ingredients = formatIngredients(ingredients);
-            return this;
-        }
-        throw new IllegalArgumentException("Can not create ritual recipe with no item or more than 9 items.");
-    }
+    private final int consumeSpeed;
 
     @Override
     public boolean equals(Object o) {
@@ -66,9 +47,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
 
     @Override
     public int hashCode() {
-        int i = Arrays.hashCode(ingredients);
-        return i;
-
+        return Arrays.hashCode(ingredients);
     }
 
     private static final int[][] ROTATE_TRANS_MAT = {
@@ -108,7 +87,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             return true;
         }
         else {
-            boolean result = true;
+            boolean result;
             for(int[] mat : transMat) {
                 result = true;
                 for(int i = 0; i < MAX_DING_NUMBER; ++i) {
@@ -133,7 +112,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
         return false;
     }
 
-    static public boolean isValidIngredients(@Nonnull Item... ingredients) {
+    private static boolean isValidIngredients(@Nonnull Item... ingredients) {
         if(ingredients.length <= 0 || ingredients.length > MAX_DING_NUMBER) {
             return false;
         }
@@ -152,16 +131,18 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
         return ingredients;
     }
 
+
+    ////////////////////////////////////////////////////
+    // Forge Registry Entry part here
+    ////////////////////////////////////////////////////
+
+    @Getter @Nullable
+    private ResourceLocation registryName;
+
     @Override
     public Ritual setRegistryName(ResourceLocation name) {
-        this.name = name;
+        this.registryName = name;
         return this;
-    }
-
-    @Nullable
-    @Override
-    public ResourceLocation getRegistryName() {
-        return this.name;
     }
 
     @Override
@@ -169,41 +150,4 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
         return Ritual.class;
     }
 
-    public static class Builder {
-
-        Ritual ritual = new Ritual(null, Items.BEDROCK);
-        public Builder() {
-
-        }
-        public Builder setExecRitual(IRitual iRitual) {
-            this.ritual.setExecRitual(iRitual);
-            return this;
-        }
-        public Builder setIngredients(@Nonnull Item... item) {
-            this.ritual.setIngredients(item);
-            return this;
-        }
-        public Builder setRotatable(boolean rotatable) {
-            this.ritual.setRotatable(rotatable);
-            return this;
-        }
-        public Builder setFlippable(boolean flippable) {
-            this.ritual.setFlippable(flippable);
-            return this;
-        }
-        public Builder setManaCost(int cost) {
-            this.ritual.setCost(cost);
-            return this;
-        }
-        public Builder setManaConsumeSpeed(int speed) {
-            this.ritual.setConsumeSpeed(speed);
-            return this;
-        }
-        public Ritual create() {
-            return this.ritual;
-        }
-        public Supplier<Ritual> supplier() {
-            return ()->this.ritual;
-        }
-    }
 }
