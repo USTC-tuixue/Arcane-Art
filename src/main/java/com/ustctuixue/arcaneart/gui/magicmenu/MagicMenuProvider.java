@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.gui.MagicMenu;
+package com.ustctuixue.arcaneart.gui.magicmenu;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

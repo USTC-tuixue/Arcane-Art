@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.automation.crystal;
 
 import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -20,25 +21,32 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
         super(entityType);
     }
 
-
+    public MPStorage CrystalMPStorage = createMPStorage();
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityMPStorage.MP_STORAGE_CAP) {
-            return LazyOptional.of(() -> {
-                return new MPStorage();
-            }).cast();
-        }
-        return LazyOptional.empty();
+        return cap == CapabilityMPStorage.MP_STORAGE_CAP ? LazyOptional.of(()->{
+            return this.CrystalMPStorage;
+        }).cast() : super.getCapability(cap, side);
+    }
+
+    private MPStorage createMPStorage(){
+        MPStorage mps = new MPStorage();
+        mps.setMaxMP(AutomationConfig.Crystal.CRYSTAL_MAX_MP.get());
+        //mps.setOutputRateLimit(AutomationConfig.Crystal.CRYSTAL_MAX_OUTPUT.get());
+        //mps.setInputRateLimit(0.0D);
+        return mps;
     }
 
     @Override
     public void tick() {
-        if (!world.isRemote) {
+        if (this.world != null && !world.isRemote) {
             //这里是服务器逻辑
-            LazyOptional<MPStorage> MPStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-            MPStorageCapLazyOptional.ifPresent((s) -> {
+            LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+            mpStorageCapLazyOptional.ifPresent((s) -> {
+                if (!world.canSeeSky(this.getPos()))
+                    return;//默认情况下水晶需要看到天空以工作
                 double regenRatio = crystalRegenRatio();
                 if (regenRatio == 0)
                     return;

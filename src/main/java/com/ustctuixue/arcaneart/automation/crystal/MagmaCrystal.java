@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public class SolarCrystal extends Block{
-    public SolarCrystal(){
+public class MagmaCrystal extends Block{
+    public MagmaCrystal(){
         super(Properties.create(Material.ROCK).hardnessAndResistance(5));
     }
 
@@ -21,7 +21,7 @@ public class SolarCrystal extends Block{
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new SolarCrystalTileEntity();
+        return new MagmaCrystalTileEntity();
     }
 
 }

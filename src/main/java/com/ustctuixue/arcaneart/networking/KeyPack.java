@@ -1,17 +1,9 @@
 package com.ustctuixue.arcaneart.networking;
 
-import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
-import com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.ForgeConfig.Server;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -41,8 +33,20 @@ public class KeyPack
             ServerPlayerEntity player = ctx.get().getSender();
             if (message.equals("OpenMagicMenu") && player != null)
             {
-                NetworkHooks.openGui(player, new com.ustctuixue.arcaneart.gui.MagicMenu.MagicMenuProvider());
+                NetworkHooks.openGui(player, new com.ustctuixue.arcaneart.gui.magicmenu.MagicMenuProvider());
             }
+            if (message.split(":")[0].equals("ItchMagic") && player != null) {
+				Container container = player.openContainer;
+				if (container instanceof MagicContainer) {
+					ItemStack book = container.inventorySlots.get(100).getStack();
+					if (!book.isEmpty()) {
+						ItemStack spell= Interpreter.fromWrittenBook(book);
+						if(!spell.isEmpty()) {
+						container.putStackInSlot(Integer.parseInt(message.split(":")[1]),spell);
+						}
+					}
+				}
+			}
         });
         ctx.get().setPacketHandled(true);
     }
