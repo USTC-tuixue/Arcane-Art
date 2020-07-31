@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -43,10 +45,10 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
     private boolean flippable = false;
 
     @Getter @Setter
-    private int cost = 5000;
+    private double cost = 5000;
 
     @Getter @Setter
-    private int consumeSpeed = 50;
+    private double consumeSpeed = 50;
 
     public Ritual setIngredients(@Nonnull Item... ingredients) {
         if(isValidIngredients(ingredients)) {
@@ -171,9 +173,9 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
 
     public static class Builder {
 
-        Ritual ritual = new Ritual(null, Items.BEDROCK);
+        Ritual ritual;
         public Builder() {
-
+            ritual = new Ritual(null, Items.BEDROCK);
         }
         public Builder setExecRitual(IRitual iRitual) {
             this.ritual.setExecRitual(iRitual);
@@ -203,7 +205,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             return this.ritual;
         }
         public Supplier<Ritual> supplier() {
-            return ()->this.ritual;
+            return this::create;
         }
     }
 }

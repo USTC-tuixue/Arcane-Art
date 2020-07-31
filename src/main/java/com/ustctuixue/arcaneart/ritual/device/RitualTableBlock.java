@@ -2,10 +2,8 @@ package com.ustctuixue.arcaneart.ritual.device;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -33,7 +31,8 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
                 .harvestTool(ToolType.PICKAXE));
         this.setDefaultState(this.stateContainer.getBaseState()
                 .with(LOCK, false)
-                .with(FACE_NS, true));
+                .with(FACE_NS, true)
+                .with(BlockStateProperties.WATERLOGGED, false));
     }
 
     public static final BooleanProperty LOCK = BooleanProperty.create("lock");
@@ -63,27 +62,12 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
             if(ritualTableTileEntity == null) {
                 return ActionResultType.PASS;
             }
-            if(ritualTableTileEntity.preExecRitual(state, worldIn, pos, player)) {
-                ritualTableTileEntity.execRitual(state, worldIn, pos, player);
-            }
-            else {
-                ritualTableTileEntity.cancelRitual();
-            }
+            ritualTableTileEntity.start(state, worldIn, pos, player);
 
         }
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
-    @Override
-    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
-        if(state.get(LOCK) == true) {
-            RitualTableTileEntity ritualTableTileEntity = (RitualTableTileEntity) worldIn.getTileEntity(pos);
-            if(ritualTableTileEntity != null) {
-                if(!ritualTableTileEntity.keepRitual(state, worldIn, pos, null)) {
-                    ritualTableTileEntity.cancelRitual();
-                }
-            }
-        }
-        super.tick(state, worldIn, pos, rand);
-    }
+
+
 }

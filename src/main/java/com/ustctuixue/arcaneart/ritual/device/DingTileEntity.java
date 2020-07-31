@@ -16,23 +16,7 @@ public class DingTileEntity extends TileEntity {
     public DingTileEntity() {
         super(RitualRegistries.dingTileEntity.get());
     }
-/*
-    public static class DingCircleTileEntity extends DingTileEntity {
-        public DingCircleTileEntity() {
-            super(RitualRegistry.dingCircleTileEntity.get());
-        }
-    }
-    public static class DingSquareTileEntity extends DingTileEntity {
-        public DingSquareTileEntity() {
-            super(RitualRegistry.dingSquareTileEntity.get());
-        }
-    }
-    public static class DingCenterTileEntity extends DingTileEntity {
-        public DingCenterTileEntity() {
-            super(RitualRegistry.dingCenterTileEntity.get());
-        }
-    }
-*/
+
     protected ItemStackHandler itemStackHandler = new ItemStackHandler();
 
     @Nonnull

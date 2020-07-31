@@ -15,6 +15,7 @@ public class RitualConfig {
     public static ForgeConfigSpec.IntValue SHORTEST_DISTANCE_FROM_TABLE_TO_DING;
     public static ForgeConfigSpec.IntValue LOWEST_HEIGHT_OF_DING;
     public static ForgeConfigSpec.IntValue HIGHEST_HEIGHT_OF_DING;
+    public static ForgeConfigSpec.DoubleValue RITUAL_MANA_AMPLIFIER;
 
     static void load(ForgeConfigSpec.Builder builder) {
         builder.push("ritual_property");
@@ -36,6 +37,9 @@ public class RitualConfig {
                 .comment("The lowest height of the plane of Dings' matrix relatively to the height of the ritual table. \n" +
                         "Negative value means the Dings be put lower than the ritual table, and positive value means higher.")
                 .defineInRange("lowestHeightOfDing", 4, -10, 20);
+        RITUAL_MANA_AMPLIFIER = builder
+                .comment("The percentage of mana cost on ritual by ritual table.")
+                .defineInRange("ritualManaAmplifier", 0.9, 0, 1);
 
         builder.pop();
     }
