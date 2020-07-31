@@ -95,6 +95,11 @@ public class TranslatedSpell
         return this;
     }
 
+    public boolean isEmpty()
+    {
+        return this.onHoldSentences.isEmpty() && this.onReleaseSentences.isEmpty() && this.preProcessSentences.isEmpty();
+    }
+
     @Nullable
     public static TranslatedSpell fromWrittenBook(ItemStack writtenBookStack)
     {
