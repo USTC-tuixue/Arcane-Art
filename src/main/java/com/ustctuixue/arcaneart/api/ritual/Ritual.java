@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
-@Builder
+@Builder @Data
 public class Ritual implements IForgeRegistryEntry<Ritual>
 {
 
@@ -66,8 +66,6 @@ public class Ritual implements IForgeRegistryEntry<Ritual>
         if(!isValidIngredients(Item)) {
             return false;
         }
-
-        boolean result = true;
         if(this.rotatable && ingredientsTransMatch(ingredients, ROTATE_TRANS_MAT)) {
             return true;
         }

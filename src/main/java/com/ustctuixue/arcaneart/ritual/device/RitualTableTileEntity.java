@@ -26,6 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class RitualTableTileEntity extends TileEntity implements ITickableTileEntity {
     public RitualTableTileEntity() {
@@ -83,6 +84,13 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
 
     @Override
     public void tick() {
+        if(executeStage != -1) {
+            World world = this.getWorld();
+            if(world != null) world.getPlayers().get(0).sendMessage(new StringTextComponent("stage: "+executeStage));
+            else {
+                ArcaneArtAPI.LOGGER.error("tile entity cannot get world");
+            }
+        }
         switch (executeStage) {
             case -1: return;
             case 0:
@@ -132,7 +140,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         for(int i = 0; i < 9; ++i) {
             items[i] = dingItemHandlers[i].getStackInSlot(0).getItem();
         }
-        ritual = new Ritual.Builder().setIngredients(items).create();
+        ritual = Ritual.builder().ingredients(items).build();
 
         boolean hasFound = false;
         for(Ritual ap : Ritual.REGISTRY) {
@@ -143,12 +151,17 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             }
         }
         if(!hasFound) {
-            playerEntity.sendMessage(new StringTextComponent("Cannot find Ritual Recipe!"));
+            sendMessage("Cannot find Ritual Recipe!");
             return false;
+        } else {
+            sendMessage(String.format("Find ritual %s.", Ritual.REGISTRY.getKey(ritual)));
+        }
+        //*/
+        if(!ritual.getExecRitual().validateRitualCondition(worldIn, pos)) {
+            sendMessage(String.format("The ritual %s is not valid here!", Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString()));
         }
         this.totalMana = ritual.getCost() * SpellConfig.SpellProperty.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
-        //ritual = Ritual.REGISTRY.getRaw(Ritual.REGISTRY.getKey(new Ritual.Builder().setIngredients(items).create()));
         return true;
     }
 
@@ -179,12 +192,16 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             playerMana.consumeMana(playerRealCost);
 
             if(manaConsumed == totalMana) {
-                this.ritual.getExecRitual().execute(world, pos, LazyOptional.of(()->playerEntity));
+                this.finishRitual();
                 return false;
             }
             return true;
         }
         return false;
+    }
+
+    private void finishRitual() {
+        this.ritual.getExecRitual().execute(world, pos, LazyOptional.of(()->playerEntity));
     }
 
     private void cancelRitual() {
@@ -207,21 +224,23 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
      * @return 是否找到了全部位置合理的鼎
      */
     private boolean findDing(World worldIn, Direction facing, BlockPos pos) {
-        int dMin = RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get();
-        int dMax = RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get();
+        int dMin = RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get()-3;//为了设置好写，写的是距离中心鼎的水平距离，
+        int dMax = RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get()-2;//但检测的时候先检测边鼎会省去部分工作量
         int hMin = RitualConfig.LOWEST_HEIGHT_OF_DING.get();
         int hMax = RitualConfig.HIGHEST_HEIGHT_OF_DING.get();
-        BlockPos bottomEdge = pos.offset(facing, dMin).offset(Direction.DOWN, hMin);
+        int d, h;
+        sendMessage(pos.toString() + String.format("(%d, %d, %d, %d)", dMin, dMax, hMin, hMax));
         BlockPos current;
 
         BlockPos nearEdgeDingPos = null;
         int dingInterSpace = 0;
 findEdgeDing:
-        for(int d = dMin; d <= dMax; ++d, bottomEdge = bottomEdge.offset(facing)) {
-            current = bottomEdge;
-            for(int h = hMin; h <= hMax; ++h, current = current.offset(Direction.UP)) {
-                if(checkDing(worldIn, current, DingBlock.EnumShape.CIRCLE, false)) {
-                    nearEdgeDingPos = current;
+        for(d = dMin; d <= dMax; ++d) {
+            current = pos.offset(facing, d);
+            for(h = hMin; h <= hMax; ++h) {
+                sendMessage(current.offset(Direction.UP, h).toString());
+                if(checkDing(worldIn, current.offset(Direction.UP, h), DingBlock.EnumShape.CIRCLE, false)) {
+                    nearEdgeDingPos = current.offset(Direction.UP, h);
                     break findEdgeDing;
                 }
             }
@@ -229,6 +248,17 @@ findEdgeDing:
         if(nearEdgeDingPos == null) {
             return false;
         }
+
+        if(checkDing(worldIn, nearEdgeDingPos.offset(facing, 1), DingBlock.EnumShape.CENTER, false)) {
+            dingInterSpace = 1;
+        }
+        else if(checkDing(worldIn, nearEdgeDingPos.offset(facing, 2), DingBlock.EnumShape.CENTER, false)) {
+            dingInterSpace = 2;
+        }
+        else {
+            return false;
+        }
+
         calculateBlockPos(nearEdgeDingPos, facing, dingInterSpace);
         if (!checkAllDings(worldIn, false)) {
             return false;
@@ -264,7 +294,6 @@ findEdgeDing:
     }
 
     private boolean checkDing(World worldIn, BlockPos pos, DingBlock.EnumShape shape, Boolean isLock) {
-
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(tileEntity instanceof DingTileEntity) {
             BlockState state = worldIn.getBlockState(pos);
@@ -292,5 +321,16 @@ findEdgeDing:
     protected void finalize() throws Throwable {
         cancelRitual();
         super.finalize();
+    }
+
+    private void sendMessage(String msg) {
+        if(playerEntity != null) {
+            playerEntity.sendMessage(new StringTextComponent(msg));
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        cancelRitual();
     }
 }

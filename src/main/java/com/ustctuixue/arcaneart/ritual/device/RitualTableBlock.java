@@ -9,15 +9,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 
@@ -55,11 +59,19 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
         return true;
     }
 
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new RitualTableTileEntity();
+    }
+
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if( !worldIn.isRemote && handIn == Hand.MAIN_HAND) {
+            player.sendMessage(new StringTextComponent("on Click"));
             RitualTableTileEntity ritualTableTileEntity = (RitualTableTileEntity) worldIn.getTileEntity(pos);
             if(ritualTableTileEntity == null) {
+                player.sendMessage(new StringTextComponent("no tile entity"));
                 return ActionResultType.PASS;
             }
             ritualTableTileEntity.start(state, worldIn, pos, player);

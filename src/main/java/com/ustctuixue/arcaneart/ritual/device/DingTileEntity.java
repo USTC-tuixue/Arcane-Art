@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.ritual.device;
 
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -17,7 +18,13 @@ public class DingTileEntity extends TileEntity {
         super(RitualRegistries.dingTileEntity.get());
     }
 
-    protected ItemStackHandler itemStackHandler = new ItemStackHandler();
+    protected ItemStackHandler itemStackHandler = new ItemStackHandler() {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+            super.onContentsChanged(slot);
+        }
+    };
 
     @Nonnull
     @Override
@@ -30,5 +37,24 @@ public class DingTileEntity extends TileEntity {
 
     public ItemStack getItemStored() {
         return itemStackHandler.getStackInSlot(0);
+    }
+
+    @Override
+    public void read(CompoundNBT compound) {
+        itemStackHandler.deserializeNBT(compound.getCompound("store"));
+        super.read(compound);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        compound.put("store", itemStackHandler.serializeNBT());
+        return super.write(compound);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        if(this.world != null) {
+            this.world.setBlockState(this.getPos(), this.getBlockState().with(DingBlock.LOCK, false));
+        }
     }
 }

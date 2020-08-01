@@ -16,6 +16,8 @@ public class RitualModuleRegistries {
                 Ritual.builder()
                         .execRitual(new RitualRain())
                         .ingredients(new Item[]{null, null, null, null, Items.LAPIS_LAZULI})
+                        .cost(5000)
+                        .consumeSpeed(50)
                         ::build
     );
 }
