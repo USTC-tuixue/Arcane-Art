@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.LazyOptional;
 
-public interface IRitual
+public interface IRitualEffect
 {
     default boolean validateTimeOfDay(long timeOfDay)
     {
