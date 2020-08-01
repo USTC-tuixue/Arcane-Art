@@ -1,0 +1,28 @@
+{
+  "multipart": [
+        {   "when": { "facing": "west", "half":  "top"},
+            "apply": { "model": "arcaneart:block/lux_prism"}
+        },
+        {   "when": { "facing": "west", "half":  "bottom"},
+            "apply": { "model": "arcaneart:block/lux_prism", "x": 180}
+        },
+        {   "when": { "facing": "north", "half":  "top"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 90}
+        },
+        {   "when": { "facing": "west", "half":  "bottom"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 90, "x": 180}
+        },
+        {   "when": { "facing": "east", "half":  "top"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 180}
+        },
+        {   "when": { "facing": "west", "half":  "bottom"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 180, "x": 180}
+        },
+        {   "when": { "facing": "south", "half":  "top"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 270}
+        },
+        {   "when": { "facing": "west", "half":  "bottom"},
+            "apply": { "model": "arcaneart:block/lux_prism", "y": 270, "x": 180}
+        }
+  ]
+}
