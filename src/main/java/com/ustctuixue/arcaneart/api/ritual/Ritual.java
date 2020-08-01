@@ -149,5 +149,4 @@ public class Ritual implements IForgeRegistryEntry<Ritual>
     public Class<Ritual> getRegistryType() {
         return Ritual.class;
     }
-
 }
