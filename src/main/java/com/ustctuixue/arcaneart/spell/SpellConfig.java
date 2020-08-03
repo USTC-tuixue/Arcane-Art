@@ -24,6 +24,7 @@ public class SpellConfig
     {
         builder.push("spell_module");
         SpellProperty.load(builder);
+        SpellModifiers.load(builder);
         builder.pop();
     }
 
@@ -203,6 +204,50 @@ public class SpellConfig
                 }
                 return EFFECTS;
             }
+        }
+    }
+
+    public static class SpellModifiers
+    {
+        private static ConfigValue<String> ARMOR_ENCHANTABILITY_MODIFIER;
+        private static Expression ARMOR_ENCHANTABILITY_MODIFIER_EXP = null;
+
+        public static DoubleValue ARMOR_ENCHANTABILITY_DEFAULT;
+
+        static void load(Builder builder)
+        {
+            builder.push("modifier");
+
+            ARMOR_ENCHANTABILITY_MODIFIER = builder
+                    .comment(
+                            "Armor enchantability modifier expression",
+                            "Mana cost for spells will be multiplied by this",
+                            "Use 'ench' refers to average armor enchantability weighed by max durability.",
+                            "Expression Usage: https://github.com/uklimaschewski/EvalEx"
+                    )
+                    .define("armorEnchantabilityModifier", "15 / ench");
+
+            ARMOR_ENCHANTABILITY_DEFAULT = builder
+                    .comment(
+                            "Default average enchantability for players have no available armor in their equipment slots"
+                    )
+                    .defineInRange("defaultArmorEnchantability", 15D, 0D, Double.MAX_VALUE);
+
+            builder.pop();
+        }
+
+        public static double getArmorEnchantabilityModifier(double ench)
+        {
+            if (ARMOR_ENCHANTABILITY_MODIFIER_EXP == null)
+            {
+                ARMOR_ENCHANTABILITY_MODIFIER_EXP = new Expression(ARMOR_ENCHANTABILITY_MODIFIER.get());
+            }
+
+            double r = ARMOR_ENCHANTABILITY_MODIFIER_EXP
+                    .and("ench", BigDecimal.valueOf(ench))
+                    .eval().doubleValue();
+
+            return r > 0? r : 1;
         }
     }
 }

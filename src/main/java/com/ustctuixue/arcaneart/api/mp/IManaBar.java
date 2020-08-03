@@ -1,5 +1,7 @@
 package com.ustctuixue.arcaneart.api.mp;
 
+import net.minecraft.entity.LivingEntity;
+
 @SuppressWarnings("unused")
 public interface IManaBar extends IMPConsumer
 {
@@ -14,6 +16,20 @@ public interface IManaBar extends IMPConsumer
      */
     void setMana(double mana);
 
+    /**
+     * 获取最大 MP 值
+     *
+     * @param parentLivingEntity 这个能力所依附的生物
+     * @return  最大 MP 值
+     */
+    double getMaxMana(LivingEntity parentLivingEntity);
+    void setBaseMaxMana(double value, LivingEntity parentLivingEntity);
+
+
+    double getBaseComplexityTolerance(LivingEntity parentLivingEntity);
+    void setBaseComplexityTolerance(double value, LivingEntity parentLivingEntity);
+
+    boolean canTolerate(double complexity, LivingEntity parentEntity);
 
     /**
      *
@@ -41,16 +57,17 @@ public interface IManaBar extends IMPConsumer
     double getMagicExperience();
 
     /**
-     * 设置当前的魔法经验值
+     * 设置当前的魔法经验值，如果是负数，则降级
      * @param exp 经验值
      */
+    void setMagicExperience(double exp, LivingEntity parentEntity);
     void setMagicExperience(double exp);
 
     /**
-     * 增加魔法经验值
+     * 增加魔法经验值，同时升级
      * @param exp 经验值
      */
-    void addMagicExperience(double exp);
+    void addMagicExperience(double exp, LivingEntity parentEntity);
 
     /**
      * 获得当前的魔法等级
