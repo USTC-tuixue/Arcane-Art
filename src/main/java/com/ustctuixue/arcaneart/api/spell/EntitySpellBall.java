@@ -66,6 +66,7 @@ public class EntitySpellBall extends DamagingProjectileEntity
         super.onImpact(result);
         if (!this.world.isRemote)
         {
+            //this.translatedSpellProvider.hasSpell();
             TranslatedSpell spell = this.translatedSpellProvider.getSpell();
             this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
         }

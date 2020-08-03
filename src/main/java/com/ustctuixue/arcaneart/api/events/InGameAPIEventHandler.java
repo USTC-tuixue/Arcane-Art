@@ -34,7 +34,7 @@ public class InGameAPIEventHandler
         {
             ((LivingEntity) entity).getAttributes().registerAttribute(CapabilityMP.MAX_MANA);
             ((LivingEntity) entity).getAttributes().registerAttribute(CapabilityMP.REGEN_RATE);
-            ((LivingEntity) entity).getAttributes().registerAttribute(SpellCasterTiers.CASTER_TIER);
+            ((LivingEntity) entity).getAttributes().registerAttribute(CapabilityMP.CASTER_TIER);
         }
     }
 

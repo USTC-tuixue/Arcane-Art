@@ -35,7 +35,7 @@ public class TestCommands
             if (profile != null)
             {
                 source.sendFeedback(new TranslationTextComponent("Language: " + profile.getName()), true);
-                TranslatedSpell spell = TranslatedSpell.translateFromRawSpell(new RawSpell("", s), profile);
+                TranslatedSpell spell = TranslatedSpell.translateFromRawSpell(new RawSpell("", s, null), profile);
                 assert spell != null;
                 try
                 {

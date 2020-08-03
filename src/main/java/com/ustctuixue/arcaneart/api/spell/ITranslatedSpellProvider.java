@@ -10,6 +10,8 @@ public interface ITranslatedSpellProvider
     TranslatedSpell getSpell();
     ITranslatedSpellProvider setSpell(TranslatedSpell spellIn);
 
+    boolean hasSpell();
+
     SpellContainer getCompiled(SpellCasterSource source);
 
     @Deprecated
@@ -37,6 +39,11 @@ public interface ITranslatedSpellProvider
             this.spell = spellIn;
         }
 
+        @Override
+        public boolean hasSpell()
+        {
+            return !spell.isEmpty();
+        }
 
         public ITranslatedSpellProvider setSpell(TranslatedSpell spellIn)
         {
