@@ -8,8 +8,10 @@ public class EnvHelper {
 
     public static double getTemperature(World world, BlockPos pos){
         //return the Temperature of the given world and pos
+        //below 0K means snow instead of rain.
         double temperatureRaw = world.getBiome(pos).getTemperature(pos);
-        double temperatureFinal = 270.0D + temperatureRaw * 20.0D + (64 - pos.getY()) / 30.0D;//biome temperature minus height factor
+        double temperatureFinal = 270.0D + (temperatureRaw + (64 - pos.getY()) * 0.0016) * 20.0D;//biome temperature minus height factor
         return temperatureFinal;
     }
+
 }
