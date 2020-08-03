@@ -66,7 +66,12 @@ public class EntitySpellBall extends DamagingProjectileEntity
         super.onImpact(result);
         if (!this.world.isRemote)
         {
-            //this.translatedSpellProvider.hasSpell();
+            if(!this.translatedSpellProvider.hasSpell()){
+                //插入作为能量传输手段的逻辑
+                //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率，是否要考虑非全反射？）
+                //和MPStorage的te碰撞时赋予其能量
+                return;
+            };
             TranslatedSpell spell = this.translatedSpellProvider.getSpell();
             this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
         }
@@ -80,6 +85,9 @@ public class EntitySpellBall extends DamagingProjectileEntity
         super.tick();
         if (!this.world.isRemote)
         {
+            //随时间而增加的能量消耗写在这（划掉）
+            //this.ticksAlive;（划掉）
+            //不要写在tick里面，在创建实体事件里面安排计划刻
             this.translatedSpellProvider.getCompiled(source).executeOnHold(source);
         }
     }
