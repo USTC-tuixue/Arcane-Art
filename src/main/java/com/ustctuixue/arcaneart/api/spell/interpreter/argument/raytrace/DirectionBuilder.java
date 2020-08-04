@@ -25,9 +25,23 @@ public class DirectionBuilder implements IRelativeArgumentBuilder<Vec3dList>
     @Override
     public Vec3dList build(@Nonnull SpellCasterSource source)
     {
-        Vec3d pivot = pivotBuilder.build(source).next();
-        Vec3dList directions = targetBuilder.build(source);
-        directions = directions.vectorAdd(pivot.inverse());
-        return directions.transform(Vec3d::normalize);
+        Vec3dList pivots = pivotBuilder.build(source);      // Absolute, origin = source
+        Vec3dList targets = targetBuilder.build(source);    // Absolute, origin = source
+        if (pivots.size() != 1)                             // When there more than 1 pivot, only use the first target
+        {
+            return pivots.transform(Vec3d::inverse).vectorAdd(targets.next())
+                    .transform(Vec3d::normalize);
+        }
+        else                                                // When there is
+        {
+            Vec3d pivot = pivots.next();
+            return targets.vectorAdd(pivot.inverse()).transform(Vec3d::normalize);
+        }
+    }
+
+    public DirectionBuilder setPivots(RelativeVec3dListBuilder pivots)
+    {
+        this.pivotBuilder = pivots;
+        return this;
     }
 }
