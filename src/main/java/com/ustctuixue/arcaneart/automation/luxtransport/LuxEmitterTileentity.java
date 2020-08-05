@@ -1,15 +1,16 @@
-package com.ustctuixue.arcaneart.automation;
+package com.ustctuixue.arcaneart.automation.luxtransport;
 
+import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.automation.crystal.AbstractCollectiveCrystalTileEntity;
 import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
-public class ArcaneLensTileEntity extends TileEntity implements ITickable {
+public class LuxEmitterTileentity extends TileEntity implements ITickable {
 
-    public ArcaneLensTileEntity(TileEntityType<? extends ArcaneLensTileEntity> entityType) {
-        super(entityType);
+    public LuxEmitterTileentity() {
+        super(AutomationRegistry.LUX_EMITTER_TILEENTITY.get());
     }
 
     @Override
