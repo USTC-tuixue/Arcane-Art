@@ -33,11 +33,15 @@ public class EntitySpellBall extends Entity{
     //建议直接转extends Entity，告辞
 
     public LivingEntity shootingEntity;
+
+    @Getter @Setter
+    protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
     
     protected void registerData() {
     }
 
     public void writeAdditional(CompoundNBT compound) {
+        //TODO
         //把实体数据写进compound，可以看DamagingProjectileEntity
         Vec3d vec3d = this.getMotion();
         compound.put("direction", this.newDoubleNBTList(new double[]{vec3d.x, vec3d.y, vec3d.z}));
@@ -68,13 +72,11 @@ public class EntitySpellBall extends Entity{
     }
 
     public IPacket<?> createSpawnPacket() {
-
-        int i = this.shootingEntity == null ? 0 : this.shootingEntity.getEntityId();
+        //int i = this.shootingEntity == null ? 0 : this.shootingEntity.getEntityId();
         //return new SSpawnObjectPacket(this.getEntityId(), this.getUniqueID(), this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationPitch, this.rotationYaw, this.getType(), i, new Vec3d(this.accelerationX, this.accelerationY, this.accelerationZ));
 
-        return new SSpawnObjectPacket(this.getEntityId(), this.getUniqueID(), this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationPitch, this.rotationYaw, this.getType(), i);
-
-        //别问我这是干啥的
+        return new SSpawnObjectPacket(this);
+        //我不知道这是干啥的
     }
 
 
@@ -104,23 +106,73 @@ public class EntitySpellBall extends Entity{
         super(APIRegistries.Entities.SPELL_BALL_TYPE, p_i50173_2_);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public EntitySpellBall(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ) {
-        super(EntityType.FIREBALL, x, y, z, accelX, accelY, accelZ, worldIn);
+    //留给附属模组的接口，空构造函数
+    public EntitySpellBall(EntityType<? extends EntitySpellBall> entitySpellBallEntityType, World world){
+        super(entitySpellBallEntityType, world);
+    }
+
+    //推荐使用构造器来构造法球实体
+    private EntitySpellBall(Builder builder){
+        super(APIRegistries.Entities.SPELL_BALL_TYPE, builder.world);
+        this.setLocationAndAngles(builder.x, builder.y, builder.z, builder.yaw, builder.pitch);
+
+    }
+
+    public static class Builder{
+        private World world;
+        private double x, y, z;
+        private double gravityFactor;
+        private LivingEntity shooter;
+        private float yaw, pitch;
+
+         public Builder (World world){
+             this.world =world;
+         }
+         public Builder pos(double x, double y, double z){
+             this.x = x;
+             this.y = y;
+             this.z = z;
+             return this;
+         }
+         public Builder shooter(LivingEntity shooter){
+             this.shooter = shooter;
+             return this;
+         }
+         public Builder gravity(double gravityFactor){
+             this.gravityFactor = gravityFactor;
+             return this;
+         }
+         public Builder angles(float yaw, float pitch){
+             this.yaw = yaw;
+             this.pitch = pitch;
+             return this;
+         }
+         public EntitySpellBall build(){
+             return new EntitySpellBall(this);
+         }
+    }
+
+    /*
+    public EntitySpellBall(World worldIn, double x, double y, double z, double gravityFactor) {
+        super(EntityType.FIREBALL, worldIn);
+        this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
+        this.gravityFactor = gravityFactor;
+    }
+
+    public EntitySpellBall(World worldIn, double x, double y, double z) {
+        this(worldIn, x, y, z, 0.0D);
     }
 
     public EntitySpellBall(World worldIn, LivingEntity shooter, double accelX, double accelY, double accelZ) {
         super(EntityType.FIREBALL, shooter, accelX, accelY, accelZ, worldIn);
     }
+    */
 
-    public EntitySpellBall(EntityType<EntitySpellBall> entitySpellBallEntityType, World world){
-        super(entitySpellBallEntityType, world);
-    }
 
-    @Override
+
     protected void onImpact(RayTraceResult result)
     {
-        super.onImpact(result);
+        //super.onImpact(result);
         if (!this.world.isRemote){
             if(!this.translatedSpellProvider.hasSpell()){
                 //插入作为能量传输手段的逻辑
@@ -143,10 +195,8 @@ public class EntitySpellBall extends Entity{
     {
         super.tick();
         if (!this.world.isRemote){
+            //TODO
             //随时间而增加的能量消耗写在这
-            //hack进private，不要从nbt读，nbt加载不同步
-            //要么就在产生的时候安排内部计时器
-            //TICKS_ALIVE_FIELD = ObfuscationReflectionHelper.<DamagingProjectileEntity>findField(EntitySpellBall, "field_70236_j");
             aliveTimer ++;
             if(aliveTimer > maxTimer){
                 //指数降低mp存量
