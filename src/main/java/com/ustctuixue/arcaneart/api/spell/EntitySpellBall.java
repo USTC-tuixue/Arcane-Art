@@ -162,22 +162,6 @@ public class EntitySpellBall extends Entity{
          }
     }
 
-    /*
-    public EntitySpellBall(World worldIn, double x, double y, double z, double gravityFactor) {
-        super(EntityType.FIREBALL, worldIn);
-        this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
-        this.gravityFactor = gravityFactor;
-    }
-
-    public EntitySpellBall(World worldIn, double x, double y, double z) {
-        this(worldIn, x, y, z, 0.0D);
-    }
-
-    public EntitySpellBall(World worldIn, LivingEntity shooter, double accelX, double accelY, double accelZ) {
-        super(EntityType.FIREBALL, shooter, accelX, accelY, accelZ, worldIn);
-    }
-    */
-
 
 
     protected void onImpact(RayTraceResult result)
