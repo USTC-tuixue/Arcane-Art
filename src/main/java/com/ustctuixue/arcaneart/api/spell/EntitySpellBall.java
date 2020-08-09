@@ -11,9 +11,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -42,8 +44,7 @@ public class EntitySpellBall extends Entity{
     }
 
     public void writeAdditional(CompoundNBT compound) {
-        //TODO
-        //把实体数据写进compound，可以看DamagingProjectileEntity
+        //把实体的速度和寿命写进compound，可以看DamagingProjectileEntity
         Vec3d vec3d = this.getMotion();
         compound.put("direction", this.newDoubleNBTList(new double[]{vec3d.x, vec3d.y, vec3d.z}));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
@@ -51,16 +52,7 @@ public class EntitySpellBall extends Entity{
     }
 
     public void readAdditional(CompoundNBT compound) {
-        /*
-        if (compound.contains("power", 9)) {
-            ListNBT listnbt = compound.getList("power", 6);
-            if (listnbt.size() == 3) {
-                this.accelerationX = listnbt.getDouble(0);
-                this.accelerationY = listnbt.getDouble(1);
-                this.accelerationZ = listnbt.getDouble(2);
-            }
-        }
-
+        //从compound加载实体数据
         this.ticksAlive = compound.getInt("life");
         if (compound.contains("direction", 9) && compound.getList("direction", 6).size() == 3) {
             ListNBT listnbt1 = compound.getList("direction", 6);
@@ -68,8 +60,6 @@ public class EntitySpellBall extends Entity{
         } else {
             this.remove();
         }
-        */
-        //从compound加载实体数据
     }
 
     public IPacket<?> createSpawnPacket() {
@@ -80,7 +70,19 @@ public class EntitySpellBall extends Entity{
         //我不知道这是干啥的
     }
 
+    /**
+     * Checks if the entity is in range to render.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public boolean isInRangeToRenderDist(double distance) {
+        double d0 = this.getBoundingBox().getAverageEdgeLength() * 4.0D;
+        if (Double.isNaN(d0)) {
+            d0 = 4.0D;
+        }
 
+        d0 = d0 * 64.0D;
+        return distance < d0 * d0;
+    }
 
     private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
 
@@ -138,6 +140,12 @@ public class EntitySpellBall extends Entity{
              this.z = z;
              return this;
          }
+        public Builder pos(BlockPos pos){
+            this.x = pos.getX();
+            this.y = pos.getY();
+            this.z = pos.getZ();
+            return this;
+        }
          public Builder motion(double vx, double vy, double vz){
              this.vx = vx;
              this.vy = vy;
