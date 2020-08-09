@@ -128,7 +128,7 @@ public class SpellConfig
                     = new MapSerializer<Effect, EffectMagicTraits>()
                     .withKeySerializer(effect -> Objects.requireNonNull(effect.getRegistryName()).toString())
                     .withValueSerializer(EffectMagicTraits::toString)
-                    .withKeyDeserializer(s -> ForgeRegistries.POTIONS.getValue(new ResourceLocation(s)))
+                    .withKeyDeserializer(s -> ForgeRegistries.POTIONS.getValue(new ResourceLocation(s.split("\\|")[0])))
                     .withValueDeserializer(EffectMagicTraits::fromString);
 
             private static Map<Effect, EffectMagicTraits> EFFECTS = null;
