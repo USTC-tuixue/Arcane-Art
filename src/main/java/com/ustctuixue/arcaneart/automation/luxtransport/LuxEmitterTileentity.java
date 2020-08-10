@@ -34,7 +34,7 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
                     mpStorageCapLazyOptional.ifPresent((s) -> {
                         double MP = s.getMana();
                         //新建一个法球实体
-                        world.addEntity(new EntitySpellBall.Builder(world).pos(this.getPos()).build());
+                        world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), 0.5).build());
                     });
                 }
             }

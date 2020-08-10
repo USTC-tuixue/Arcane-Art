@@ -14,6 +14,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
@@ -140,18 +142,46 @@ public class EntitySpellBall extends Entity{
              this.z = z;
              return this;
          }
-        public Builder pos(BlockPos pos){
-            this.x = pos.getX();
-            this.y = pos.getY();
-            this.z = pos.getZ();
-            return this;
-        }
          public Builder motion(double vx, double vy, double vz){
              this.vx = vx;
              this.vy = vy;
              this.vz = vz;
              return this;
          }
+
+         /*
+         gives out a spell ball emit from a block, at the given direction & speed
+          */
+        public Builder emitFromBlock(BlockPos pos, Direction FACING, double speed){
+            this.x = pos.getX() + 0.5D;
+            this.y = pos.getY() + 0.5D;
+            this.z = pos.getZ() + 0.5D;
+            if(FACING == Direction.UP){
+                this.y += 0.5;
+                this.vy = speed;
+            }
+            else if(FACING == Direction.DOWN){
+                this.y -= 0.5;
+                this.vy = -speed;
+            }
+            else if(FACING == Direction.EAST){
+                this.x += 0.5;
+                this.vx = speed;
+            }
+            else if(FACING == Direction.WEST){
+                this.x -= 0.5;
+                this.vx = -speed;
+            }
+            else if(FACING == Direction.NORTH){
+                this.z += 0.5;
+                this.vz = speed;
+            }
+            else if(FACING == Direction.SOUTH){
+                this.z -= 0.5;
+                this.vz = -speed;
+            }
+            return this;
+        }
          public Builder shooter(LivingEntity shooter){
              this.shooter = shooter;
              return this;

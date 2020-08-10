@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.automation.luxtransport;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
@@ -14,7 +15,7 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public class LuxEmitter extends Block{
+public class LuxEmitter extends DirectionalBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -36,7 +37,7 @@ public class LuxEmitter extends Block{
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         Direction direction = context.getFace();
         BlockPos blockpos = context.getPos();
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getFace().getOpposite());
     }
 
 }
