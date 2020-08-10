@@ -1,14 +1,12 @@
 package com.ustctuixue.arcaneart.automation.crystal;
 
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
-import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -26,9 +24,10 @@ public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity imp
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityMPStorage.MP_STORAGE_CAP ? LazyOptional.of(()->{
-            return this.CrystalMPStorage;
-        }).cast() : super.getCapability(cap, side);
+        if (cap == CapabilityMPStorage.MP_STORAGE_CAP){
+            return LazyOptional.of(() -> this.CrystalMPStorage).cast();
+        }
+        return super.getCapability(cap, side);
     }
 
     private MPStorage createMPStorage(){

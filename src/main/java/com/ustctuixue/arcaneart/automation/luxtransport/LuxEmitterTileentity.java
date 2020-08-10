@@ -1,16 +1,11 @@
 package com.ustctuixue.arcaneart.automation.luxtransport;
 
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.EntitySpellBall;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
-import com.ustctuixue.arcaneart.automation.crystal.AbstractCollectiveCrystalTileEntity;
-import net.minecraft.block.HopperBlock;
 import net.minecraft.client.renderer.texture.ITickable;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class LuxEmitterTileentity extends TileEntity implements ITickable {
@@ -33,8 +28,12 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
                     LazyOptional<MPStorage> mpStorageCapLazyOptional = mpStorageTE.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
                     mpStorageCapLazyOptional.ifPresent((s) -> {
                         double MP = s.getMana();
-                        //新建一个法球实体
-                        world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), 0.5).build());
+                        if (MP >= emitterTransferAmount){
+                            //必须有足够一次发射的能量才运作，抽取这些能量
+                            s.setMana(MP - emitterTransferAmount);
+                            //新建一个法球实体
+                            world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), 0.5).setFullMP(emitterTransferAmount).build());
+                        }
                     });
                 }
             }

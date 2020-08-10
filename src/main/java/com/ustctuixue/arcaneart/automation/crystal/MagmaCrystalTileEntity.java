@@ -1,16 +1,12 @@
 package com.ustctuixue.arcaneart.automation.crystal;
 
-import com.udojava.evalex.Expression;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
-import com.ustctuixue.arcaneart.automation.EnvHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;
-
-import java.math.BigDecimal;
 
 public class MagmaCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
     public MagmaCrystalTileEntity() {

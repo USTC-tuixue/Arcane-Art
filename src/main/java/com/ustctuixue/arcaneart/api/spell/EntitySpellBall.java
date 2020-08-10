@@ -2,8 +2,10 @@ package com.ustctuixue.arcaneart.api.spell;
 
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
+import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.Entity;
@@ -14,8 +16,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
@@ -41,6 +41,9 @@ public class EntitySpellBall extends Entity{
 
     public int ticksAlive = 0;//生存时间的计时器。
     public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
+
+    private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
+    public MPStorage spellBallMPStorage;
     
     protected void registerData() {
     }
@@ -86,8 +89,6 @@ public class EntitySpellBall extends Entity{
         return distance < d0 * d0;
     }
 
-    private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
-
     @Getter @Setter
     protected IMPConsumer mpSource = null;
     @Getter @Setter
@@ -123,6 +124,7 @@ public class EntitySpellBall extends Entity{
         this.setGravityFactor(builder.gravityFactor);
         this.setShootingEntity(builder.shooter);
         this.setMotion(new Vec3d(builder.vx,builder.vy,builder.vz));
+        this.spellBallMPStorage = builder.mps;
     }
 
     public static class Builder{
@@ -132,6 +134,7 @@ public class EntitySpellBall extends Entity{
         private double gravityFactor;
         private LivingEntity shooter;
         private float yaw, pitch;
+        private MPStorage mps;
 
          public Builder (World world){
              this.world =world;
@@ -152,36 +155,36 @@ public class EntitySpellBall extends Entity{
          /*
          gives out a spell ball emit from a block, at the given direction & speed
           */
-        public Builder emitFromBlock(BlockPos pos, Direction FACING, double speed){
-            this.x = pos.getX() + 0.5D;
-            this.y = pos.getY() + 0.5D;
-            this.z = pos.getZ() + 0.5D;
-            if(FACING == Direction.UP){
-                this.y += 0.5;
-                this.vy = speed;
-            }
-            else if(FACING == Direction.DOWN){
-                this.y -= 0.5;
-                this.vy = -speed;
-            }
-            else if(FACING == Direction.EAST){
-                this.x += 0.5;
-                this.vx = speed;
-            }
-            else if(FACING == Direction.WEST){
-                this.x -= 0.5;
-                this.vx = -speed;
-            }
-            else if(FACING == Direction.NORTH){
-                this.z += 0.5;
-                this.vz = speed;
-            }
-            else if(FACING == Direction.SOUTH){
-                this.z -= 0.5;
-                this.vz = -speed;
-            }
-            return this;
-        }
+         public Builder emitFromBlock(BlockPos pos, Direction FACING, double speed){
+             this.x = pos.getX() + 0.5D;
+             this.y = pos.getY() + 0.5D;
+             this.z = pos.getZ() + 0.5D;
+             if(FACING == Direction.UP){
+                 this.y += 0.5;
+                 this.vy = speed;
+             }
+             else if(FACING == Direction.DOWN){
+                 this.y -= 0.5;
+                 this.vy = -speed;
+             }
+             else if(FACING == Direction.EAST){
+                 this.x += 0.5;
+                 this.vx = speed;
+             }
+             else if(FACING == Direction.WEST){
+                 this.x -= 0.5;
+                 this.vx = -speed;
+             }
+             else if(FACING == Direction.NORTH){
+                 this.z += 0.5;
+                 this.vz = speed;
+             }
+             else if(FACING == Direction.SOUTH){
+                 this.z -= 0.5;
+                 this.vz = -speed;
+             }
+             return this;
+         }
          public Builder shooter(LivingEntity shooter){
              this.shooter = shooter;
              return this;
@@ -193,6 +196,17 @@ public class EntitySpellBall extends Entity{
          public Builder angles(float yaw, float pitch){
              this.yaw = yaw;
              this.pitch = pitch;
+             return this;
+         }
+
+         /*
+         gives out a spell ball with full mp
+          */
+         public Builder setFullMP(double maxMP) {
+             MPStorage mps = new MPStorage();
+             mps.setMaxMP(maxMP);
+             mps.setMana(maxMP);
+             this.mps = mps;
              return this;
          }
          public EntitySpellBall build(){
@@ -271,11 +285,16 @@ public class EntitySpellBall extends Entity{
         }
     }
 
+
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
-        if ((cap == CapabilitySpell.SPELL_CAP)||(cap == CapabilityMPStorage.MP_STORAGE_CAP)){
+        if (cap == CapabilitySpell.SPELL_CAP){
             return LazyOptional.of(() -> this.translatedSpellProvider).cast();
+        }
+        else if (cap == CapabilityMPStorage.MP_STORAGE_CAP){
+            return LazyOptional.of(() -> this.spellBallMPStorage).cast();
         }
         return super.getCapability(cap, side);
     }

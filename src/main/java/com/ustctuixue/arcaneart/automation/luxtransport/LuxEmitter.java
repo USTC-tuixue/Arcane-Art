@@ -35,8 +35,6 @@ public class LuxEmitter extends DirectionalBlock {
     }
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction direction = context.getFace();
-        BlockPos blockpos = context.getPos();
         return this.getDefaultState().with(FACING, context.getFace().getOpposite());
     }
 
