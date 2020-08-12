@@ -44,7 +44,6 @@ public class EntitySpellBall extends Entity{
     protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
 
     public int ticksAlive = 0;//生存时间的计时器。
-    public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
 
     private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
@@ -254,9 +253,9 @@ public class EntitySpellBall extends Entity{
                             } else {
                                 s.setMana(mana + spellMana);
                             }
-                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
                         });
                     }
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
                 else if (result.getType() == RayTraceResult.Type.ENTITY) {
                     //给实体补充能量
@@ -381,5 +380,7 @@ public class EntitySpellBall extends Entity{
         }
         return super.getCapability(cap, side);
     }
+
+    public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
 
 }
