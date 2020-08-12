@@ -17,8 +17,6 @@ import javax.annotation.Nullable;
 
 public class LuxEmitter extends DirectionalBlock {
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
-
     public LuxEmitter(){
         super(Properties.create(Material.ROCK).hardnessAndResistance(5));
     }

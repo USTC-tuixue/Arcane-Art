@@ -1,13 +1,19 @@
 package com.ustctuixue.arcaneart.api.spell;
 
 import com.ustctuixue.arcaneart.api.APIRegistries;
+import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
+import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
+import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
+import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -16,11 +22,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -175,11 +179,11 @@ public class EntitySpellBall extends Entity{
                  this.x -= 0.5;
                  this.vx = -speed;
              }
-             else if(FACING == Direction.NORTH){
+             else if(FACING == Direction.SOUTH){
                  this.z += 0.5;
                  this.vz = speed;
              }
-             else if(FACING == Direction.SOUTH){
+             else if(FACING == Direction.NORTH){
                  this.z -= 0.5;
                  this.vz = -speed;
              }
@@ -216,33 +220,73 @@ public class EntitySpellBall extends Entity{
 
 
 
-    protected void onImpact(RayTraceResult result)
-    {
+    protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
         if (!this.world.isRemote){
-            if(!this.translatedSpellProvider.hasSpell()){
-                //插入作为能量传输手段的逻辑
+            if (!this.translatedSpellProvider.hasSpell()) {
+                //没带法术，插入作为能量传输手段的逻辑
                 //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
-                //棱镜分两种：直角棱镜和分光棱镜
+                //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
                 //不考虑任何折射，摸了
                 //和MPStorage的te碰撞时赋予其能量
-                if(result.getType() == RayTraceResult.Type.BLOCK){
+                if (result.getType() == RayTraceResult.Type.BLOCK) {
                     //碰上方块了
+                    BlockState block = world.getBlockState(((BlockRayTraceResult) result).getPos());
+                    if (block.getBlock() instanceof LuxReflector) {
+                        block.get(LuxReflector.HORIZONTAL_FACING);
+                        //TODO
+                    }
+                    else if (block.getBlock() instanceof LuxSplitter) {
+                        block.get(LuxSplitter.FACING);
+                        //TODO
+                    }
+                    else if (block.hasTileEntity()) {
+                        TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
+                        assert te != null;
+                        LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+                        mpStorageCapLazyOptional.ifPresent((s) -> {
+                            double mana = s.getMana();
+                            double maxMP = s.getMaxMP();
+                            double spellMana = this.spellBallMPStorage.getMana();
+                            if (mana + spellMana > maxMP) {
+                                s.setMana(maxMP);
+                            } else {
+                                s.setMana(mana + spellMana);
+                            }
+                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
+                        });
+                    }
                 }
-                else if(result.getType() == RayTraceResult.Type.ENTITY) {
+                else if (result.getType() == RayTraceResult.Type.ENTITY) {
                     //给实体补充能量
+                    Entity entity = ((EntityRayTraceResult) result).getEntity();
+                    if (entity instanceof LivingEntity) {
+                        LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
+                        optionalManaBar.ifPresent((s) -> {
+                            double mana = s.getMana();
+                            double maxMP = s.getMaxMana((LivingEntity) entity);
+                            double spellMana = this.spellBallMPStorage.getMana();
+                            if (mana + spellMana > maxMP) {
+                                s.setMana(maxMP);
+                            }
+                            else {
+                                s.setMana(mana + spellMana);
+                            }
+                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
+                        });
+                    }
+                    return;
                 }
-                return;
-            };
-            TranslatedSpell spell = this.translatedSpellProvider.getSpell();
-            this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                //带了法术，执行瞬时施法操作
+                TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+            }
         }
     }
 
     @Override
-    public void tick()
-    {
+    public void tick(){
         super.tick();
 
         if (!this.world.isRemote) {
@@ -281,11 +325,50 @@ public class EntitySpellBall extends Entity{
             if(ticksAlive > maxTimer){
                 //指数降低mp存量
             }
+
+            if (this.spellBallMPStorage.getMana() == 0D){
+                this.remove();
+            }
+
             this.translatedSpellProvider.getCompiled(source).executeOnHold(source);
         }
     }
 
-
+    /*
+    获取运动方向，如果运动方向和坐标轴不对齐返回null
+     */
+    public Direction isMotionAligned(){
+        Vec3d v = this.getMotion();
+        double x = v.getX();
+        double y = v.getY();
+        double z = v.getZ();
+        if (y == 0){
+            if (x == 0){
+                if(z < 0)
+                    return Direction.NORTH;
+                else if(z > 0)
+                    return Direction.SOUTH;
+                else
+                    return null;
+            }
+            else if (z == 0){
+                if(x < 0)
+                    return Direction.WEST;
+                else
+                    return Direction.EAST;
+            }
+            else
+                return null;
+        }
+        else if (x == 0 && y == 0){
+            if (y < 0)
+                return Direction.DOWN;
+            else
+                return Direction.UP;
+        }
+        else
+            return null;
+    }
 
     @Nonnull
     @Override
