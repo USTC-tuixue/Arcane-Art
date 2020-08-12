@@ -29,8 +29,7 @@ public class LuxWand extends Item {
         BlockPos blockpos = context.getPos();
         BlockState block = world.getBlockState(blockpos);
         AtomicReference<StringTextComponent> stringTextComponent = null;
-        boolean flag = false;
-        /*
+        boolean flag = false; //true代表法杖已经起效过，不需要再显示温度
         if (block.hasTileEntity()) {
             TileEntity te = world.getTileEntity(blockpos);
             assert te != null;
@@ -40,8 +39,10 @@ public class LuxWand extends Item {
                 double maxMP = s.getMaxMP();
                 stringTextComponent.set(new StringTextComponent("Current MP: " + mana + " / Max MP: " + maxMP));
             });
+            if(mpStorageCapLazyOptional.isPresent())
+                flag = true;
+
         }
-         */
         if (!flag){
             double temperature = EnvHelper.getTemperature(world, blockpos);
             stringTextComponent.set(new StringTextComponent("Temperature: " + temperature + "K"));
