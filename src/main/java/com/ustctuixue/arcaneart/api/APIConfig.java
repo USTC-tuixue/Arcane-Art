@@ -19,6 +19,8 @@ public class APIConfig
     public static class MP
     {
         public static ForgeConfigSpec.DoubleValue DEATH_RESET_RATIO;
+        public static ForgeConfigSpec.DoubleValue MANA_COST_AMPLIFIER;
+        public static ForgeConfigSpec.DoubleValue COMPLEXITY_AMPLIFIER;
 
         static void load(ForgeConfigSpec.Builder builder)
         {
@@ -27,6 +29,19 @@ public class APIConfig
             DEATH_RESET_RATIO = builder
                     .comment("After death, players' MP will be reset to this value multiply by players' max MP.")
                     .defineInRange("AfterDeathResetRatio", 0.25, 0.0, 1.0);
+
+            MANA_COST_AMPLIFIER = builder
+                    .comment(
+                            "Global mana cost amplifier, all mana cost will be multiplied by this."
+                    )
+                    .defineInRange("manaCostaAmplifier", 1.0, 0.0, Double.MAX_VALUE);
+
+            COMPLEXITY_AMPLIFIER = builder
+                    .comment(
+                            "Global spell complexity amplifier, all complexity will be multiplied by this."
+                    )
+                    .defineInRange("complexityAmplifier", 1.0, 0.0, Double.MAX_VALUE);
+
 
             Regeneration.load(builder);
             Levelling.load(builder);
