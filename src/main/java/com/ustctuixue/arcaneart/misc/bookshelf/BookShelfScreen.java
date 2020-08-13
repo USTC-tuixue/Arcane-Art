@@ -9,7 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class BookShelfScreen extends ContainerScreen<BookShelfContainer> {
-    private ResourceLocation OBSIDIAN_CONTAINER_RESOURCE = new ResourceLocation("arcaneart", "textures/gui/container/bookshelf.png");
+    private ResourceLocation BOOKSHELF_GUI = new ResourceLocation("arcaneart", "textures/gui/container/bookshelf.png");
     private int textureWidth = 176;
     private int textureHeight = 151;
 
@@ -38,7 +38,7 @@ public class BookShelfScreen extends ContainerScreen<BookShelfContainer> {
         this.renderBackground();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         assert this.minecraft != null;
-        this.minecraft.getTextureManager().bindTexture(OBSIDIAN_CONTAINER_RESOURCE);
+        this.minecraft.getTextureManager().bindTexture(BOOKSHELF_GUI);
         this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 }
