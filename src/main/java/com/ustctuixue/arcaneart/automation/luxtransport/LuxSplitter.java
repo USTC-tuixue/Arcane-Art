@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.automation.luxtransport;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.IWaterLoggable;
@@ -17,10 +18,12 @@ import javax.annotation.Nullable;
 /*
 偏振分光棱镜（游戏里去掉了偏振的属性，仅保留分拆为两束强度相同光的特性）
  */
-public class LuxSplitter extends DirectionalBlock implements IWaterLoggable {
+public class LuxSplitter extends Block implements IWaterLoggable {
     //FACE的选取：UP意味着半透半反面从-x-z到+x+z，DOWN意味着从-x+z到+x-z。
     //xoz平面上的四个方向则取和下台阶类似的方位，如EAST（正x）从+x-y到-x+y，SOUTH（正z）从+z-y到-z+y
 
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    //不能和正常方块的面属性一一对应，不把DirectionalBlock做父类
 
     public LuxSplitter(){
         super(Properties.create(Material.ROCK).hardnessAndResistance(5));

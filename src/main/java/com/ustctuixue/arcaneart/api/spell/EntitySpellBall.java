@@ -222,43 +222,80 @@ public class EntitySpellBall extends Entity{
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
-        if (!this.world.isRemote){
-            if (!this.translatedSpellProvider.hasSpell()) {
-                //没带法术，插入作为能量传输手段的逻辑
-                //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
-                //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
-                //不考虑任何折射，摸了
-                //和MPStorage的te碰撞时赋予其能量
-                if (result.getType() == RayTraceResult.Type.BLOCK) {
-                    //碰上方块了
-                    BlockState block = world.getBlockState(((BlockRayTraceResult) result).getPos());
-                    if (block.getBlock() instanceof LuxReflector) {
-                        block.get(LuxReflector.HORIZONTAL_FACING);
-                        //TODO
-                    }
-                    else if (block.getBlock() instanceof LuxSplitter) {
-                        block.get(LuxSplitter.FACING);
-                        //TODO
-                    }
-                    else if (block.hasTileEntity()) {
-                        TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
-                        assert te != null;
-                        LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-                        mpStorageCapLazyOptional.ifPresent((s) -> {
-                            double mana = s.getMana();
-                            double maxMP = s.getMaxMP();
-                            double spellMana = this.spellBallMPStorage.getMana();
-                            if (mana + spellMana > maxMP) {
-                                s.setMana(maxMP);
-                            } else {
-                                s.setMana(mana + spellMana);
-                            }
-                        });
-                    }
-                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
+        if (!this.world.isRemote) {
+
+            //没带法术，插入作为能量传输手段的逻辑
+            //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
+            //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
+            //不考虑任何折射，摸了
+            //和MPStorage的te碰撞时赋予其能量
+            if (result.getType() == RayTraceResult.Type.BLOCK) {
+                //碰上方块了
+                BlockState block = world.getBlockState(((BlockRayTraceResult) result).getPos());
+                if (block.getBlock() instanceof LuxReflector) {
+                    block.get(LuxReflector.FACING);
+                    //TODO
                 }
-                else if (result.getType() == RayTraceResult.Type.ENTITY) {
-                    //给实体补充能量
+                else if (block.getBlock() instanceof LuxSplitter) {
+                    block.get(LuxSplitter.FACING);
+                    //TODO
+                }
+                else if (this.translatedSpellProvider.hasSpell()) {
+                    //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                    this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                    LivingEntity shooter = this.getShootingEntity();
+                    LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                    optionalManaBar.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double leftOverMana = this.spellBallMPStorage.getMana();
+                        if (mana + leftOverMana > maxMP) {
+                            s.setMana(maxMP);
+                        } else {
+                            s.setMana(mana + leftOverMana);
+                        }
+                    });//return the leftover mana to the caster
+                }
+                else if (block.hasTileEntity()) {
+                    TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
+                    assert te != null;
+                    LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+                    mpStorageCapLazyOptional.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMP();
+                        double spellMana = this.spellBallMPStorage.getMana();
+                        if (mana + spellMana > maxMP) {
+                            s.setMana(maxMP);
+                        }
+                        else {
+                            s.setMana(mana + spellMana);
+                        }
+                    });
+                }
+                this.spellBallMPStorage.setMana(0D);//delete this spell ball
+            }
+            else if (result.getType() == RayTraceResult.Type.ENTITY) {
+                if (this.translatedSpellProvider.hasSpell()) {
+                    //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                    this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                    LivingEntity shooter = this.getShootingEntity();
+                    LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                    optionalManaBar.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double leftOverMana = this.spellBallMPStorage.getMana();
+                        if (mana + leftOverMana > maxMP) {
+                            s.setMana(maxMP);
+                        }
+                        else {
+                            s.setMana(mana + leftOverMana);
+                        }
+                    });//return the leftover mana to the caster
+                }
+                else {
+                    //没有携带法术，给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
                     if (entity.isLiving()) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
@@ -268,31 +305,12 @@ public class EntitySpellBall extends Entity{
                             double spellMana = this.spellBallMPStorage.getMana();
                             if (mana + spellMana > maxMP) {
                                 s.setMana(maxMP);
-                            }
-                            else {
+                            } else {
                                 s.setMana(mana + spellMana);
                             }
-                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
                         });
                     }
-                    return;
                 }
-                //带了法术，执行瞬时施法操作
-                TranslatedSpell spell = this.translatedSpellProvider.getSpell();
-                this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
-                LivingEntity shooter = this.getShootingEntity();
-                LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
-                optionalManaBar.ifPresent((s) -> {
-                    double mana = s.getMana();
-                    double maxMP = s.getMaxMana((LivingEntity) shooter);
-                    double leftOverMana = this.spellBallMPStorage.getMana();
-                    if (mana + leftOverMana > maxMP) {
-                        s.setMana(maxMP);
-                    }
-                    else {
-                        s.setMana(mana + leftOverMana);
-                    }
-                });//return the leftover mana to the caster
                 this.spellBallMPStorage.setMana(0D);//delete this spell ball
             }
         }

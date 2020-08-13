@@ -20,6 +20,7 @@ public class AutomationRegistry {
     public static RegistryObject<Block> SOLAR_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("solar_crystal", SolarCrystal::new);
     public static RegistryObject<Block> FROZEN_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("frozen_crystal", FrozenCrystal::new);
     public static RegistryObject<Block> MAGMA_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("magma_crystal", MagmaCrystal::new);
+    public static RegistryObject<Block> VOID_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("void_crystal", VoidCrystal::new);
     public static RegistryObject<Block> LUX_EMITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_emitter", LuxEmitter::new);
     public static RegistryObject<Block> LUX_REFLECTOR_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_reflector", LuxReflector::new);
     public static RegistryObject<Block> LUX_SPLITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_splitter", LuxReflector::new);
@@ -32,6 +33,7 @@ public class AutomationRegistry {
     public static RegistryObject<Item> SOLAR_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("solar_crystal", () -> new BlockItem(AutomationRegistry.SOLAR_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> FROZEN_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("frozen_crystal", () -> new BlockItem(AutomationRegistry.FROZEN_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> MAGMA_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("magma_crystal", () -> new BlockItem(AutomationRegistry.MAGMA_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
+    public static RegistryObject<Item> VOID_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("void_crystal", () -> new BlockItem(AutomationRegistry.VOID_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> LUX_EMITTER_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_emitter", () -> new BlockItem(AutomationRegistry.LUX_EMITTER_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> LUX_REFLECTOR_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_reflector", () -> new BlockItem(AutomationRegistry.LUX_REFLECTOR_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> LUX_SPLITTER_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_splitter", () -> new BlockItem(AutomationRegistry.LUX_SPLITTER_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
@@ -43,6 +45,7 @@ public class AutomationRegistry {
     public static RegistryObject<TileEntityType<SolarCrystalTileEntity>> SOLAR_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("solar_crystal_tileentity", () -> TileEntityType.Builder.create(SolarCrystalTileEntity::new, AutomationRegistry.SOLAR_CRYSTAL_BLOCK.get()).build(null));
     public static RegistryObject<TileEntityType<FrozenCrystalTileEntity>> FROZEN_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("frozen_crystal_tileentity", () -> TileEntityType.Builder.create(FrozenCrystalTileEntity::new, AutomationRegistry.FROZEN_CRYSTAL_BLOCK.get()).build(null));
     public static RegistryObject<TileEntityType<MagmaCrystalTileEntity>> MAGMA_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("magma_crystal_tileentity", () -> TileEntityType.Builder.create(MagmaCrystalTileEntity::new, AutomationRegistry.MAGMA_CRYSTAL_BLOCK.get()).build(null));
+    public static RegistryObject<TileEntityType<VoidCrystalTileEntity>> VOID_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("void_crystal_tileentity", () -> TileEntityType.Builder.create(VoidCrystalTileEntity::new, AutomationRegistry.VOID_CRYSTAL_BLOCK.get()).build(null));
     public static RegistryObject<TileEntityType<LuxEmitterTileentity>> LUX_EMITTER_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("lux_emitter_tileentity", () -> TileEntityType.Builder.create(LuxEmitterTileentity::new, AutomationRegistry.LUX_EMITTER_BLOCK.get()).build(null));
 
 }
