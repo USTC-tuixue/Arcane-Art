@@ -4,6 +4,7 @@ import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -15,7 +16,11 @@ public class RitualModuleRegistries {
             = RITUAL_DEFERRED_REGISTER.register("ritual_rain",
                 Ritual.builder()
                         .execRitual(new RitualRain())
-                        .ingredients(new Item[]{null, null, null, null, Items.LAPIS_LAZULI})
+                        .ingredients(new Ingredient[]{
+                                Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.EMPTY,
+                                Ingredient.EMPTY, Ingredient.fromItems(Items.LAPIS_LAZULI), Ingredient.EMPTY,
+                                Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.EMPTY
+                        })
                         .cost(5000)
                         .consumeSpeed(50)
                         ::build

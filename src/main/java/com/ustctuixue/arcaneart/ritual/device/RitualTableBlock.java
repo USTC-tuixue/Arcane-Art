@@ -68,14 +68,11 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if( !worldIn.isRemote && handIn == Hand.MAIN_HAND) {
-            player.sendMessage(new StringTextComponent("on Click"));
             RitualTableTileEntity ritualTableTileEntity = (RitualTableTileEntity) worldIn.getTileEntity(pos);
             if(ritualTableTileEntity == null) {
-                player.sendMessage(new StringTextComponent("no tile entity"));
                 return ActionResultType.PASS;
             }
             ritualTableTileEntity.start(state, worldIn, pos, player);
-
         }
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }

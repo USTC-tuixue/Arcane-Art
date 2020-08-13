@@ -21,12 +21,14 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 public class DingBlock extends Block implements IWaterLoggable {
     public enum EnumShape implements IStringSerializable {
@@ -98,4 +100,31 @@ public class DingBlock extends Block implements IWaterLoggable {
         return ActionResultType.PASS;
     }
 
+    @Override
+    public boolean ticksRandomly(BlockState state) {
+        return super.ticksRandomly(state);
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+        super.randomTick(state, worldIn, pos, random);
+    }
+
+    @Override
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+        if(state.get(LOCK)) {
+            DingTileEntity dingTileEntity = (DingTileEntity) world.getTileEntity(pos);
+            if(dingTileEntity == null) {
+                return 0;
+            }
+            if(dingTileEntity.getItemStored().isEmpty()) {
+                return 6;
+            }
+            else {
+                return 12;
+            }
+        }
+        return super.getLightValue(state, world, pos);
+    }
+    
 }

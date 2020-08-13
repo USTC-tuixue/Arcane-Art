@@ -34,7 +34,7 @@ public interface IRitualEffect
     /**
      * 施法效果
      * @param world 仪式核心祭坛的位置
-     * @param pos 仪式核心祭坛的位置
+     * @param pos 仪式中心鼎的位置
      * @param caster 可选的施法人
      */
     void execute(World world, BlockPos pos, LazyOptional<PlayerEntity> caster);

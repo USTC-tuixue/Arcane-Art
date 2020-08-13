@@ -53,7 +53,7 @@ public class DingTileEntity extends TileEntity {
 
     @Override
     public void onChunkUnloaded() {
-        if(this.world != null) {
+        if(this.world != null && !this.world.isRemote) {
             this.world.setBlockState(this.getPos(), this.getBlockState().with(DingBlock.LOCK, false));
         }
     }

@@ -1,7 +1,9 @@
 package com.ustctuixue.arcaneart.ritual.ritualMagic;
 
 import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -10,7 +12,7 @@ public class RitualRain implements IRitualEffect {
 
     @Override
     public boolean validateOther(World world, BlockPos pos) {
-        return world.canSeeSky(pos);
+        return world.canBlockSeeSky(pos.offset(Direction.UP));
     }
 
     @Override
@@ -19,4 +21,5 @@ public class RitualRain implements IRitualEffect {
             world.setRainStrength(world.getRainStrength(1F)+10F);
         }
     }
+
 }
