@@ -44,7 +44,7 @@ public class LuxSplitter extends DirectionalBlock implements IWaterLoggable {
             else{
                 return this.getDefaultState().with(FACING, Direction.DOWN);
             }
-            //net\minecraft\util\Direction.java, line 283-289
+            //net.minecraft.util.Direction, line 283-289
             // An angle of 0 is SOUTH, an angle of 90 would be WEST.
             // public static Direction fromAngle(double angle){
             //     return byHorizontalIndex(MathHelper.floor(angle / 90.0D + 0.5D) & 3);
