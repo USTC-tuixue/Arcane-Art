@@ -260,7 +260,7 @@ public class EntitySpellBall extends Entity{
                 else if (result.getType() == RayTraceResult.Type.ENTITY) {
                     //给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
-                    if (entity instanceof LivingEntity) {
+                    if (entity.isLiving()) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
@@ -280,6 +280,20 @@ public class EntitySpellBall extends Entity{
                 //带了法术，执行瞬时施法操作
                 TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                 this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                LivingEntity shooter = this.getShootingEntity();
+                LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                optionalManaBar.ifPresent((s) -> {
+                    double mana = s.getMana();
+                    double maxMP = s.getMaxMana((LivingEntity) shooter);
+                    double leftOverMana = this.spellBallMPStorage.getMana();
+                    if (mana + leftOverMana > maxMP) {
+                        s.setMana(maxMP);
+                    }
+                    else {
+                        s.setMana(mana + leftOverMana);
+                    }
+                });//return the leftover mana to the caster
+                this.spellBallMPStorage.setMana(0D);//delete this spell ball
             }
         }
     }
@@ -317,12 +331,19 @@ public class EntitySpellBall extends Entity{
             //this.setMotion(vec3d.add(this.accelerationX, this.accelerationY, this.accelerationZ).scale((double)f));
             //this.world.addParticle(this.getParticle(), d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
             this.setPosition(d0, d1, d2);
-
-            //TODO
+            
             //随时间而增加的能量消耗写在这
             ticksAlive++;
             if(ticksAlive > maxTimer){
                 //指数降低mp存量
+                double mp = this.spellBallMPStorage.getMana();
+                if(mp < 0.01D * this.spellBallMPStorage.getMaxMP()){
+                    mp = 0D;
+                }
+                else{
+                    mp = mp *(1.0D - descendingRate);
+                }
+                this.spellBallMPStorage.setMana(mp);
             }
 
             if (this.spellBallMPStorage.getMana() == 0D){
@@ -382,5 +403,6 @@ public class EntitySpellBall extends Entity{
     }
 
     public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
+    public double descendingRate = 0.01;//每tick衰减量
 
 }
