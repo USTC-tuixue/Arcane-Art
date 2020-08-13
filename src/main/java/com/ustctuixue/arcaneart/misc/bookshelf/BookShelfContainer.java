@@ -53,7 +53,7 @@ public class BookShelfContainer extends Container {
                 c--;
             }
         }
-        for (; c > 6; c++)
+        for (; c > 6; c--)
         {
             state = state.with(BookShelfBlock.BOOKS[c], false);
         }
