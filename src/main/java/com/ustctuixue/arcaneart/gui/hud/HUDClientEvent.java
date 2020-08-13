@@ -17,7 +17,7 @@ public class HUDClientEvent
     @SubscribeEvent
     public static void onOverlayRender(RenderGameOverlayEvent event)
     {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL)
+        if (event.getType() != RenderGameOverlayEvent.ElementType.SUBTITLES)
         {
             return;
         }

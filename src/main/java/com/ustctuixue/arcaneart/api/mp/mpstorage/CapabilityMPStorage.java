@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.mp.tile;
+package com.ustctuixue.arcaneart.api.mp.mpstorage;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;

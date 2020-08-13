@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.mp;
 
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
+import com.ustctuixue.arcaneart.api.spell.SpellCasterTiers;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,6 +19,10 @@ import javax.annotation.Nullable;
 public class CapabilityMP
 {
 
+    public static final IAttribute CASTER_TIER
+            = new RangedAttribute(null, "arcaneart.caster_tier",
+            10.0, SpellCasterTiers.MIN_TIER, SpellCasterTiers.MAX_TIER
+    );
     public static IAttribute MAX_MANA = new RangedAttribute(null, "arcaneart.maxMana",
             100.0D, 0.0D, InnerNumberDefaults.MAX_ALLOWED_MP);
     public static IAttribute REGEN_RATE = new RangedAttribute(null, "arcaneart.regenRate",

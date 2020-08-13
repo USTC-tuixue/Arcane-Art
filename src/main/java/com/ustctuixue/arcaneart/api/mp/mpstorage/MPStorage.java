@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.mp.tile;
+package com.ustctuixue.arcaneart.api.mp.mpstorage;
 
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import lombok.Getter;
