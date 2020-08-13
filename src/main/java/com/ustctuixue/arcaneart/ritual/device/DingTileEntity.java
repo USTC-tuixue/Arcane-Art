@@ -1,42 +1,30 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
-import com.ustctuixue.arcaneart.ritual.RitualRegistry;
+import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
 public class DingTileEntity extends TileEntity {
 
-    public DingTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public DingTileEntity() {
+        super(RitualRegistries.dingTileEntity.get());
     }
 
-    public static class DingCircleTileEntity extends DingTileEntity {
-        public DingCircleTileEntity() {
-            super(RitualRegistry.dingCircleTileEntity.get());
+    protected ItemStackHandler itemStackHandler = new ItemStackHandler() {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+            super.onContentsChanged(slot);
         }
-    }
-    public static class DingSquareTileEntity extends DingTileEntity {
-        public DingSquareTileEntity() {
-            super(RitualRegistry.dingSquareTileEntity.get());
-        }
-    }
-    public static class DingCenterTileEntity extends DingTileEntity {
-        public DingCenterTileEntity() {
-            super(RitualRegistry.dingCenterTileEntity.get());
-        }
-    }
-
-    protected ItemStackHandler itemStackHandler = new ItemStackHandler();
+    };
 
     @Nonnull
     @Override
@@ -49,5 +37,24 @@ public class DingTileEntity extends TileEntity {
 
     public ItemStack getItemStored() {
         return itemStackHandler.getStackInSlot(0);
+    }
+
+    @Override
+    public void read(CompoundNBT compound) {
+        itemStackHandler.deserializeNBT(compound.getCompound("store"));
+        super.read(compound);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        compound.put("store", itemStackHandler.serializeNBT());
+        return super.write(compound);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        if(this.world != null && !this.world.isRemote) {
+            this.world.setBlockState(this.getPos(), this.getBlockState().with(DingBlock.LOCK, false));
+        }
     }
 }

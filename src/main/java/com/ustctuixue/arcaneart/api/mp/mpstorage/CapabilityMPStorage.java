@@ -29,8 +29,6 @@ public class CapabilityMPStorage
             CompoundNBT nbt = new CompoundNBT();
             nbt.putDouble(MAX_MP, instance.maxMP);
             nbt.putDouble(CURRENT_MP, instance.mana);
-            //nbt.putDouble(IN_LIM, instance.inputRateLimit);
-            //nbt.putDouble(OUT_LIM, instance.outputRateLimit);
             return nbt;
         }
 
@@ -40,8 +38,6 @@ public class CapabilityMPStorage
             CompoundNBT compound = (CompoundNBT) nbt;
             instance.setMana(compound.getDouble(CURRENT_MP));
             instance.setMaxMP(compound.getDouble(MAX_MP));
-            //instance.setInputRateLimit(compound.getDouble(IN_LIM));
-            //instance.setOutputRateLimit(compound.getDouble(OUT_LIM));
         }
     }
 
