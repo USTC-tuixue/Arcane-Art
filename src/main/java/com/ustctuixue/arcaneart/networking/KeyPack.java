@@ -38,7 +38,7 @@ public class KeyPack
             if (message.equals("OpenMagicMenu") && player != null)
             {
                 NetworkHooks.openGui(player, new com.ustctuixue.arcaneart.gui.magicmenu.MagicMenuProvider());
-            }
+            }else
             if (message.split(":")[0].equals("ItchMagic") && player != null) {
 				Container container = player.openContainer;
 				if (container instanceof MagicContainer) {
@@ -50,7 +50,14 @@ public class KeyPack
 						}
 					}
 				}
-			}
+			}else
+            if(message.equals("LoadSpellShortcut") && player != null) {
+        		LazyOptional<ISpellInventory> spellCap = player
+        				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
+        		Inventory inventory = new Inventory();
+        		inventory=spellCap.orElseGet(SpellInventory::new).getShortCut();
+        		player.connection.sendPacket(new ShortcutPack(inventory));
+            }
         });
         ctx.get().setPacketHandled(true);
     }
