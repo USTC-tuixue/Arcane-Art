@@ -22,6 +22,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.state.properties.Half;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
@@ -231,14 +232,27 @@ public class EntitySpellBall extends Entity{
             //和MPStorage的te碰撞时赋予其能量
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
-                BlockState block = world.getBlockState(((BlockRayTraceResult) result).getPos());
+                BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                BlockState block = world.getBlockState(pos);
                 if (block.getBlock() instanceof LuxReflector) {
-                    block.get(LuxReflector.FACING);
+                    this.reflect(block.get(LuxReflector.FACING), block.get(LuxReflector.HALF));
                     //TODO
+                    // 设置红石信号强度的blockstate
+                    block.updateNeighbors(world, pos, 3);
+                    //必须更新才能正常反应红石信号
+                    //这个flag堪称mojang硬编码艺术的核心，最高128，用不同位的0/1来控制更新类型
+                    //https://www.bilibili.com/read/cv4565671/
+                    //net\minecraft\world\IWorldWriter.java line 9-19
                 }
                 else if (block.getBlock() instanceof LuxSplitter) {
-                    block.get(LuxSplitter.FACING);
+                    this.split(block.get(LuxSplitter.FACING));
                     //TODO
+                    // 设置红石信号强度的blockstate
+                    block.updateNeighbors(world, pos, 3);
+                    //必须更新才能正常反应红石信号
+                    //这个flag堪称mojang硬编码艺术的核心，最高128，用不同位的0/1来控制更新类型
+                    //https://www.bilibili.com/read/cv4565671/
+                    //net\minecraft\world\IWorldWriter.java line 9-19
                 }
                 else if (this.translatedSpellProvider.hasSpell()) {
                     //执行瞬时施法操作
@@ -374,6 +388,7 @@ public class EntitySpellBall extends Entity{
 
     /*
     获取运动方向，如果运动方向和坐标轴不对齐返回null
+    一般来说，方向和坐标轴对齐意味着这个法球是由发射器发出的
      */
     public Direction isMotionAligned(){
         Vec3d v = this.getMotion();
@@ -406,6 +421,24 @@ public class EntitySpellBall extends Entity{
         }
         else
             return null;
+    }
+
+    /*
+    执行反射操作，传入镜子的两个方向属性
+     */
+    public void reflect(Direction face, Half half){
+        //TODO
+        // 反射，下同
+        // 例如计算xz的反射，把xz和y的运算拆开
+        // xz对换，y反向
+        // 写个计算出射位置的函数，或者直接用入射位置代替减少代码量
+    }
+
+    /*
+    执行拆分操作，传入镜子的方向属性
+     */
+    public void split(Direction face){
+
     }
 
     @Nonnull
