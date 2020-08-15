@@ -13,6 +13,7 @@ public class APIConfig
     {
         builder.push("api");
         MP.load(builder);
+        Spell.load(builder);
         builder.pop();
     }
 
@@ -154,6 +155,31 @@ public class APIConfig
                         .and("lvl", BigDecimal.valueOf(currentLevel))
                         .eval().doubleValue();
             }
+        }
+    }
+
+    public static class Spell
+    {
+        public static ForgeConfigSpec.IntValue MAX_LIFE_TIME;
+        public static ForgeConfigSpec.DoubleValue DESCENDING_RATE;
+
+        static void load(ForgeConfigSpec.Builder builder)
+        {
+
+            builder.push("SpellBall");
+
+            MAX_LIFE_TIME = builder
+                    .comment(
+                            "An spell ball will lose MP after this time"
+                    )
+                    .defineInRange("MaxLifeTime", 1000, 0, 100000);
+
+            DESCENDING_RATE = builder
+                    .comment("An spell ball will lose MP after MaxLifeTime with this speed per tick")
+                    .defineInRange("DescendingRate", 0.02D, 0.0D, 1.0D);
+
+            builder.pop();
+
         }
     }
 
