@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 public class EntitySpellBall extends DamagingProjectileEntity
 {
+    @Getter
     private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
 
     @Getter @Setter
