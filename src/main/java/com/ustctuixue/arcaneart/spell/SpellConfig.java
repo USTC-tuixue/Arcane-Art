@@ -80,7 +80,7 @@ public class SpellConfig
                 .comment("Basic complexity")
                 .defineInRange("baseComplexity", defaultBaseComplexity, -Double.MAX_VALUE, Double.MAX_VALUE);
 
-        List<String> processedVariantComment = Arrays.asList(variantComment);
+        List<String> processedVariantComment = new ArrayList<>(Arrays.asList(variantComment));
         processedVariantComment.add("Expression Usage: https://github.com/uklimaschewski/EvalEx");
 
         List<String> manaAmpComment = new ArrayList<>(processedVariantComment);
