@@ -490,6 +490,16 @@ public class EntitySpellBall extends Entity{
         EntitySpellBall newSpell = this.clone();
         newSpell.reflect(face, pos);
         world.addEntity(newSpell);
+
+        double px = 0.5D + pos.getX();
+        double py = 0.5D + pos.getY();
+        double pz = 0.5D + pos.getZ();
+
+        double x = this.getPosX() - px;
+        double y = this.getPosY() - py + HALF_SIZE;
+        double z = this.getPosZ() - pz;
+
+        this.setPosition(px - x, py - y, pz - z);
     }
 
     /**
