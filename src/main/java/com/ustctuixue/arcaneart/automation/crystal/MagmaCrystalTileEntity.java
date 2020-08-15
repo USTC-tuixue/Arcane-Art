@@ -26,7 +26,7 @@ public class MagmaCrystalTileEntity extends AbstractCollectiveCrystalTileEntity 
                 if (regenRatio == 0)
                     return;
                 double MP = s.getMana();
-                double maxMP = s.getMaxMP();
+                double maxMP = s.getMaxMana();
                 MP += regenRatio;
                 if (MP >= maxMP)
                     MP = maxMP;

@@ -18,7 +18,7 @@ public class RitualRain implements IRitualEffect {
     @Override
     public void execute(World world, BlockPos pos, LazyOptional<PlayerEntity> caster) {
         if(!world.isRemote()) {
-            world.setRainStrength(world.getRainStrength(1F)+10F);
+            world.setRainStrength(world.getRainStrength(1F)+100F);
         }
     }
 
