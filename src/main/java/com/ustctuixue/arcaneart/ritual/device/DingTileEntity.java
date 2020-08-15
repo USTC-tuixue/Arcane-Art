@@ -39,6 +39,7 @@ public class DingTileEntity extends TileEntity {
         return itemStackHandler.getStackInSlot(0);
     }
 
+
     @Override
     public void read(CompoundNBT compound) {
         itemStackHandler.deserializeNBT(compound.getCompound("store"));

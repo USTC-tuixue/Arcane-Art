@@ -1,25 +1,26 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import com.ustctuixue.arcaneart.ritual.RitualConfig;
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import com.ustctuixue.arcaneart.spell.SpellConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -33,7 +34,7 @@ import java.util.Objects;
 public class RitualTableTileEntity extends TileEntity implements ITickableTileEntity {
     public RitualTableTileEntity() {
         super(RitualRegistries.ritualTableTileEntity.get());
-        mpStorage.setMaxMP(10000);
+        mpStorage.setMaxMana(10000);
         mpStorage.setMana(6000);
         neverExec = RitualConfig.HIGHEST_HEIGHT_OF_DING.get() < RitualConfig.LOWEST_HEIGHT_OF_DING.get() ||
                 RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get() < RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get();
@@ -154,6 +155,10 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         if(!ritual.getExecRitual().validateRitualCondition(worldIn, pos)) {
             sendMessage(String.format("The ritual %s is not valid here!", Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString()));
             return false;
+        }
+        else {
+            playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.begin",
+                    new TranslationTextComponent(Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString())));
         }
         this.totalMana = ritual.getCost() * SpellConfig.SpellProperty.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
@@ -340,8 +345,18 @@ findEdgeDing:
 
     @Override
     public void onChunkUnloaded() {
-        if(this.worldIn != null && !this.worldIn.isRemote) {
-            cancelRitual();
-        }
+        cancelRitual();
+    }
+
+    @Override
+    public void read(CompoundNBT compound) {
+        mpStorage.deserializeNBT(compound.getCompound("mana"));
+        super.read(compound);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        compound.put("mana", mpStorage.serializeNBT());
+        return super.write(compound);
     }
 }
