@@ -1,13 +1,12 @@
 package com.ustctuixue.arcaneart.api.events;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
@@ -24,10 +23,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 

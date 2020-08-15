@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.LazyOptional;
 
-public interface IRitual
+public interface IRitualEffect
 {
     default boolean validateTimeOfDay(long timeOfDay)
     {
@@ -34,7 +34,7 @@ public interface IRitual
     /**
      * 施法效果
      * @param world 仪式核心祭坛的位置
-     * @param pos 仪式核心祭坛的位置
+     * @param pos 仪式中心鼎的位置
      * @param caster 可选的施法人
      */
     void execute(World world, BlockPos pos, LazyOptional<PlayerEntity> caster);
@@ -46,5 +46,7 @@ public interface IRitual
      * @param simulate 是否模拟，true 时不应消耗牺牲
      * @return 消耗是否成功
      */
-    boolean consumeSacrifice(World world, BlockPos pos, boolean simulate);
+    default boolean consumeSacrifice(World world, BlockPos pos, boolean simulate) {
+        return true;
+    };
 }
