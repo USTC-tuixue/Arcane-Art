@@ -27,7 +27,7 @@ public class CapabilityMPStorage
         public INBT writeNBT(Capability<MPStorage> capability, MPStorage instance, Direction side)
         {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putDouble(MAX_MP, instance.maxMP);
+            nbt.putDouble(MAX_MP, instance.maxMana);
             nbt.putDouble(CURRENT_MP, instance.mana);
             return nbt;
         }
@@ -37,7 +37,7 @@ public class CapabilityMPStorage
         {
             CompoundNBT compound = (CompoundNBT) nbt;
             instance.setMana(compound.getDouble(CURRENT_MP));
-            instance.setMaxMP(compound.getDouble(MAX_MP));
+            instance.setMaxMana(compound.getDouble(MAX_MP));
         }
     }
 

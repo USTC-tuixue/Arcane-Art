@@ -8,12 +8,10 @@ import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -214,7 +212,7 @@ public class EntitySpellBall extends Entity{
           */
          public Builder setFullMP(double maxMP) {
              MPStorage mps = new MPStorage();
-             mps.setMaxMP(maxMP);
+             mps.setMaxMana(maxMP);
              mps.setMana(maxMP);
              this.mps = mps;
              return this;
@@ -222,7 +220,7 @@ public class EntitySpellBall extends Entity{
 
         public Builder setMP(double mana, double maxMP) {
             MPStorage mps = new MPStorage();
-            mps.setMaxMP(maxMP);
+            mps.setMaxMana(maxMP);
             mps.setMana(mana);
             this.mps = mps;
             return this;
@@ -291,7 +289,7 @@ public class EntitySpellBall extends Entity{
                     LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
                     mpStorageCapLazyOptional.ifPresent((s) -> {
                         double mana = s.getMana();
-                        double maxMP = s.getMaxMP();
+                        double maxMP = s.getMaxMana();
                         double spellMana = this.spellBallMPStorage.getMana();
                         if (mana + spellMana > maxMP) {
                             s.setMana(maxMP);
@@ -383,7 +381,7 @@ public class EntitySpellBall extends Entity{
             if(ticksAlive > maxTimer){
                 //指数降低mp存量
                 double mp = this.spellBallMPStorage.getMana();
-                if(mp < 0.05D * this.spellBallMPStorage.getMaxMP()){
+                if(mp < 0.01D * this.spellBallMPStorage.getMaxMana()){
                     mp = 0D;
                 }
                 else{
@@ -506,7 +504,7 @@ public class EntitySpellBall extends Entity{
                 .pos(x, y, z).motion(mot)
                 .gravity(this.gravityFactor)
                 .shooter(this.shootingEntity)
-                .setMP(this.spellBallMPStorage.getMana(), this.spellBallMPStorage.getMaxMP())
+                .setMP(this.spellBallMPStorage.getMana(), this.spellBallMPStorage.getMaxMana())
                 .build();
         spell.translatedSpellProvider = this.translatedSpellProvider;
         spell.ticksAlive = this.ticksAlive;

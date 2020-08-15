@@ -36,7 +36,7 @@ public class LuxWand extends Item {
             LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
             mpStorageCapLazyOptional.ifPresent((s) -> {
                 double mana = s.getMana();
-                double maxMP = s.getMaxMP();
+                double maxMP = s.getMaxMana();
                 stringTextComponent.set(new StringTextComponent("Current MP: " + mana + " / Max MP: " + maxMP));
             });
             if(mpStorageCapLazyOptional.isPresent())
