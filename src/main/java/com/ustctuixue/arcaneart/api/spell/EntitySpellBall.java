@@ -20,6 +20,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.state.properties.Half;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
@@ -42,7 +43,6 @@ public class EntitySpellBall extends Entity{
     protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
 
     public int ticksAlive = 0;//生存时间的计时器。
-    public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
 
     private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
@@ -221,45 +221,95 @@ public class EntitySpellBall extends Entity{
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
-        if (!this.world.isRemote){
-            if (!this.translatedSpellProvider.hasSpell()) {
-                //没带法术，插入作为能量传输手段的逻辑
-                //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
-                //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
-                //不考虑任何折射，摸了
-                //和MPStorage的te碰撞时赋予其能量
-                if (result.getType() == RayTraceResult.Type.BLOCK) {
-                    //碰上方块了
-                    BlockState block = world.getBlockState(((BlockRayTraceResult) result).getPos());
-                    if (block.getBlock() instanceof LuxReflector) {
-                        block.get(LuxReflector.HORIZONTAL_FACING);
-                        //TODO
-                    }
-                    else if (block.getBlock() instanceof LuxSplitter) {
-                        block.get(LuxSplitter.FACING);
-                        //TODO
-                    }
-                    else if (block.hasTileEntity()) {
-                        TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
-                        assert te != null;
-                        LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-                        mpStorageCapLazyOptional.ifPresent((s) -> {
-                            double mana = s.getMana();
-                            double maxMP = s.getMaxMana();
-                            double spellMana = this.spellBallMPStorage.getMana();
-                            if (mana + spellMana > maxMP) {
-                                s.setMana(maxMP);
-                            } else {
-                                s.setMana(mana + spellMana);
-                            }
-                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
-                        });
-                    }
+        if (!this.world.isRemote) {
+
+            //没带法术，插入作为能量传输手段的逻辑
+            //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
+            //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
+            //不考虑任何折射，摸了
+            //和MPStorage的te碰撞时赋予其能量
+            if (result.getType() == RayTraceResult.Type.BLOCK) {
+                //碰上方块了
+                BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                BlockState block = world.getBlockState(pos);
+                if (block.getBlock() instanceof LuxReflector) {
+                    this.reflect(block.get(LuxReflector.FACING), block.get(LuxReflector.HALF));
+                    //TODO
+                    // 设置红石信号强度的blockstate
+                    block.updateNeighbors(world, pos, 3);
+                    //必须更新才能正常反应红石信号
+                    //这个flag堪称mojang硬编码艺术的核心，最高128，用不同位的0/1来控制更新类型
+                    //https://www.bilibili.com/read/cv4565671/
+                    //net\minecraft\world\IWorldWriter.java line 9-19
                 }
-                else if (result.getType() == RayTraceResult.Type.ENTITY) {
-                    //给实体补充能量
+                else if (block.getBlock() instanceof LuxSplitter) {
+                    this.split(block.get(LuxSplitter.FACING));
+                    //TODO
+                    // 设置红石信号强度的blockstate
+                    block.updateNeighbors(world, pos, 3);
+                    //必须更新才能正常反应红石信号
+                    //这个flag堪称mojang硬编码艺术的核心，最高128，用不同位的0/1来控制更新类型
+                    //https://www.bilibili.com/read/cv4565671/
+                    //net\minecraft\world\IWorldWriter.java line 9-19
+                }
+                else if (this.translatedSpellProvider.hasSpell()) {
+                    //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                    this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                    LivingEntity shooter = this.getShootingEntity();
+                    LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                    optionalManaBar.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double leftOverMana = this.spellBallMPStorage.getMana();
+                        if (mana + leftOverMana > maxMP) {
+                            s.setMana(maxMP);
+                        } else {
+                            s.setMana(mana + leftOverMana);
+                        }
+                    });//return the leftover mana to the caster
+                }
+                else if (block.hasTileEntity()) {
+                    TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
+                    assert te != null;
+                    LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+                    mpStorageCapLazyOptional.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana();
+                        double spellMana = this.spellBallMPStorage.getMana();
+                        if (mana + spellMana > maxMP) {
+                            s.setMana(maxMP);
+                        }
+                        else {
+                            s.setMana(mana + spellMana);
+                        }
+                    });
+                }
+                this.spellBallMPStorage.setMana(0D);//delete this spell ball
+            }
+            else if (result.getType() == RayTraceResult.Type.ENTITY) {
+                if (this.translatedSpellProvider.hasSpell()) {
+                    //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                    this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                    LivingEntity shooter = this.getShootingEntity();
+                    LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                    optionalManaBar.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double leftOverMana = this.spellBallMPStorage.getMana();
+                        if (mana + leftOverMana > maxMP) {
+                            s.setMana(maxMP);
+                        }
+                        else {
+                            s.setMana(mana + leftOverMana);
+                        }
+                    });//return the leftover mana to the caster
+                }
+                else {
+                    //没有携带法术，给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
-                    if (entity instanceof LivingEntity) {
+                    if (entity.isLiving()) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
@@ -267,18 +317,13 @@ public class EntitySpellBall extends Entity{
                             double spellMana = this.spellBallMPStorage.getMana();
                             if (mana + spellMana > maxMP) {
                                 s.setMana(maxMP);
-                            }
-                            else {
+                            } else {
                                 s.setMana(mana + spellMana);
                             }
-                            this.spellBallMPStorage.setMana(0D);//delete this spell ball
                         });
                     }
-                    return;
                 }
-                //带了法术，执行瞬时施法操作
-                TranslatedSpell spell = this.translatedSpellProvider.getSpell();
-                this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                this.spellBallMPStorage.setMana(0D);//delete this spell ball
             }
         }
     }
@@ -316,12 +361,19 @@ public class EntitySpellBall extends Entity{
             //this.setMotion(vec3d.add(this.accelerationX, this.accelerationY, this.accelerationZ).scale((double)f));
             //this.world.addParticle(this.getParticle(), d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
             this.setPosition(d0, d1, d2);
-
-            //TODO
+            
             //随时间而增加的能量消耗写在这
             ticksAlive++;
             if(ticksAlive > maxTimer){
                 //指数降低mp存量
+                double mp = this.spellBallMPStorage.getMana();
+                if(mp < 0.01D * this.spellBallMPStorage.getMaxMana()){
+                    mp = 0D;
+                }
+                else{
+                    mp = mp *(1.0D - descendingRate);
+                }
+                this.spellBallMPStorage.setMana(mp);
             }
 
             if (this.spellBallMPStorage.getMana() == 0D){
@@ -334,6 +386,7 @@ public class EntitySpellBall extends Entity{
 
     /*
     获取运动方向，如果运动方向和坐标轴不对齐返回null
+    一般来说，方向和坐标轴对齐意味着这个法球是由发射器发出的
      */
     public Direction isMotionAligned(){
         Vec3d v = this.getMotion();
@@ -368,6 +421,24 @@ public class EntitySpellBall extends Entity{
             return null;
     }
 
+    /*
+    执行反射操作，传入镜子的两个方向属性
+     */
+    public void reflect(Direction face, Half half){
+        //TODO
+        // 反射，下同
+        // 例如计算xz的反射，把xz和y的运算拆开
+        // xz对换，y反向
+        // 写个计算出射位置的函数，或者直接用入射位置代替减少代码量
+    }
+
+    /*
+    执行拆分操作，传入镜子的方向属性
+     */
+    public void split(Direction face){
+
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
@@ -379,5 +450,8 @@ public class EntitySpellBall extends Entity{
         }
         return super.getCapability(cap, side);
     }
+
+    public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
+    public double descendingRate = 0.01;//每tick衰减量
 
 }
