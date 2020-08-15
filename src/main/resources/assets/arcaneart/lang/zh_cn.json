@@ -1,1 +1,4 @@
-{}
+{
+  "msg.arcaneart.ritual.begin": "%s仪式开始了。",
+  "arcaneart:ritual_rain": "祈雨"
+}

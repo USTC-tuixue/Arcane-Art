@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.mp.tile;
+package com.ustctuixue.arcaneart.api.mp.mpstorage;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -27,10 +27,8 @@ public class CapabilityMPStorage
         public INBT writeNBT(Capability<MPStorage> capability, MPStorage instance, Direction side)
         {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putDouble(MAX_MP, instance.maxMP);
+            nbt.putDouble(MAX_MP, instance.maxMana);
             nbt.putDouble(CURRENT_MP, instance.mana);
-            //nbt.putDouble(IN_LIM, instance.inputRateLimit);
-            //nbt.putDouble(OUT_LIM, instance.outputRateLimit);
             return nbt;
         }
 
@@ -39,9 +37,7 @@ public class CapabilityMPStorage
         {
             CompoundNBT compound = (CompoundNBT) nbt;
             instance.setMana(compound.getDouble(CURRENT_MP));
-            instance.setMaxMP(compound.getDouble(MAX_MP));
-            //instance.setInputRateLimit(compound.getDouble(IN_LIM));
-            //instance.setOutputRateLimit(compound.getDouble(OUT_LIM));
+            instance.setMaxMana(compound.getDouble(MAX_MP));
         }
     }
 

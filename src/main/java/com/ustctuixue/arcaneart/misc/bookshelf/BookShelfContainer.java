@@ -44,16 +44,16 @@ public class BookShelfContainer extends Container {
                     this.inventorySlots.get(i + 36).getHasStack());
         }
 
-        int c = 7;
+        int c = 9;
         for (int i = 7; i < 10; i++)
         {
             if (this.inventorySlots.get(i + 36).getHasStack())
             {
                 state = state.with(BookShelfBlock.BOOKS[c], true);
-                c++;
+                c--;
             }
         }
-        for (; c < 10; c++)
+        for (; c > 6; c--)
         {
             state = state.with(BookShelfBlock.BOOKS[c], false);
         }
