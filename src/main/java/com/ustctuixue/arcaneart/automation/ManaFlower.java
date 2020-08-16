@@ -51,14 +51,14 @@ public class ManaFlower extends FlowerBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
         if (stack.getTag() != null && stack.getTag().contains("tileentity")) {
             INBT nbt = stack.getTag().get("tileentity");
             ManaFlowerTileentity tile = (ManaFlowerTileentity) worldIn.getTileEntity(pos);
             assert tile != null;
             LazyOptional<ITranslatedSpellProvider> spellCap = tile.getCapability(CapabilitySpell.SPELL_CAP);
             spellCap.ifPresent((s) -> {
-                Capability.IStorage.readNBT()
+                new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt);
             });
         }
     }
