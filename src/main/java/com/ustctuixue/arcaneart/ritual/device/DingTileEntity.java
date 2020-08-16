@@ -43,6 +43,9 @@ public class DingTileEntity extends TileEntity {
     @Override
     public void read(CompoundNBT compound) {
         itemStackHandler.deserializeNBT(compound.getCompound("store"));
+        if(this.world != null && !this.world.isRemote) {
+            this.world.setBlockState(this.getPos(), this.getBlockState().with(DingBlock.LOCK, false));
+        }
         super.read(compound);
     }
 

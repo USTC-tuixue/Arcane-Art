@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern" : [
+    "G G",
+    "GBG",
+    "B B"
+  ],
+  "key": {
+    "G": [
+      {
+        "tag": "forge:storage_blocks/gold"
+      },
+      {
+        "tag": "forge:storage_blocks/bronze"
+      }
+    ],
+    "B": [
+      {
+        "tag": "forge:storage_blocks/iron"
+      },
+      {
+        "tag": "forge:storage_blocks/steel"
+      }
+    ]
+  },
+  "result": {
+    "item": "arcane_art:item_ding_center"
+  }
+}
