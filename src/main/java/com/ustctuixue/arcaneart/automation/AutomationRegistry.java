@@ -16,7 +16,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class AutomationRegistry {
 
     public static final DeferredRegister<Block> BLOCK_TYPE_DEFERRED_REGISTER = new DeferredRegister<>(ForgeRegistries.BLOCKS, "arcaneart");
-    public static final DeferredRegister<Block> BLOCK_TYPE_DEFERRED_REGISTER = new DeferredRegister<>(ForgeRegistries.BLOCKS, "arcaneart");
 
     public static RegistryObject<Block> SOLAR_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("solar_crystal", SolarCrystal::new);
     public static RegistryObject<Block> FROZEN_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("frozen_crystal", FrozenCrystal::new);
