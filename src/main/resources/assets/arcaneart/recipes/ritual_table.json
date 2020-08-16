@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EEE",
+    "B B"
+  ],
+  "key":{
+    "E": [
+      {
+        "tag": "forge:gems/emerald"
+      },
+      {
+        "tag": "forge:gems/jade"
+      }
+    ],
+    "B": [
+      {
+        "tag": "forge:storage_blocks/emerald"
+      },
+      {
+        "tag": "forge:storage_blocks/jade"
+      },
+      {
+        "tag": "forge:storage_blocks/diamond"
+      }
+    ],
+    "result": {
+      "item": "arcane_art:item_ritual_table"
+    }
+  }
+
+}

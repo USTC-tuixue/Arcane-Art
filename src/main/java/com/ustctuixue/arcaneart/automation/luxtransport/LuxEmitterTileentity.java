@@ -3,6 +3,7 @@ package com.ustctuixue.arcaneart.automation.luxtransport;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.EntitySpellBall;
+import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.tileentity.TileEntity;
@@ -56,5 +57,5 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
     }
 
     public double emitterTransferInterval = 20;//下次从cfg读
-    public double emitterTransferAmount = 40;//下次从cfg读
+    public double emitterTransferAmount = AutomationConfig.Crystal.MAGMA_CRYSTAL_REGEN_RATIO.get();//下次从cfg读
 }

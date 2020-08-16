@@ -13,6 +13,7 @@ import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import com.ustctuixue.arcaneart.spell.SpellConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -58,7 +59,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private PlayerEntity playerEntity = null;
     private Direction playerFacing;
     private BlockPos tablePos;
-    private BlockState tableState;
     private boolean tableFacingNS;
     private Ritual ritual;
     private World worldIn;
@@ -79,8 +79,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         this.playerEntity = player;
         this.playerFacing = player.getHorizontalFacing();
         this.tablePos = pos;
-        this.tableState = blockState.getBlockState();
-        this.tableFacingNS = tableState.get(RitualTableBlock.FACE_NS);
+        this.tableFacingNS = blockState.get(RitualTableBlock.FACE_NS);
         this.worldIn = worldIn;
         this.manaConsumed = 0;
     }
@@ -116,11 +115,11 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private boolean checkRitualStructure() {
         ArcaneArtAPI.LOGGER.info("Checking if ritual structure is complete.");
         if(tableFacingNS ^ (playerFacing == Direction.NORTH || playerFacing == Direction.SOUTH)) {
-            playerEntity.sendMessage(new StringTextComponent("Wrong facing!"));
+            sendMessage("msg.arcaneart.ritual.wrong_facing");
             return false;
         }
         if( !findDing(worldIn, playerEntity.getHorizontalFacing(), pos)) {
-            playerEntity.sendMessage(new StringTextComponent("Cannot find Legal Dings!"));
+            sendMessage("msg.arcaneart.ritual.illegal_ding");
             return false;
         }
         for(BlockPos bp : dingPos) {
@@ -146,14 +145,13 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             }
         }
         if(!hasFound) {
-            sendMessage("Cannot find Ritual Recipe!");
+            sendMessage("msg.arcaneart.ritual.no_recipe");
             return false;
-        } else {
-            sendMessage(String.format("Find ritual %s.", Ritual.REGISTRY.getKey(ritual)));
         }
         //*/
         if(!ritual.getExecRitual().validateRitualCondition(worldIn, pos)) {
-            sendMessage(String.format("The ritual %s is not valid here!", Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString()));
+            playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.not_valid",
+                    new TranslationTextComponent(Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString())));
             return false;
         }
         else {
@@ -174,6 +172,8 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         if(checkAllDings(worldIn, true)
                 && nowTableState.get(RitualTableBlock.LOCK)
                 && nowTableState.get(RitualTableBlock.FACE_NS) == this.tableFacingNS
+                && checkItemsInDings()
+                && worldIn.getPlayers().contains(playerEntity)
                 && playerEntity.getHorizontalFacing() == playerFacing) {
 
             IManaBar playerMana = playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).orElse(new DefaultManaBar());
@@ -197,6 +197,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             }
             return true;
         }
+        sendMessage("msg.arcaneart.ritual.cancel");
         return false;
     }
 
@@ -321,6 +322,15 @@ findEdgeDing:
         dingPos[2] = dingPos[1].offset(face.rotateY(), interSpace);
     }
 
+    private boolean checkItemsInDings() {
+        ItemStack[] items = new ItemStack[9];
+
+        for(int i = 0; i < 9; ++i) {
+            items[i] = dingItemHandlers[i].getStackInSlot(0);
+        }
+        return this.ritual.matches(items);
+    }
+
     @Override
     protected void finalize() throws Throwable {
         if(this.worldIn != null && !this.worldIn.isRemote) {
@@ -337,9 +347,9 @@ findEdgeDing:
         super.remove();
     }
 
-    private void sendMessage(String msg) {
+    private void sendMessage(String key) {
         if(playerEntity != null) {
-            playerEntity.sendMessage(new StringTextComponent(msg));
+            playerEntity.sendMessage(new TranslationTextComponent(key));
         }
     }
 

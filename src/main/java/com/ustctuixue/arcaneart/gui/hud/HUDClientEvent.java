@@ -8,7 +8,7 @@ import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.gui.hud.manabar.ManaBar;
-import com.ustctuixue.arcaneart.gui.hud.shortcut.ShortcutHUD;
+import com.ustctuixue.arcaneart.gui.hud.manabar.ShortcutHUD;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.networking.KeyPack;
 
