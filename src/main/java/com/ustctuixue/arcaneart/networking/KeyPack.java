@@ -3,11 +3,16 @@ package com.ustctuixue.arcaneart.networking;
 import java.util.function.Supplier;
 
 import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
+import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventory;
+import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicContainer;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
