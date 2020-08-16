@@ -31,8 +31,8 @@ import javax.annotation.Nullable;
 public class ManaFlower extends FlowerBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public ManaFlower(Block.Properties properties) {
-        super(Effects.GLOWING, 40, properties);
+    public ManaFlower() {
+        super(Effects.GLOWING, 40, null);
         this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
     }
 
