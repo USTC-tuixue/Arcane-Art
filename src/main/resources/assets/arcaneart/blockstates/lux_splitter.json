@@ -1,0 +1,22 @@
+{
+  "multipart": [
+    {   "when": { "facing": "west"},
+      "apply": { "model": "arcaneart:block/lux_splitter"}
+    },
+    {   "when": { "facing": "north"},
+      "apply": { "model": "arcaneart:block/lux_splitter", "y": 90}
+    },
+    {   "when": { "facing": "east"},
+      "apply": { "model": "arcaneart:block/lux_splitter", "y": 180}
+    },
+    {   "when": { "facing": "south"},
+      "apply": { "model": "arcaneart:block/lux_splitter", "y": 270}
+    },
+    {   "when": { "facing": "up"},
+      "apply": { "model": "arcaneart:block/lux_splitter", "x": 90}
+    },
+    {   "when": { "facing": "east"},
+      "apply": { "model": "arcaneart:block/lux_splitter", "x": 270}
+    }
+  ]
+}

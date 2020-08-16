@@ -24,6 +24,7 @@ public class AutomationRegistry {
     public static RegistryObject<Block> LUX_EMITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_emitter", LuxEmitter::new);
     public static RegistryObject<Block> LUX_REFLECTOR_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_reflector", LuxReflector::new);
     public static RegistryObject<Block> LUX_SPLITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_splitter", LuxReflector::new);
+    public static RegistryObject<Block> MANA_FLOWER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("mana_flower", ManaFlower::new);
 
 
 
@@ -37,6 +38,7 @@ public class AutomationRegistry {
     public static RegistryObject<Item> LUX_EMITTER_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_emitter", () -> new BlockItem(AutomationRegistry.LUX_EMITTER_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> LUX_REFLECTOR_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_reflector", () -> new BlockItem(AutomationRegistry.LUX_REFLECTOR_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> LUX_SPLITTER_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("lux_splitter", () -> new BlockItem(AutomationRegistry.LUX_SPLITTER_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
+    public static RegistryObject<Item> MANA_FLOWER_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("mana_flower", () -> new BlockItem(AutomationRegistry.MANA_FLOWER_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
 
 
 
@@ -47,5 +49,6 @@ public class AutomationRegistry {
     public static RegistryObject<TileEntityType<MagmaCrystalTileEntity>> MAGMA_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("magma_crystal_tileentity", () -> TileEntityType.Builder.create(MagmaCrystalTileEntity::new, AutomationRegistry.MAGMA_CRYSTAL_BLOCK.get()).build(null));
     public static RegistryObject<TileEntityType<VoidCrystalTileEntity>> VOID_CRYSTAL_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("void_crystal_tileentity", () -> TileEntityType.Builder.create(VoidCrystalTileEntity::new, AutomationRegistry.VOID_CRYSTAL_BLOCK.get()).build(null));
     public static RegistryObject<TileEntityType<LuxEmitterTileentity>> LUX_EMITTER_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("lux_emitter_tileentity", () -> TileEntityType.Builder.create(LuxEmitterTileentity::new, AutomationRegistry.LUX_EMITTER_BLOCK.get()).build(null));
+    public static RegistryObject<TileEntityType<ManaFlowerTileentity>> MANA_FLOWER_TILEENTITY = TILE_ENTITY_TYPE_DEFERRED_REGISTER.register("mana_flower_tileentity", () -> TileEntityType.Builder.create(ManaFlowerTileentity::new, AutomationRegistry.MANA_FLOWER_BLOCK.get()).build(null));
 
 }

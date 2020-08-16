@@ -30,7 +30,8 @@ public class LuxSplitter extends Block implements IWaterLoggable {
     //不能和正常方块的面属性一一对应，不把DirectionalBlock做父类
 
     public LuxSplitter(){
-        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+        super(Block.Properties.create(Material.ROCK).hardnessAndResistance(3f).notSolid());
+        this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
     }
 
     private static VoxelShape shape=Block.makeCuboidShape(2, 2, 2, 14, 14, 14);
