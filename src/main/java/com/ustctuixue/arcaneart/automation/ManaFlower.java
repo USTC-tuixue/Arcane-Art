@@ -32,7 +32,7 @@ public class ManaFlower extends FlowerBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public ManaFlower(Block.Properties properties) {
-        super(Effects.GLOWING, 40, Block.Properties properties);
+        super(Effects.GLOWING, 40, properties);
         this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
     }
 
