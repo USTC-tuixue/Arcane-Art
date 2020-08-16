@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart.api.spell;
 
+import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
@@ -43,6 +44,8 @@ public class EntitySpellBall extends Entity{
     protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
 
     public int ticksAlive = 0;//生存时间的计时器。
+    public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
+    public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
     private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
@@ -153,6 +156,9 @@ public class EntitySpellBall extends Entity{
              this.vz = vz;
              return this;
          }
+         public Builder motion(Vec3d motion){
+             return motion(motion.getX(), motion.getY(), motion.getZ());
+         }
 
          /*
          gives out a spell ball emit from a block, at the given direction & speed
@@ -211,6 +217,14 @@ public class EntitySpellBall extends Entity{
              this.mps = mps;
              return this;
          }
+
+        public Builder setMP(double mana, double maxMP) {
+            MPStorage mps = new MPStorage();
+            mps.setMaxMana(maxMP);
+            mps.setMana(mana);
+            this.mps = mps;
+            return this;
+        }
          public EntitySpellBall build(){
              return new EntitySpellBall(this);
          }
@@ -233,7 +247,7 @@ public class EntitySpellBall extends Entity{
                 BlockPos pos = ((BlockRayTraceResult) result).getPos();
                 BlockState block = world.getBlockState(pos);
                 if (block.getBlock() instanceof LuxReflector) {
-                    this.reflect(block.get(LuxReflector.FACING), block.get(LuxReflector.HALF));
+                    this.reflect(block.get(LuxReflector.FACING), pos);
                     //TODO
                     // 设置红石信号强度的blockstate
                     block.updateNeighbors(world, pos, 3);
@@ -243,7 +257,7 @@ public class EntitySpellBall extends Entity{
                     //net\minecraft\world\IWorldWriter.java line 9-19
                 }
                 else if (block.getBlock() instanceof LuxSplitter) {
-                    this.split(block.get(LuxSplitter.FACING));
+                    this.split(block.get(LuxSplitter.FACING), pos);
                     //TODO
                     // 设置红石信号强度的blockstate
                     block.updateNeighbors(world, pos, 3);
@@ -387,7 +401,6 @@ public class EntitySpellBall extends Entity{
     /*
     获取运动方向，如果运动方向和坐标轴不对齐返回null
     一般来说，方向和坐标轴对齐意味着这个法球是由发射器发出的
-     */
     public Direction isMotionAligned(){
         Vec3d v = this.getMotion();
         double x = v.getX();
@@ -420,23 +433,92 @@ public class EntitySpellBall extends Entity{
         else
             return null;
     }
+     */
 
-    /*
+    public static double HALF_SIZE = 0.5;//法球y轴高度的一半
+    /**
     执行反射操作，传入镜子的两个方向属性
      */
-    public void reflect(Direction face, Half half){
-        //TODO
-        // 反射，下同
-        // 例如计算xz的反射，把xz和y的运算拆开
-        // xz对换，y反向
-        // 写个计算出射位置的函数，或者直接用入射位置代替减少代码量
+    public void reflect(Direction face, BlockPos pos){
+        //例如计算xz的反射，把xz和y的运算拆开
+        //xz对换，y反向
+        //写个计算出射位置的函数，或者直接用入射位置代替减少代码量
+        double px = 0.5D + pos.getX();
+        double py = 0.5D + pos.getY();
+        double pz = 0.5D + pos.getZ();
+
+        double x = this.getPosX() - px;
+        double y = this.getPosY() - py + HALF_SIZE;
+        double z = this.getPosZ() - pz;
+        //法球中心的相对位置
+        //请注意mc的位置指的是脚底位置，posY要+HALF_SIZE才是法球中心位置
+
+        Vec3d v = this.getMotion();
+
+        if (face == Direction.SOUTH){
+            this.setPosition(px + y, py + x - HALF_SIZE, this.getPosZ());
+            this.setMotion(-v.getY(), -v.getX(), v.getZ());
+        }
+        else if (face == Direction.NORTH){
+            this.setPosition(px - y, py - x - HALF_SIZE, this.getPosZ());
+            this.setMotion(v.getY(), v.getX(), v.getZ());
+        }
+        else if (face == Direction.EAST){
+            this.setPosition(this.getPosX(), py + z - HALF_SIZE, pz + y);
+            this.setMotion(v.getX(), -v.getZ(), -v.getY());
+        }
+        else if (face == Direction.WEST){
+            this.setPosition(this.getPosX(), py - z - HALF_SIZE, pz - y);
+            this.setMotion(v.getX(), v.getZ(), v.getY());
+        }
+        else if (face == Direction.UP){
+            this.setPosition(px + z, this.getPosY(), pz + x);
+            this.setMotion(-v.getZ(), v.getY(), -v.getX());
+        }
+        else if (face == Direction.DOWN){
+            this.setPosition(px - z, this.getPosY(), pz - x);
+            this.setMotion(v.getZ(), v.getY(), v.getX());
+        }
+
     }
 
-    /*
+    /**
     执行拆分操作，传入镜子的方向属性
      */
-    public void split(Direction face){
+    public void split(Direction face, BlockPos pos){
+        this.spellBallMPStorage.setMana(this.spellBallMPStorage.getMana()/2);
+        EntitySpellBall newSpell = this.clone();
+        newSpell.reflect(face, pos);
+        world.addEntity(newSpell);
 
+        double px = 0.5D + pos.getX();
+        double py = 0.5D + pos.getY();
+        double pz = 0.5D + pos.getZ();
+
+        double x = this.getPosX() - px;
+        double y = this.getPosY() - py + HALF_SIZE;
+        double z = this.getPosZ() - pz;
+
+        this.setPosition(px - x, py - y, pz - z);
+    }
+
+    /**
+     复制一个法球实体
+     */
+    public EntitySpellBall clone(){
+        double x = this.getPosX();
+        double y = this.getPosY();
+        double z = this.getPosZ();
+        Vec3d mot = this.getMotion();
+        EntitySpellBall spell = new EntitySpellBall.Builder(world)
+                .pos(x, y, z).motion(mot)
+                .gravity(this.gravityFactor)
+                .shooter(this.shootingEntity)
+                .setMP(this.spellBallMPStorage.getMana(), this.spellBallMPStorage.getMaxMana())
+                .build();
+        spell.translatedSpellProvider = this.translatedSpellProvider;
+        spell.ticksAlive = this.ticksAlive;
+        return spell;
     }
 
     @Nonnull
@@ -451,7 +533,6 @@ public class EntitySpellBall extends Entity{
         return super.getCapability(cap, side);
     }
 
-    public int maxTimer = 1000;//最大不衰减飞行时间，后面要换成从cfg读
-    public double descendingRate = 0.01;//每tick衰减量
+
 
 }

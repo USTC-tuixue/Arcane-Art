@@ -21,11 +21,9 @@ import net.minecraft.world.IBlockReader;
  */
 public class LuxReflector extends Block implements IWaterLoggable {
     //FACE的选取：UP意味着反射面从-x+z到+x-z，DOWN意味着从-x-z到+x+z。
-    //HALF为UP代表可供垂直入射的面之一为+x（FACE为UP则另一个入射面为+z，反之-z），为DOWN代表为-x（FACE为UP则另一个入射面为-z，反之+z）
-    //xoz平面上的四个方向则取和台阶类似的方位
+    //xoz平面上的四个方向则取和下台阶类似的方位，如EAST（正x）从+x-y到-x+y，SOUTH（正z）从+z-y到-z+y
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
 
     public LuxReflector(){
         super(Block.Properties.create(Material.ROCK).hardnessAndResistance(3f).notSolid());
@@ -35,7 +33,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
     private static VoxelShape shape=Block.makeCuboidShape(2, 2, 2, 14, 14, 14);
 
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF);
+        builder.add(FACING);
     }
 
     @Override
@@ -66,7 +64,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         Direction direction = context.getFace();
         BlockPos blockpos = context.getPos();
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()).with(HALF, direction != Direction.DOWN && (direction == Direction.UP || !(context.getHitVec().y - (double)blockpos.getY() > 0.5D)) ? Half.BOTTOM : Half.TOP);
+        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
     }
 }
 

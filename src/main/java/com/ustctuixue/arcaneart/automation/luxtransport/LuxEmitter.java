@@ -6,6 +6,7 @@ import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +21,11 @@ public class LuxEmitter extends DirectionalBlock {
     public LuxEmitter(){
         super(Properties.create(Material.ROCK).hardnessAndResistance(5));
     }
+
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+    //注册方块的blockstate，必须要有，否则放置方块的时候会崩溃
 
     @Override
     public boolean hasTileEntity(BlockState state) {
