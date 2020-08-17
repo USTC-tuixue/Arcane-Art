@@ -66,6 +66,9 @@ public class ManaFlower extends FlowerBlock {
             spellCap.ifPresent((s) -> {
                 new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt);
             });
+            if(!worldIn.isRemote) {
+            	tile.source=tile.createSource();
+            }
         }
     }
 }
