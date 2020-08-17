@@ -13,6 +13,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,31 +24,30 @@ public class LuxWand extends Item {
         super(new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP));
     }
 
+    @Nonnull
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         World world = context.getWorld();
         BlockPos blockpos = context.getPos();
         BlockState block = world.getBlockState(blockpos);
-        AtomicReference<StringTextComponent> stringTextComponent = null;
         boolean flag = false; //true代表法杖已经起效过，不需要再显示温度
-        if (block.hasTileEntity()) {
+        if (block.hasTileEntity() && context.getPlayer() != null) {
             TileEntity te = world.getTileEntity(blockpos);
             assert te != null;
             LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
             mpStorageCapLazyOptional.ifPresent((s) -> {
                 double mana = s.getMana();
                 double maxMP = s.getMaxMana();
-                stringTextComponent.set(new StringTextComponent("Current MP: " + mana + " / Max MP: " + maxMP));
+                context.getPlayer().sendMessage(new StringTextComponent("Current MP: " + mana + " / Max MP: " + maxMP));
             });
             if(mpStorageCapLazyOptional.isPresent())
                 flag = true;
 
         }
-        if (!flag){
+        if (!flag && context.getPlayer() != null){
             double temperature = EnvHelper.getTemperature(world, blockpos);
-            stringTextComponent.set(new StringTextComponent("Temperature: " + temperature + "K"));
+            context.getPlayer().sendMessage(new StringTextComponent("Temperature: " + temperature + "K"));
         }
-        context.getPlayer().sendMessage(stringTextComponent.get());
         return ActionResultType.SUCCESS;
     }
 }
