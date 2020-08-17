@@ -6,12 +6,13 @@ import com.ustctuixue.arcaneart.api.spell.EntitySpellBall;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class LuxEmitterTileentity extends TileEntity implements ITickable {
+public class LuxEmitterTileentity extends TileEntity implements ITickableTileEntity {
 
     public LuxEmitterTileentity() {
         super(AutomationRegistry.LUX_EMITTER_TILEENTITY.get());
