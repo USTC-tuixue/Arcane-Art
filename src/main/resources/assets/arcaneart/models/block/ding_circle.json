@@ -1,11 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "arcaneart:block/DingSurface",
-		"1": "arcaneart:block/DingFoot",
-		"2": "arcaneart:block/DingInside",
-		"3": "arcaneart:block/DingTop",
-		"particle": "arcaneart:block/DingSurface"
+		"0": "arcaneart:block/ding_circle_surface",
+		"1": "arcaneart:block/ding_circle_foot",
+		"2": "arcaneart:block/ding_circle_inside",
+		"3": "arcaneart:block/ding_circle_top",
+		"particle": "arcaneart:block/ding_circle_surface"
 	},
 	"elements": [
 		{
@@ -282,8 +282,8 @@
 			}
 		},
 		{
-			"from": [1, 13, 3],
-			"to": [3, 14, 13],
+			"from": [1, 13, 4],
+			"to": [3, 14.01, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [10, 21, 11]},
 			"faces": {
 				"north": {"uv": [0, 0, 2, 1], "texture": "#3"},
@@ -308,8 +308,8 @@
 			}
 		},
 		{
-			"from": [12, 13, 3],
-			"to": [14, 14, 14],
+			"from": [12, 13, 4],
+			"to": [14, 14.01, 13],
 			"rotation": {"angle": 0, "axis": "y", "origin": [7, 21, 1]},
 			"faces": {
 				"north": {"uv": [0, 0, 2, 1], "texture": "#3"},
@@ -529,6 +529,31 @@
 			}
 		}
 	],
+	"display": {
+		"thirdperson_righthand": {
+			"scale": [0.3, 0.3, 0.3]
+		},
+		"thirdperson_lefthand": {
+			"scale": [0.3, 0.3, 0.3]
+		},
+		"firstperson_righthand": {
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_lefthand": {
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [25, 30, 0],
+			"scale": [0.7, 0.7, 0.7]
+		},
+		"fixed": {
+			"rotation": [0, -90, 0],
+			"translation": [0, 0, -2]
+		}
+	},
 	"groups": [
 		{
 			"name": "柱子",
