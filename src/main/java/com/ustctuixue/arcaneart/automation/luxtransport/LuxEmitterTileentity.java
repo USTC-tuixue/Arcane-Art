@@ -34,7 +34,7 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
                 }
             }
 
-            if(TRANSF_COUNTER == emitterTransferInterval){
+            if(TRANSF_COUNTER >= emitterTransferInterval){
                 TileEntity mpStorageTE = world.getTileEntity(this.getPos().offset(
                         this.getBlockState().get(LuxEmitter.FACING).getOpposite()
                 ));
