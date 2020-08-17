@@ -39,4 +39,10 @@ public class ItemRegistry {
 			));
 		}));
 	  }
+	public static RegistryObject<Item> itemStaff = ITEMS.register("staff", () -> {
+		return new ItemStaff();
+	});
+	public static RegistryObject<Item> itemAdvancedStaff = ITEMS.register("advanced_staff", () -> {
+		return new ItemAdvancedStaff();
+	});
 }
