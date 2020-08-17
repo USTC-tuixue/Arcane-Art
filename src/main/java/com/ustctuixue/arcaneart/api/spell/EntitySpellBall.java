@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.Half;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -47,7 +48,7 @@ public class EntitySpellBall extends Entity{
     public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
     public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
-    private ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
+    public ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
     
     protected void registerData() {
@@ -371,7 +372,9 @@ public class EntitySpellBall extends Entity{
                 f = 0.8F;
             }
             */
-
+            for(int i = 0; i < 4; ++i) {
+                this.world.addParticle(ParticleTypes.ENCHANT, d0 - vec3d.x * 0.25D, d1 - vec3d.y * 0.25D, d2 - vec3d.z * 0.25D, vec3d.x, vec3d.y, vec3d.z);
+            }
             //this.setMotion(vec3d.add(this.accelerationX, this.accelerationY, this.accelerationZ).scale((double)f));
             //this.world.addParticle(this.getParticle(), d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
             this.setPosition(d0, d1, d2);

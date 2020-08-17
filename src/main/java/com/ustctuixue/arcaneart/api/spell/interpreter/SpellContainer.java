@@ -47,7 +47,7 @@ public class SpellContainer
         for (ISpell sp :
                 iSpellList)
         {
-            cost += sp.getComplexity(source);
+            cost += sp.getComplexityBase(source);
         }
         return cost;
     }

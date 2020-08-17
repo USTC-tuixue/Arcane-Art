@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.mojang.brigadier.StringReader;
+import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
 
 public interface ISpell
@@ -10,7 +11,12 @@ public interface ISpell
      * @param source spell source
      * @return complexity
      */
-    double getComplexity(SpellCasterSource source);
+    double getComplexityBase(SpellCasterSource source);
+
+    default double getComplexity(SpellCasterSource source)
+    {
+        return getComplexityBase(source) * APIConfig.MP.COMPLEXITY_AMPLIFIER.get();
+    }
 
     /**
      *
@@ -36,7 +42,10 @@ public interface ISpell
 
     default double getManaCost(SpellCasterSource source)
     {
-        return ISpellCostModifier.modifyCost(getManaCostBase(source), source);
+        return ISpellCostModifier.modifyCost(getManaCostBase(source), source)
+                * APIConfig.MP.MANA_COST_AMPLIFIER.get();
     }
+
+    double guessManaCost(SpellCasterSource source);
 
 }

@@ -2,6 +2,8 @@ package com.ustctuixue.arcaneart.misc;
 
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.misc.item.ItemAdvancedStaff;
+import com.ustctuixue.arcaneart.misc.item.ItemStaff;
 
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -39,4 +41,10 @@ public class ItemRegistry {
 			));
 		}));
 	  }
+	public static RegistryObject<Item> itemStaff = ITEMS.register("staff", () -> {
+		return new ItemStaff();
+	});
+	public static RegistryObject<Item> itemAdvancedStaff = ITEMS.register("advanced_staff", () -> {
+		return new ItemAdvancedStaff();
+	});
 }

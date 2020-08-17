@@ -59,8 +59,7 @@ public class KeyPack
             if(message.equals("LoadSpellShortcut") && player != null) {
         		LazyOptional<ISpellInventory> spellCap = player
         				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
-        		Inventory inventory = new Inventory();
-        		inventory=spellCap.orElseGet(SpellInventory::new).getShortCut();
+        		Inventory inventory = spellCap.orElseGet(SpellInventory::new).getShortCut();
         		player.connection.sendPacket(new ShortcutPack(inventory));
             }
         });

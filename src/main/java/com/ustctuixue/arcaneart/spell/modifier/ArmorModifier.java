@@ -2,7 +2,7 @@ package com.ustctuixue.arcaneart.spell.modifier;
 
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
-import com.ustctuixue.arcaneart.spell.SpellConfig;
+import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -23,7 +23,7 @@ public class ArmorModifier implements ISpellCostModifier
         {
             PlayerEntity player = (PlayerEntity) entity;
             double enchantability = getAverageEnchantability(player);
-            return SpellConfig.SpellModifiers.getArmorEnchantabilityModifier(enchantability);
+            return SpellModuleConfig.SpellModifiers.getArmorEnchantabilityModifier(enchantability);
         }
 
         return 1;
@@ -49,7 +49,7 @@ public class ArmorModifier implements ISpellCostModifier
         }
         if (totalDurability == 0)
         {
-            return SpellConfig.SpellModifiers.ARMOR_ENCHANTABILITY_DEFAULT.get();
+            return SpellModuleConfig.SpellModifiers.ARMOR_ENCHANTABILITY_DEFAULT.get();
         }
         return enchantability / totalDurability;
     }

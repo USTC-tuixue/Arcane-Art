@@ -38,4 +38,9 @@ public class RelativeVec3dListBuilder implements IRelativeArgumentBuilder<Vec3dL
         }
         return this.relativeVec.vectorAdd(source.getPos());
     }
+
+    public boolean isFromEntity()
+    {
+        return entityListBuilder != null;
+    }
 }

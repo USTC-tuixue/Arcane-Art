@@ -26,4 +26,10 @@
   "msg.arcaneart.ritual.cancel": "因仪式结构变化，仪式被迫取消。",
   "info.arcaneart.ritual.fake_item_description": "",
   "arcaneart:ritual_rain": "祈雨"
+  "arcaneart:ritual_rain": "祈雨",
+  "title.arcaneart.magicmenu": "选择法术",
+  "info.arcaneart.itchspell": "刻录法术",
+  "info.arcaneart.deletespell": "删除法术",
+  "item.arcaneart.staff": "法杖",
+  "item.arcaneart.advanced_staff": "进阶法杖"
 }

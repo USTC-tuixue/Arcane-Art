@@ -24,6 +24,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
     //xoz平面上的四个方向则取和下台阶类似的方位，如EAST（正x）从+x-y到-x+y，SOUTH（正z）从+z-y到-z+y
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public int redstonePower = 0;
 
     public LuxReflector(){
         super(Block.Properties.create(Material.ROCK).hardnessAndResistance(3f).notSolid());
@@ -41,7 +42,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
         return shape;
     }
 
-    /*红石信号的part
+    //*红石信号的part
 
     //是否可以产生红石信号
     @Override
@@ -56,10 +57,10 @@ public class LuxReflector extends Block implements IWaterLoggable {
     // 应该可以添加新的blockstate来做，由法球触发方块更新
     @Override
     public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side){
-
+        return redstonePower;
     }
 
-     */
+     //*/
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         Direction direction = context.getFace();
