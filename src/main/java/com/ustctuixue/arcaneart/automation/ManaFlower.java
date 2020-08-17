@@ -32,12 +32,18 @@ public class ManaFlower extends FlowerBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public ManaFlower() {
-        super(Effects.GLOWING, 40, null);
+        super(Effects.GLOWING, 40, Block.Properties.create(Material.PLANTS).hardnessAndResistance(3f).notSolid());
         this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
     }
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+    }
+    
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+        super.fillStateContainer(builder);
     }
 
     @Override
