@@ -34,7 +34,7 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
     public MPStorage FlowerMPStorage = createMPStorage();
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    private final SpellCasterSource source = createSource();
+    private final SpellCasterSource source;
 
     @OnlyIn(Dist.DEDICATED_SERVER)
     private SpellCasterSource createSource(){
