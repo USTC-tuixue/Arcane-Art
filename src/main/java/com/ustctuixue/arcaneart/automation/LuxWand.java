@@ -31,7 +31,7 @@ public class LuxWand extends Item {
         BlockPos blockpos = context.getPos();
         BlockState block = world.getBlockState(blockpos);
         boolean flag = false; //true代表法杖已经起效过，不需要再显示温度
-        if (block.hasTileEntity() && context.getPlayer() != null) {
+        if (block.hasTileEntity() && context.getPlayer() != null && !context.getWorld().isRemote()) {
             TileEntity te = world.getTileEntity(blockpos);
             assert te != null;
             LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
@@ -44,7 +44,7 @@ public class LuxWand extends Item {
                 flag = true;
 
         }
-        if (!flag && context.getPlayer() != null){
+        if (!flag && context.getPlayer() != null && !context.getWorld().isRemote()){
             double temperature = EnvHelper.getTemperature(world, blockpos);
             context.getPlayer().sendMessage(new StringTextComponent("Temperature: " + temperature + "K"));
         }
