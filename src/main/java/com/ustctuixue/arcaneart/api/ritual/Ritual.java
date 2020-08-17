@@ -14,6 +14,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 @Builder @Data
 public class Ritual implements IForgeRegistryEntry<Ritual>
@@ -29,7 +30,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual>
 
     private final Ingredient[] ingredients;
 
-    private final IRitualEffect execRitual;
+    private final Supplier<IRitualEffect> execRitual;
 
     private final boolean rotatable;
 
