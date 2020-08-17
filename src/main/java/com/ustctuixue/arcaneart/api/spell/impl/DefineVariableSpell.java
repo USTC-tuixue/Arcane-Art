@@ -16,7 +16,7 @@ public class DefineVariableSpell implements ISpell
     private String name;
 
     @Override
-    public double getComplexity(SpellCasterSource source)
+    public double getComplexityBase(SpellCasterSource source)
     {
         return 0;
     }
@@ -76,5 +76,11 @@ public class DefineVariableSpell implements ISpell
             return false;
         }
         return true;
+    }
+
+    @Override
+    public double guessManaCost(SpellCasterSource source)
+    {
+        return 0;
     }
 }

@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
 import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
@@ -11,6 +12,7 @@ import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import com.ustctuixue.arcaneart.ritual.RitualConfig;
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import com.ustctuixue.arcaneart.spell.SpellConfig;
+import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -158,7 +160,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.begin",
                     new TranslationTextComponent(Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString())));
         }
-        this.totalMana = ritual.getCost() * SpellConfig.SpellProperty.MANA_COST_AMPLIFIER.get();
+        this.totalMana = ritual.getCost() * APIConfig.MP.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
         return true;
     }
