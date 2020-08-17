@@ -8,6 +8,7 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
@@ -83,6 +84,12 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
     public void tick() {
         if (this.world != null && !world.isRemote) {
             //这里是服务器逻辑
+            for(Direction direction : Direction.values()){
+                //下方方块任意面被强充能终止工作
+                if(this.getBlockState().getStrongPower(world, this.getPos().down(), direction) != 0){
+                    return;
+                }
+            }
             LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
             mpStorageCapLazyOptional.ifPresent((s) -> {
                 if (this.translatedSpellProvider.hasSpell()){

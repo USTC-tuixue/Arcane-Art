@@ -53,8 +53,9 @@ public class ManaFlower extends FlowerBlock {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-        if (!worldIn.isRemote() && stack.getTag() != null && stack.getTag().contains("tileentity")) {
-            INBT nbt = stack.getTag().get("tileentity");
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        if (!worldIn.isRemote() && stack.getTag() != null && stack.getTag().contains("spell")) {
+            INBT nbt = stack.getTag().get("spell");
             ManaFlowerTileentity tile = (ManaFlowerTileentity) worldIn.getTileEntity(pos);
             assert tile != null;
             LazyOptional<ITranslatedSpellProvider> spellCap = tile.getCapability(CapabilitySpell.SPELL_CAP);

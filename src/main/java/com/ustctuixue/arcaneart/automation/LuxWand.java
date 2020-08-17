@@ -38,7 +38,7 @@ public class LuxWand extends Item {
             mpStorageCapLazyOptional.ifPresent((s) -> {
                 double mana = s.getMana();
                 double maxMP = s.getMaxMana();
-                context.getPlayer().sendMessage(new StringTextComponent("Current MP: " + mana + " / Max MP: " + maxMP));
+                context.getPlayer().sendMessage(new StringTextComponent("Current MP: " + String.format("%.2f", mana) + " / Max MP: " + String.format("%.2f", maxMP)));
             });
             if(mpStorageCapLazyOptional.isPresent())
                 flag = true;
@@ -46,7 +46,7 @@ public class LuxWand extends Item {
         }
         if (!flag && context.getPlayer() != null && !context.getWorld().isRemote()){
             double temperature = EnvHelper.getTemperature(world, blockpos);
-            context.getPlayer().sendMessage(new StringTextComponent("Temperature: " + temperature + "K"));
+            context.getPlayer().sendMessage(new StringTextComponent("Temperature: " + String.format("%3.0f", temperature) + "K"));
         }
         return ActionResultType.SUCCESS;
     }

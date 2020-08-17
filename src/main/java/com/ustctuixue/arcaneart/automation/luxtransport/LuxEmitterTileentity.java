@@ -18,6 +18,8 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
     }
 
     public static int TRANSF_COUNTER = 0;
+    public double emitterTransferInterval = AutomationConfig.Emitter.EMIT_INTERVAL.get();//下次从cfg读
+    public double emitterTransferAmount = AutomationConfig.Emitter.EMIT_AMOUNT.get();//下次从cfg读
 
     @Override
     public void tick() {
@@ -44,7 +46,7 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
                             //必须有足够一次发射的能量才运作，抽取这些能量
                             s.setMana(MP - emitterTransferAmount);
                             //新建一个法球实体
-                            world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), 0.5).setFullMP(emitterTransferAmount).build());
+                            world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), AutomationConfig.Emitter.EMIT_SPEED.get()).setFullMP(emitterTransferAmount).build());
                         }
                     });
                 }
@@ -56,6 +58,4 @@ public class LuxEmitterTileentity extends TileEntity implements ITickable {
 
     }
 
-    public double emitterTransferInterval = 20;//下次从cfg读
-    public double emitterTransferAmount = AutomationConfig.Crystal.MAGMA_CRYSTAL_REGEN_RATIO.get();//下次从cfg读
 }

@@ -168,28 +168,29 @@ public class EntitySpellBall extends Entity{
              this.x = pos.getX() + 0.5D;
              this.y = pos.getY() + 0.5D;
              this.z = pos.getZ() + 0.5D;
+             double len = 0.7;//向外平移多少以免撞上发射器
              if(FACING == Direction.UP){
-                 this.y += 0.5;
+                 this.y += len;
                  this.vy = speed;
              }
              else if(FACING == Direction.DOWN){
-                 this.y -= 0.5;
+                 this.y -= len;
                  this.vy = -speed;
              }
              else if(FACING == Direction.EAST){
-                 this.x += 0.5;
+                 this.x += len;
                  this.vx = speed;
              }
              else if(FACING == Direction.WEST){
-                 this.x -= 0.5;
+                 this.x -= len;
                  this.vx = -speed;
              }
              else if(FACING == Direction.SOUTH){
-                 this.z += 0.5;
+                 this.z += len;
                  this.vz = speed;
              }
              else if(FACING == Direction.NORTH){
-                 this.z -= 0.5;
+                 this.z -= len;
                  this.vz = -speed;
              }
              return this;
