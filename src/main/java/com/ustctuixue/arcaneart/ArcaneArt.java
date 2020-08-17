@@ -72,6 +72,7 @@ public class ArcaneArt
         RitualRegistries.ITEMS.register(modLoadingEventBus);
         RitualRegistries.TILE_ENTITIES.register(modLoadingEventBus);
         RitualModuleRegistries.RITUAL_DEFERRED_REGISTER.register(modLoadingEventBus);
+        RitualModuleRegistries.ITEMS.register(modLoadingEventBus);
     }
 
     @Nonnull
