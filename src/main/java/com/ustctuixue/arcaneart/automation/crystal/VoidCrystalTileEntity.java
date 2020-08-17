@@ -33,6 +33,6 @@ public class VoidCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
                     return 0.0D;
             }
         }
-        return AutomationConfig.Crystal.MAGMA_CRYSTAL_REGEN_RATIO.get() / 20;//从每秒恢复速率转换为每tick
+        return AutomationConfig.Crystal.VOID_CRYSTAL_REGEN_RATIO.get() / 20;//从每秒恢复速率转换为每tick
     }
 }

@@ -5,6 +5,7 @@ import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -25,4 +26,8 @@ public class RitualModuleRegistries {
                         .consumeSpeed(50)
                         ::build
     );
+
+    public void test() {
+
+    }
 }
