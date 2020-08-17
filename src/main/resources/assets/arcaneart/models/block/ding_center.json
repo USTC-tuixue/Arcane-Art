@@ -1,11 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "ATeaconModel:FlowerPot_inside",
-		"1": "ATeaconModel:FlowerPot_leg",
-		"2": "ATeaconModel:FlowerPot_mud",
-		"3": "ATeaconModel:FlowerPot_top",
-		"particle": "ATeaconModel:FlowerPot_inside"
+		"0": "arcaneart:block/FlowerPot_inside",
+		"1": "arcaneart:block/FlowerPot_leg",
+		"2": "arcaneart:block/FlowerPot_mud",
+		"3": "arcaneart:block/FlowerPot_top",
+		"particle": "arcaneart:block/FlowerPot_inside"
 	},
 	"elements": [
 		{

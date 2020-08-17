@@ -16,6 +16,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -58,7 +59,7 @@ public class ManaFlower extends FlowerBlock {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-        if (stack.getTag() != null && stack.getTag().contains("tileentity")) {
+        if (!worldIn.isRemote() && stack.getTag() != null && stack.getTag().contains("tileentity")) {
             INBT nbt = stack.getTag().get("tileentity");
             ManaFlowerTileentity tile = (ManaFlowerTileentity) worldIn.getTileEntity(pos);
             assert tile != null;
@@ -67,5 +68,6 @@ public class ManaFlower extends FlowerBlock {
                 new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt);
             });
         }
+
     }
 }

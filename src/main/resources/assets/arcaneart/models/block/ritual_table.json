@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "ATeaconModel:玉台-上",
-		"1": "ATeaconModel:玉台-座",
-		"2": "ATeaconModel:玉台-柄",
-		"particle": "ATeaconModel:玉台-上"
+		"0": "arcaneart:block/玉台-上",
+		"1": "arcaneart:block/玉台-座",
+		"2": "arcaneart:block/玉台-柄",
+		"particle": "arcaneart:block/玉台-上"
 	},
 	"elements": [
 		{

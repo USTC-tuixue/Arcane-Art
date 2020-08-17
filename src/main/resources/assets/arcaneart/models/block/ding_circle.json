@@ -1,11 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "ATeaconModel:DingSurface",
-		"1": "ATeaconModel:DingFoot",
-		"2": "ATeaconModel:DingInside",
-		"3": "ATeaconModel:DingTop",
-		"particle": "ATeaconModel:DingSurface"
+		"0": "arcaneart:block/DingSurface",
+		"1": "arcaneart:block/DingFoot",
+		"2": "arcaneart:block/DingInside",
+		"3": "arcaneart:block/DingTop",
+		"particle": "arcaneart:block/DingSurface"
 	},
 	"elements": [
 		{
