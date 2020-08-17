@@ -5,6 +5,7 @@ import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
+import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import com.ustctuixue.arcaneart.automation.crystal.AbstractCollectiveCrystalTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -34,7 +35,7 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
     public MPStorage FlowerMPStorage = createMPStorage();
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    private final SpellCasterSource source = createSource();
+    private SpellCasterSource source = null;
 
     @OnlyIn(Dist.DEDICATED_SERVER)
     private SpellCasterSource createSource(){
@@ -90,6 +91,8 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
             LazyOptional<MPStorage> mpStorageCapLazyOptional = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
             mpStorageCapLazyOptional.ifPresent((s) -> {
                 if (this.translatedSpellProvider.hasSpell()){
+                    this.source = this.createSource();
+                    this.translatedSpellProvider.getCompiled(source).executePreProcess(source);
                     this.translatedSpellProvider.getCompiled(source).executeOnHold(source);
                 }
             });
