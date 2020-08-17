@@ -8,14 +8,11 @@ import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +37,6 @@ public class TranslatedSpell
         this("", null);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public TranslatedSpell(String name)
     {
         this(name, null);

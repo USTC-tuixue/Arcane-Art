@@ -2,9 +2,7 @@ package com.ustctuixue.arcaneart.api;
 
 import com.udojava.evalex.Expression;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 public class APIConfig

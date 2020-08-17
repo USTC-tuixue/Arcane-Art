@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.spell.EntitySpellBall;
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import net.minecraft.entity.EntityClassification;

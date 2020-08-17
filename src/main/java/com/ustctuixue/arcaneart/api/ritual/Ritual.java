@@ -2,9 +2,7 @@ package com.ustctuixue.arcaneart.api.ritual;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import lombok.*;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -96,7 +94,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual>
         }
         else {
             boolean result;
-            for(int[] mat : transMat) {
+            for(int[] ignored : transMat) {
                 result = true;
                 for(int i = 0; i < MAX_DING_NUMBER; ++i) {
                     result = ingredients[i].test(input[i]);

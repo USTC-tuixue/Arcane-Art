@@ -17,7 +17,7 @@ public class PacketHandler
 {
     private int index = 0;
 
-    protected static SimpleChannel createChannel(ResourceLocation name) {
+    private static SimpleChannel createChannel(ResourceLocation name) {
         return NetworkRegistry.ChannelBuilder.named(name)
                 .clientAcceptedVersions(getProtocolVersion()::equals)
                 .serverAcceptedVersions(getProtocolVersion()::equals)
@@ -30,8 +30,8 @@ public class PacketHandler
         return "0.0.1";
     }
 
-    protected <MSG> void registerClientToServer(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder,
-                                                BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+    private <MSG> void registerClientToServer(Class<MSG> type, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder,
+                                              BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
         getChannel().registerMessage(index++, type, encoder, decoder, consumer, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 

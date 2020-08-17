@@ -9,8 +9,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class MPStorage implements IMPConsumer, INBTSerializable<CompoundNBT>
 {
-    static String MANA = "mana";
-    static String MAX_MANA = "max_mana";
+    private static String MANA = "mana";
+    private static String MAX_MANA = "max_mana";
 
     @Getter
     double mana;

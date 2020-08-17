@@ -1,7 +1,5 @@
 package com.ustctuixue.arcaneart.api.events;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.network.PacketSwitchSpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
@@ -16,11 +14,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
-import net.minecraftforge.client.event.GuiScreenEvent.MouseScrollEvent;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
 @Mod.EventBusSubscriber
 public class InGameAPIClientEventHandler {
 	public static int pointer = -1;
@@ -43,10 +41,11 @@ public class InGameAPIClientEventHandler {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void onKeyDown(KeyInputEvent event) {
 		if (KeyLoader.shortcut.isPressed() && Minecraft.getInstance().currentScreen == null) {
-			if (Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof ItemSpellCaster) {
+			if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof ItemSpellCaster) {
 				if (pointer == -1) {
 					pointer = ItemSpellCaster.getSpellSlot(Minecraft.getInstance().player.getHeldItemMainhand());
 				}
@@ -75,6 +74,7 @@ public class InGameAPIClientEventHandler {
         }
     }
 
+    @SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void onPlayerLogIn(LoggedInEvent event) {
 		KeyEvent.INSTANCE.sendToServer(new KeyPack("LoadSpellShortcut"));

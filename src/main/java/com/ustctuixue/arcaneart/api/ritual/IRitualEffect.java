@@ -8,11 +8,13 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public interface IRitualEffect
 {
+    @SuppressWarnings("unused")
     default boolean validateTimeOfDay(long timeOfDay)
     {
         return true;
     }
 
+    @SuppressWarnings("unused")
     default boolean validateBiome(Biome biome)
     {
         return true;
@@ -46,6 +48,7 @@ public interface IRitualEffect
      * @param simulate 是否模拟，true 时不应消耗牺牲
      * @return 消耗是否成功
      */
+    @SuppressWarnings("unused")
     default boolean consumeSacrifice(World world, BlockPos pos, boolean simulate) {
         return true;
     };
