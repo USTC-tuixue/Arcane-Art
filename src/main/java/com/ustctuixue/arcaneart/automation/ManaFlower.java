@@ -1,10 +1,7 @@
 package com.ustctuixue.arcaneart.automation;
 
-import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
-import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowerBlock;
@@ -13,17 +10,15 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
@@ -66,6 +61,7 @@ public class ManaFlower extends FlowerBlock {
             spellCap.ifPresent((s) -> {
                 new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt);
             });
+
         }
     }
 }

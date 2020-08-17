@@ -5,12 +5,9 @@ import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
-import com.ustctuixue.arcaneart.automation.crystal.AbstractCollectiveCrystalTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
@@ -21,8 +18,6 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static net.minecraft.util.Direction.byHorizontalIndex;
 
 public class ManaFlowerTileentity extends TileEntity implements ITickableTileEntity {
     public ManaFlowerTileentity() {
@@ -38,7 +33,7 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
     private SpellCasterSource source = null;
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    private SpellCasterSource createSource(){
+    SpellCasterSource createSource(){
         assert world != null;
         Direction face = world.getBlockState(this.getPos()).get(ManaFlower.FACING);
         float pitch = 0;
