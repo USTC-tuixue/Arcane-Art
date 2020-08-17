@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 public class CapabilitySpell
 {
-    @SuppressWarnings("WeakerAccess")
     @CapabilityInject(ITranslatedSpellProvider.class)
     public static Capability<ITranslatedSpellProvider> SPELL_CAP = null;
 

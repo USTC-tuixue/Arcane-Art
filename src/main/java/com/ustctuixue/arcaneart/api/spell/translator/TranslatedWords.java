@@ -2,7 +2,6 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;

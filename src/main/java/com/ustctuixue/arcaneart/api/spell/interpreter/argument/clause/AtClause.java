@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause;
 
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWords;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;

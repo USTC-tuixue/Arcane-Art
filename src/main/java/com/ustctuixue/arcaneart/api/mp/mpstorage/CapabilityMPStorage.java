@@ -20,8 +20,7 @@ public class CapabilityMPStorage
     {
         static final String MAX_MP = "maxMP";
         static final String CURRENT_MP = "mp";
-        static final String IN_LIM = "inputLimit";
-        static final String OUT_LIM = "outputLimit";
+
         @Nullable
         @Override
         public INBT writeNBT(Capability<MPStorage> capability, MPStorage instance, Direction side)
@@ -41,27 +40,4 @@ public class CapabilityMPStorage
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<CompoundNBT>
-    {
-        private MPStorage mpstorage = new MPStorage();
-        private Storage storage = new Storage();
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-        {
-            return cap == MP_STORAGE_CAP ? LazyOptional.of(()-> mpstorage).cast() : LazyOptional.empty();
-        }
-
-        @Override
-        public CompoundNBT serializeNBT()
-        {
-            return (CompoundNBT) storage.writeNBT(MP_STORAGE_CAP, mpstorage, null);
-        }
-
-        @Override
-        public void deserializeNBT(CompoundNBT nbt)
-        {
-            storage.readNBT(MP_STORAGE_CAP, mpstorage, null, nbt);
-        }
-    }
 }

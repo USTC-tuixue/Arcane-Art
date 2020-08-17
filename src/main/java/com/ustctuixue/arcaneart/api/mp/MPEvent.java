@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api.mp;
 
-import lombok.Data;
 import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;

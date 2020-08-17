@@ -36,7 +36,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 
 public class EntitySpellBall extends Entity{
-    //建议直接转extends Entity，告辞
+    //直接转extends Entity，告辞
 
     @Getter @Setter
     public LivingEntity shootingEntity;
@@ -57,7 +57,7 @@ public class EntitySpellBall extends Entity{
     public void writeAdditional(CompoundNBT compound) {
         //把实体的速度和寿命写进compound，可以看DamagingProjectileEntity
         Vec3d vec3d = this.getMotion();
-        compound.put("direction", this.newDoubleNBTList(new double[]{vec3d.x, vec3d.y, vec3d.z}));
+        compound.put("direction", this.newDoubleNBTList(vec3d.x, vec3d.y, vec3d.z));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
         compound.putInt("life", this.ticksAlive);
     }
@@ -78,7 +78,7 @@ public class EntitySpellBall extends Entity{
         //return new SSpawnObjectPacket(this.getEntityId(), this.getUniqueID(), this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationPitch, this.rotationYaw, this.getType(), i, new Vec3d(this.accelerationX, this.accelerationY, this.accelerationZ));
 
         return new SSpawnObjectPacket(this);
-        //我不知道这是干啥的
+        // 生成实体要发送数据包
     }
 
     /**

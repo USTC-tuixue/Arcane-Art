@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api.spell;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import lombok.*;
 import net.minecraft.util.ResourceLocation;

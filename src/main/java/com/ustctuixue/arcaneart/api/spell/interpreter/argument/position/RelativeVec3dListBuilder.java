@@ -6,7 +6,6 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.Relati
 import com.ustctuixue.arcaneart.api.util.Vec3dList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;

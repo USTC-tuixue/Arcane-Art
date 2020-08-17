@@ -1,7 +1,5 @@
 package com.ustctuixue.arcaneart.api.spell.inventory;
 
-import java.util.List;
-
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

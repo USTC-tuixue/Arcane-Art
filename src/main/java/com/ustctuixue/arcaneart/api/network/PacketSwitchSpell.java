@@ -17,7 +17,7 @@ public class PacketSwitchSpell
 {
     int switchedSpell;
 
-    public static void handle(PacketSwitchSpell packet, Supplier<NetworkEvent.Context> contextSupplier)
+    static void handle(PacketSwitchSpell packet, Supplier<NetworkEvent.Context> contextSupplier)
     {
         ArcaneArtAPI.LOGGER.debug("Received spell switch packet, handling...");
         PlayerEntity playerEntity = contextSupplier.get().getSender();
@@ -34,11 +34,11 @@ public class PacketSwitchSpell
         });
     }
 
-    public static void encode(PacketSwitchSpell pkt, PacketBuffer buf) {
+    static void encode(PacketSwitchSpell pkt, PacketBuffer buf) {
         buf.writeVarInt(pkt.switchedSpell);
     }
 
-    public static PacketSwitchSpell decode(PacketBuffer buf) {
+    static PacketSwitchSpell decode(PacketBuffer buf) {
         return new PacketSwitchSpell(buf.readVarInt());
     }
 }
