@@ -24,5 +24,10 @@
   "msg.arcaneart.ritual.no_recipe": "There is no matching ritual recipe!",
   "msg.arcaneart.ritual.not_valid": "The ritual for %s is not valid here!",
   "msg.arcaneart.ritual.cancel": "The ritual is canceled due to some changes around.",
-  "arcaneart:ritual_rain": "raining"
+  "arcaneart:ritual_rain": "raining",
+  "title.arcaneart.magicmenu": "Spell Menu",
+  "info.arcaneart.itchspell": "Itch Spell",
+  "info.arcaneart.deletespell": "Delete Spell",
+  "item.arcaneart.staff": "Staff",
+  "item.arcaneart.advanced_staff": "Advanced Staff"
 }
