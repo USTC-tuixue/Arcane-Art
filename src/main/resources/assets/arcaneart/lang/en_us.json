@@ -24,5 +24,11 @@
   "msg.arcaneart.ritual.no_recipe": "There is no matching ritual recipe!",
   "msg.arcaneart.ritual.not_valid": "The ritual for %s is not valid here!",
   "msg.arcaneart.ritual.cancel": "The ritual is canceled due to some changes around.",
-  "arcaneart:ritual_rain": "raining"
+  "msg.arcaneart.ritual.finish": "The ritual has finished.",
+  "info.arcaneart.ritual.fake_item_description": "This is a fake item for description of a specific ritual.\n",
+  "info.arcaneart.ritual.total_mana": "Total Mana Cost: ",
+  "info.arcaneart.ritual.mana_per_tick": "Mana Consume Speed: ",
+  "arcaneart:ritual_rain": "raining",
+  "description.arcaneart.ritual_rain": "",
+  "arcaneart.ritual.anonymous": "anonymous"
 }

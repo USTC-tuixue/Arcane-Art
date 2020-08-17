@@ -7,6 +7,7 @@ import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
+import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import com.ustctuixue.arcaneart.ritual.RitualConfig;
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
@@ -67,6 +68,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private int executeStage = -1;
     private double totalMana;
     private double consumeSpeed;
+    private IRitualEffect ritualEffect;
     private double tableCostAmplifier;
 
 
@@ -149,14 +151,17 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             return false;
         }
         //*/
-        if(!ritual.getExecRitual().validateRitualCondition(worldIn, pos)) {
+        String ritualName = ritual.getRegistryName() == null ?
+                "arcaneart.ritual.anonymous" : ritual.getRegistryName().toString();
+        this.ritualEffect = ritual.getExecRitual().get();
+        if(!ritualEffect.validateRitualCondition(worldIn, pos)) {
             playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.not_valid",
-                    new TranslationTextComponent(Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString())));
+                    new TranslationTextComponent(ritualName)));
             return false;
         }
         else {
             playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.begin",
-                    new TranslationTextComponent(Objects.requireNonNull(Ritual.REGISTRY.getKey(ritual)).toString())));
+                    new TranslationTextComponent(ritualName)));
         }
         this.totalMana = ritual.getCost() * SpellConfig.SpellProperty.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
@@ -174,7 +179,8 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
                 && nowTableState.get(RitualTableBlock.FACE_NS) == this.tableFacingNS
                 && checkItemsInDings()
                 && worldIn.getPlayers().contains(playerEntity)
-                && playerEntity.getHorizontalFacing() == playerFacing) {
+                && playerEntity.getHorizontalFacing() == playerFacing
+                && playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).isPresent()) {
 
             IManaBar playerMana = playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).orElse(new DefaultManaBar());
             double tableRealCost = Math.min(consumeSpeed*tableCostAmplifier, this.mpStorage.getMana());
@@ -205,7 +211,8 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         for(IItemHandler i : dingItemHandlers) {
             i.extractItem(0, 1, false);
         }
-        ritual.getExecRitual().execute(world, pos, LazyOptional.of(()->playerEntity));
+        ritualEffect.execute(world, dingPos[4], LazyOptional.of(()->playerEntity));
+        sendMessage("msg.arcaneart.ritual.finish");
     }
 
     private void cancelRitual() {
