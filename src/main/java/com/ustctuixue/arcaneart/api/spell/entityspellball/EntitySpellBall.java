@@ -358,9 +358,9 @@ public class EntitySpellBall extends Entity{
         super.tick();
 
         if (!this.world.isRemote) {
-            for(PlayerEntity p : world.getPlayers()){
-                p.sendMessage(new StringTextComponent("ticking spell"));
-            }//测试
+            //for(PlayerEntity p : world.getPlayers()){
+            //    p.sendMessage(new StringTextComponent("ticking spell"));
+            //}//测试
             ++this.ticksAlive;
             RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, this.ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
             //这个includeShooter大概率是指在什么情况下允许射出投掷物的实体被投掷物击中，但是逻辑比较复杂，我读不太懂。此处照抄了DamagingProjectileEntity的逻辑
