@@ -88,8 +88,6 @@ public class ArcaneArt
     public void clientSetup(FMLClientSetupEvent event)
     {
         KeyLoader.register();
-        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
-        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
     }
 
 
