@@ -1,4 +1,4 @@
-package com.ustctuixue.arcaneart.api.spell;
+package com.ustctuixue.arcaneart.api.spell.entityspellball;
 
 import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.APIRegistries;
@@ -7,6 +7,9 @@ import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
+import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
+import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
+import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
@@ -16,16 +19,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.Half;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,13 +50,15 @@ public class EntitySpellBall extends Entity{
     @Getter @Setter
     protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
 
-    public int ticksAlive = 0;//生存时间的计时器。
+    public int ticksAlive = 0;
     public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
     public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
     public ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
-    
+
+    //private static final DataParameter<Integer> tsp = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.VARINT);
+
     protected void registerData() {
     }
 
@@ -75,6 +81,7 @@ public class EntitySpellBall extends Entity{
         }
     }
 
+    @Override
     public IPacket<?> createSpawnPacket() {
         //int i = this.shootingEntity == null ? 0 : this.shootingEntity.getEntityId();
         //return new SSpawnObjectPacket(this.getEntityId(), this.getUniqueID(), this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationPitch, this.rotationYaw, this.getType(), i, new Vec3d(this.accelerationX, this.accelerationY, this.accelerationZ));
@@ -351,7 +358,9 @@ public class EntitySpellBall extends Entity{
         super.tick();
 
         if (!this.world.isRemote) {
-
+            for(PlayerEntity p : world.getPlayers()){
+                p.sendMessage(new StringTextComponent("ticking spell"));
+            }//测试
             ++this.ticksAlive;
             RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, this.ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
             //这个includeShooter大概率是指在什么情况下允许射出投掷物的实体被投掷物击中，但是逻辑比较复杂，我读不太懂。此处照抄了DamagingProjectileEntity的逻辑
