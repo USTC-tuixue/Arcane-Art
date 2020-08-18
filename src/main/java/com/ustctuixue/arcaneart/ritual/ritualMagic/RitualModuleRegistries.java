@@ -82,7 +82,7 @@ public class RitualModuleRegistries {
                     ::build
     );
 
-    static {
+    {
         Style NUMBER_STYLE = new Style().setColor(TextFormatting.YELLOW);
         for(Ritual i : Ritual.REGISTRY) {
             String name = Objects.requireNonNull(i.getRegistryName()).getPath();
