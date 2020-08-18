@@ -100,10 +100,10 @@ public class EntitySpellBall extends Entity{
     @Getter @Setter
     protected int tier;
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
+    //@OnlyIn(Dist.DEDICATED_SERVER)
     private final SpellCasterSource source = createSource();
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
+    //@OnlyIn(Dist.DEDICATED_SERVER)
     private SpellCasterSource createSource(){
         return new SpellCasterSource(
                 this.getPositionVec(), this.getPitchYaw(),
