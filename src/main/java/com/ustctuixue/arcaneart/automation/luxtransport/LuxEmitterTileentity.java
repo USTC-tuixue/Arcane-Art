@@ -6,9 +6,11 @@ import com.ustctuixue.arcaneart.api.spell.EntitySpellBall;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -36,6 +38,7 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
             }
 
             if(TRANSF_COUNTER >= emitterTransferInterval){
+                TRANSF_COUNTER = 0;
                 TileEntity mpStorageTE = world.getTileEntity(this.getPos().offset(
                         this.getBlockState().get(LuxEmitter.FACING).getOpposite()
                 ));

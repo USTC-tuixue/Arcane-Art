@@ -100,10 +100,10 @@ public class EntitySpellBall extends Entity{
     @Getter @Setter
     protected int tier;
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
+    //@OnlyIn(Dist.DEDICATED_SERVER)
     private final SpellCasterSource source = createSource();
 
-    @OnlyIn(Dist.DEDICATED_SERVER)
+    //@OnlyIn(Dist.DEDICATED_SERVER)
     private SpellCasterSource createSource(){
         return new SpellCasterSource(
                 this.getPositionVec(), this.getPitchYaw(),
@@ -360,7 +360,7 @@ public class EntitySpellBall extends Entity{
 
             Vec3d vec3d = this.getMotion();
             double d0 = this.getPosX() + vec3d.x;
-            double d1 = this.getPosY() + vec3d.y;
+            double d1 = this.getPosY() + HALF_SIZE + vec3d.y;
             double d2 = this.getPosZ() + vec3d.z;
             ProjectileHelper.rotateTowardsMovement(this, 0.2F);
             //float f = this.getMotionFactor();
