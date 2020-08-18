@@ -1,8 +1,6 @@
 package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.test.TestEventHandler;
-import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
@@ -55,8 +53,6 @@ public class ArcaneArt
 
         SpellModuleRegistries.SpellKeyWords.SPELL_KEY_WORD_DEFERRED_REGISTER.register(modLoadingEventBus);
 
-        modLoadingEventBus.register(new TestEventHandler());
-        TestObjects.register();
 
         modLoadingEventBus.addListener(this::commonSetup);
         modLoadingEventBus.addListener(this::clientSetup);

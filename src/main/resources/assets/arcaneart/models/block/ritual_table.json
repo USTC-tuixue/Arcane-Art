@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "arcaneart:block/玉台-上",
-		"1": "arcaneart:block/玉台-座",
-		"2": "arcaneart:block/玉台-柄",
-		"particle": "arcaneart:block/玉台-上"
+		"0": "arcaneart:block/ritual_table_top",
+		"1": "arcaneart:block/ritual_table_base",
+		"2": "arcaneart:block/ritual_table_connection",
+		"particle": "arcaneart:block/ritual_table_top"
 	},
 	"elements": [
 		{
@@ -61,19 +61,27 @@
 	],
 	"display": {
 		"thirdperson_righthand": {
+			"translation": [0, 0.5, 2],
 			"scale": [0.26, 0.26, 0.26]
 		},
 		"thirdperson_lefthand": {
+			"translation": [0, 0.5, 2],
 			"scale": [0.26, 0.26, 0.26]
 		},
 		"firstperson_righthand": {
-			"scale": [0.26, 0.26, 0.26]
+			"translation": [0, 3.5, 0],
+			"scale": [0.4, 0.4, 0.4]
 		},
 		"firstperson_lefthand": {
-			"scale": [0.26, 0.26, 0.26]
+			"translation": [0, 3.5, 0],
+			"scale": [0.4, 0.4, 0.4]
 		},
 		"ground": {
 			"scale": [0.26, 0.26, 0.26]
+		},
+		"gui": {
+			"rotation": [30, 30, 0],
+			"scale": [0.75, 0.75, 0.75]
 		}
 	}
 }
