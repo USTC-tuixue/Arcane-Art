@@ -3,7 +3,7 @@
 	"textures": {
 		"1": "arcaneart:block/mana_flower_pedal",
 		"2": "arcaneart:block/mana_flower_stem",
-		"particle": "arcaneart:item/mana_flower_stem"
+		"particle": "arcaneart:item/mana_flower"
 	},
 	"elements": [
 		{
