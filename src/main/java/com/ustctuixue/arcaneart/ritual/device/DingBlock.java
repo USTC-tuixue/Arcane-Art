@@ -17,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -45,6 +46,34 @@ public class DingBlock extends Block implements IWaterLoggable {
         public String getName() {
             return this.name;
         }
+    }
+    private static VoxelShape shapeCenter, shapeCircle, shapeSquare;
+    static {
+        VoxelShape circle_base = Block.makeCuboidShape(1,0,2,14,13,15);
+        VoxelShape circle_E = Block.makeCuboidShape(14, 13, 6, 15, 14, 11);
+        VoxelShape circle_W = Block.makeCuboidShape(0, 13, 6, 1, 14, 11);
+        VoxelShape circle_N = Block.makeCuboidShape(5, 13, 1, 10, 16, 2);
+        VoxelShape circle_S = Block.makeCuboidShape(5, 13, 15, 10, 16, 16);
+        VoxelShape circle_Empty = Block.makeCuboidShape(4,9,5,12,14,13);
+        shapeCircle= VoxelShapes.or(circle_base, circle_E, circle_W, circle_N, circle_S);
+        shapeCircle = VoxelShapes.combine(shapeCircle, circle_Empty, IBooleanFunction.ONLY_FIRST);
+        VoxelShape center_base = Block.makeCuboidShape(1,0,1, 15, 12, 15);
+        VoxelShape center_head = Block.makeCuboidShape(0, 12, 0, 16, 13, 16);
+        VoxelShape center_empty = VoxelShapes.or(
+                Block.makeCuboidShape(3, 6, 3, 13, 11, 13),
+                Block.makeCuboidShape(2,11,2,14,12,14),
+                Block.makeCuboidShape(1,12,1,15,13,15));
+        shapeCenter = VoxelShapes.or(center_base, center_head);
+        shapeCenter = VoxelShapes.combine(shapeCenter, center_empty, IBooleanFunction.ONLY_FIRST);
+        VoxelShape square_base = Block.makeCuboidShape(1, 0, 1, 15, 14, 15);
+        VoxelShape square_edges = VoxelShapes.or(
+                Block.makeCuboidShape(0, 13, 0, 16, 14, 0),
+                Block.makeCuboidShape(1, 14, 6, 2, 16, 10),
+                Block.makeCuboidShape(14, 14, 6, 15, 16, 10)
+        );
+        VoxelShape square_empty = Block.makeCuboidShape(3, 7, 3,13, 14, 13);
+        shapeSquare = VoxelShapes.or(square_base, square_edges);
+        shapeSquare = VoxelShapes.combine(shapeSquare, square_empty, IBooleanFunction.ONLY_FIRST);
     }
     public static final BooleanProperty LOCK = BooleanProperty.create("lock");
     public static final EnumProperty<EnumShape> SHAPE = EnumProperty.create("shape", EnumShape.class);
@@ -132,5 +161,15 @@ public class DingBlock extends Block implements IWaterLoggable {
     @Override
     public BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
         return state.with(LOCK, false);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        switch (state.get(SHAPE)) {
+            case CENTER: return shapeCenter;
+            case CIRCLE: return shapeCircle;
+            case SQUARE: return shapeSquare;
+            default: return VoxelShapes.fullCube();
+        }
     }
 }
