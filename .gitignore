@@ -1,3 +1,5 @@
+*.bbmodel
+
 # eclipse
 bin
 *.launch
