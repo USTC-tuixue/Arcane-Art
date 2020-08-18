@@ -38,6 +38,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class EntitySpellBall extends Entity{
     //直接转extends Entity，告辞
@@ -68,6 +69,15 @@ public class EntitySpellBall extends Entity{
         compound.put("direction", this.newDoubleNBTList(vec3d.x, vec3d.y, vec3d.z));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
         compound.putInt("life", this.ticksAlive);
+        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
+        spellCap.ifPresent((s) -> {
+            compound.put("spell", Objects.requireNonNull(new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null)));
+        });
+        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+        mpCap.ifPresent((s) -> {
+            compound.put("mpstorage", Objects.requireNonNull(new CapabilityMPStorage.Storage().writeNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null)));
+        });
+
     }
 
     public void readAdditional(CompoundNBT compound) {
@@ -79,6 +89,14 @@ public class EntitySpellBall extends Entity{
         } else {
             this.remove();
         }
+        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
+        spellCap.ifPresent((s) -> {
+            new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, compound.get("spell"));
+        });
+        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+        mpCap.ifPresent((s) -> {
+            new CapabilityMPStorage.Storage().readNBT(CapabilityMPStorage.MP_STORAGE_CAP, s, null, compound.get("mpstorage"));
+        });
     }
 
     @Override
@@ -177,7 +195,7 @@ public class EntitySpellBall extends Entity{
              this.x = pos.getX() + 0.5D;
              this.y = pos.getY() + 0.5D;
              this.z = pos.getZ() + 0.5D;
-             double len = 1;//向外平移多少以免撞上发射器
+             double len = 5;//向外平移多少以免撞上发射器
              if(FACING == Direction.UP){
                  this.y += len;
                  this.vy = speed;

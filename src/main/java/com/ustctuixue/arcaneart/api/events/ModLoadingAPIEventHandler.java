@@ -63,7 +63,7 @@ public class ModLoadingAPIEventHandler
     @SubscribeEvent @SuppressWarnings("unused")
     public void registerEntityType(@Nonnull RegistryEvent.Register<EntityType<?>> event)
     {
-        event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
+        //event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
     }
 
     @SubscribeEvent @SuppressWarnings("unused")

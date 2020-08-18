@@ -34,7 +34,6 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
             }
 
             if(TRANSF_COUNTER >= emitterTransferInterval){
-                TRANSF_COUNTER = 0;
                 TileEntity mpStorageTE = world.getTileEntity(this.getPos().offset(
                         this.getBlockState().get(LuxEmitter.FACING).getOpposite()
                 ));
@@ -43,6 +42,7 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
                     mpStorageCapLazyOptional.ifPresent((s) -> {
                         double MP = s.getMana();
                         if (MP >= emitterTransferAmount){
+                            TRANSF_COUNTER = 0;
                             //必须有足够一次发射的能量才运作，抽取这些能量
                             s.setMana(MP - emitterTransferAmount);
                             //新建一个法球实体
