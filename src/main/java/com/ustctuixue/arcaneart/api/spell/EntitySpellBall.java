@@ -38,6 +38,8 @@ import javax.annotation.Nonnull;
 public class EntitySpellBall extends Entity{
     //直接转extends Entity，告辞
 
+    public static double HALF_SIZE = 0.25;//法球y轴高度的一半
+
     @Getter @Setter
     public LivingEntity shootingEntity;
 
@@ -168,7 +170,7 @@ public class EntitySpellBall extends Entity{
              this.x = pos.getX() + 0.5D;
              this.y = pos.getY() + 0.5D;
              this.z = pos.getZ() + 0.5D;
-             double len = 0.7;//向外平移多少以免撞上发射器
+             double len = 1;//向外平移多少以免撞上发射器
              if(FACING == Direction.UP){
                  this.y += len;
                  this.vy = speed;
@@ -373,7 +375,7 @@ public class EntitySpellBall extends Entity{
                 f = 0.8F;
             }
             */
-            for(int i = 0; i < 4; ++i) {
+            for(int i = 0; i < 8; ++i) {
                 this.world.addParticle(ParticleTypes.ENCHANT, d0 - vec3d.x * 0.25D, d1 - vec3d.y * 0.25D, d2 - vec3d.z * 0.25D, vec3d.x, vec3d.y, vec3d.z);
             }
             //this.setMotion(vec3d.add(this.accelerationX, this.accelerationY, this.accelerationZ).scale((double)f));
@@ -439,7 +441,7 @@ public class EntitySpellBall extends Entity{
     }
      */
 
-    public static double HALF_SIZE = 0.5;//法球y轴高度的一半
+
     /**
     执行反射操作，传入镜子的两个方向属性
      */

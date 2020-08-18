@@ -27,6 +27,7 @@ public class MagmaCrystalTileEntity extends AbstractCollectiveCrystalTileEntity 
                     return;
                 double MP = s.getMana();
                 double maxMP = s.getMaxMana();
+                MP *= (1D - AutomationConfig.Crystal.CRYSTAL_LOSS_RATIO.get());
                 MP += regenRatio;
                 if (MP >= maxMP)
                     MP = maxMP;

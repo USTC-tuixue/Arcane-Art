@@ -17,6 +17,7 @@ public class AutomationConfig {
     public static class Crystal{
 
         public static ForgeConfigSpec.DoubleValue CRYSTAL_MAX_MP;
+        public static ForgeConfigSpec.DoubleValue CRYSTAL_LOSS_RATIO;
         //public static ForgeConfigSpec.DoubleValue CRYSTAL_MAX_OUTPUT;
         public static ForgeConfigSpec.ConfigValue<String> SOLAR_CRYSTAL_REGEN_RATIO;
         public static ForgeConfigSpec.ConfigValue<String> FROZEN_CRYSTAL_REGEN_RATIO;
@@ -30,6 +31,10 @@ public class AutomationConfig {
             CRYSTAL_MAX_MP = builder
                     .comment("Max MP capacity of a crystal")
                     .defineInRange("MaxCrystalMP", 1000.0D, 0.0D, 100000.0D);
+
+            CRYSTAL_LOSS_RATIO = builder
+                    .comment("The percentage of mana that crystal lost per tick")
+                    .defineInRange("CrystalLoss", 0.005D, 0.0D, 1.0D);
 
             /*
             CRYSTAL_MAX_OUTPUT = builder

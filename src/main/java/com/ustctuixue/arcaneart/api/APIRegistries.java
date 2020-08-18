@@ -15,7 +15,7 @@ public class APIRegistries
                 .<EntitySpellBall>create(
                         EntitySpellBall::new, EntityClassification.MISC
                 )
-                .size(1.0f, 1.0f)
+                .size(0.5f, 0.5f)
                 .build("spell_ball");   // 这里的 ID 是给 DataFixer 用的，不影响注册键值
                                             // 众所周知，DataFixer 只是升级远古(MC v1.7)存档用的玩意儿
     }
