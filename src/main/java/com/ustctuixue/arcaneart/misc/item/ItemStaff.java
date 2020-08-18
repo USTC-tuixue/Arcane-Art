@@ -8,7 +8,7 @@ import net.minecraft.item.Item.Properties;
 public class ItemStaff extends ItemSpellCaster{
 
 	public ItemStaff() {
-		super(new Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP),10);
+		super(new Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP).maxStackSize(1),10);
 			// TODO Auto-generated constructor stub
 	}
 
