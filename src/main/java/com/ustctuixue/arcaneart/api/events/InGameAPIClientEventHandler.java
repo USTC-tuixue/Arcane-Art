@@ -13,19 +13,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(value=Dist.CLIENT)
 public class InGameAPIClientEventHandler {
 	public static int pointer = -1;
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")
-	public void switchSpell(InputEvent.MouseScrollEvent event) {
+	public static void switchSpell(InputEvent.MouseScrollEvent event) {
 		PlayerEntity player = Minecraft.getInstance().player;
 		if (player == null) {
 			return;
@@ -53,7 +54,7 @@ public class InGameAPIClientEventHandler {
 		}
 		if (event.getAction() == 0 && event.getKey() == KeyLoader.shortcut.getKey().getKeyCode()) {
 			if (Minecraft.getInstance().player!=null && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof ItemSpellCaster ) {
-				ServerLifecycleAPIEventHandler.packetHandler.getChannel().sendToServer(new PacketSwitchSpell(pointer));
+				KeyEvent.INSTANCE.sendToServer(new KeyPack("Switch:"+String.valueOf(pointer)));
 				pointer=-1;
 			}
 		}
