@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;
 import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -28,7 +27,7 @@ public class CastSpellCommand extends AbstractCommandImpl
                         TranslatedSpell translatedSpell = TranslatedSpell.fromRawSpell(rawSpell);
                         if (translatedSpell != null)
                         {
-                            Interpreter.executeSpell(translatedSpell, source);
+                            Interpreter.testExecuteSpell(translatedSpell, source);
                             context.getSource().sendFeedback(
                                     new StringTextComponent("Variables:"), true
                             );

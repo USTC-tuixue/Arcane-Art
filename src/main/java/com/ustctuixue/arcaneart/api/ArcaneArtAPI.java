@@ -3,6 +3,9 @@ package com.ustctuixue.arcaneart.api;
 import com.ustctuixue.arcaneart.api.events.*;
 import com.ustctuixue.arcaneart.api.util.Module;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,8 +14,7 @@ import org.apache.logging.log4j.Logger;
 //
 // @Mod(ArcaneArtAPI.MOD_ID)
 @Mod.EventBusSubscriber
-public class ArcaneArtAPI
-    extends Module
+public class ArcaneArtAPI extends Module
 {
     public static final String MOD_ID = "arcane_api";
     public static final String MOD_NAME = "Arcane API";
@@ -39,5 +41,14 @@ public class ArcaneArtAPI
                 new InGameAPIEventHandler(),
                 new ServerLifecycleAPIEventHandler()
         };
+    }
+
+    @Override @OnlyIn(Dist.CLIENT)
+    protected Object[] getClientEventHandler()
+    {
+        return new Object[]
+                {
+                        new InGameAPIClientEventHandler()
+                };
     }
 }

@@ -97,7 +97,7 @@ public class Interpreter
         return ItemStack.EMPTY;
     }
 
-    public static int executeSpell(TranslatedSpell spell, SpellCasterSource source)
+    public static int testExecuteSpell(TranslatedSpell spell, SpellCasterSource source)
     {
         SpellContainer container = compile(spell);
         ArcaneArtAPI.LOGGER.debug("Executing pre processors");
