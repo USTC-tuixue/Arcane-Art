@@ -1,5 +1,6 @@
 package com.ustctuixue.arcaneart;
 
+import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
@@ -59,6 +60,7 @@ public class ArcaneArt
 
 
         MinecraftForge.EVENT_BUS.register(this);
+        APIRegistries.Entities.ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
