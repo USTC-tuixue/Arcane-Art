@@ -5,9 +5,11 @@ import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.entityspellball.EntitySpellBall;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class LuxEmitterTileentity extends TileEntity implements ITickableTileEntity {
@@ -46,6 +48,9 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
                             //必须有足够一次发射的能量才运作，抽取这些能量
                             s.setMana(MP - emitterTransferAmount);
                             //新建一个法球实体
+                            for(PlayerEntity p : world.getPlayers()){
+                                p.sendMessage(new StringTextComponent("emit spell"));
+                            }//测试
                             world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), AutomationConfig.Emitter.EMIT_SPEED.get()).setFullMP(emitterTransferAmount).build());
                         }
                     });
