@@ -63,7 +63,8 @@ public class ModLoadingAPIEventHandler
     @SubscribeEvent @SuppressWarnings("unused")
     public void registerEntityType(@Nonnull RegistryEvent.Register<EntityType<?>> event)
     {
-        event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
+        //此处注释掉，法球现在注册在主类下面，看APIRegistries第18行
+        //event.getRegistry().register(APIRegistries.Entities.SPELL_BALL_TYPE.setRegistryName(ArcaneArtAPI.getResourceLocation("spell_ball")));
     }
 
     @SubscribeEvent @SuppressWarnings("unused")

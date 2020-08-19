@@ -24,6 +24,8 @@ import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -36,8 +38,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class EntitySpellBall extends Entity{
     //直接转extends Entity，告辞
@@ -59,17 +63,30 @@ public class EntitySpellBall extends Entity{
 
     //private static final DataParameter<Integer> tsp = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.VARINT);
 
+    @Override
     protected void registerData() {
+
     }
 
+    @Override
     public void writeAdditional(CompoundNBT compound) {
         //把实体的速度和寿命写进compound，可以看DamagingProjectileEntity
         Vec3d vec3d = this.getMotion();
         compound.put("direction", this.newDoubleNBTList(vec3d.x, vec3d.y, vec3d.z));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
         compound.putInt("life", this.ticksAlive);
+        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
+        spellCap.ifPresent((s) -> {
+            compound.put("spell", Objects.requireNonNull(new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null)));
+        });
+        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+        mpCap.ifPresent((s) -> {
+            compound.put("mpstorage", Objects.requireNonNull(new CapabilityMPStorage.Storage().writeNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null)));
+        });
+
     }
 
+    @Override
     public void readAdditional(CompoundNBT compound) {
         //从compound加载实体数据
         this.ticksAlive = compound.getInt("life");
@@ -79,6 +96,14 @@ public class EntitySpellBall extends Entity{
         } else {
             this.remove();
         }
+        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
+        spellCap.ifPresent((s) -> {
+            new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, compound.get("spell"));
+        });
+        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+        mpCap.ifPresent((s) -> {
+            new CapabilityMPStorage.Storage().readNBT(CapabilityMPStorage.MP_STORAGE_CAP, s, null, compound.get("mpstorage"));
+        });
     }
 
     @Override
@@ -86,7 +111,7 @@ public class EntitySpellBall extends Entity{
         //int i = this.shootingEntity == null ? 0 : this.shootingEntity.getEntityId();
         //return new SSpawnObjectPacket(this.getEntityId(), this.getUniqueID(), this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationPitch, this.rotationYaw, this.getType(), i, new Vec3d(this.accelerationX, this.accelerationY, this.accelerationZ));
 
-        return new SSpawnObjectPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
         // 生成实体要发送数据包
     }
 
@@ -175,7 +200,7 @@ public class EntitySpellBall extends Entity{
           */
          public Builder emitFromBlock(BlockPos pos, Direction FACING, double speed){
              this.x = pos.getX() + 0.5D;
-             this.y = pos.getY() + 0.5D;
+             this.y = pos.getY() + 0.5D - HALF_SIZE;
              this.z = pos.getZ() + 0.5D;
              double len = 1;//向外平移多少以免撞上发射器
              if(FACING == Direction.UP){
@@ -202,6 +227,9 @@ public class EntitySpellBall extends Entity{
                  this.z -= len;
                  this.vz = -speed;
              }
+             for(PlayerEntity p : world.getPlayers()){
+                 p.sendMessage(new StringTextComponent(vx + "," + vy + "," + vz + "," + x + "," + y + "," + z));
+             }//测试
              return this;
          }
          public Builder shooter(LivingEntity shooter){
@@ -246,7 +274,7 @@ public class EntitySpellBall extends Entity{
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
-        if (!this.world.isRemote) {
+        //if (!this.world.isRemote) {
 
             //没带法术，插入作为能量传输手段的逻辑
             //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
@@ -350,22 +378,41 @@ public class EntitySpellBall extends Entity{
                 }
                 this.spellBallMPStorage.setMana(0D);//delete this spell ball
             }
-        }
+        //}
     }
 
     @Override
     public void tick(){
         super.tick();
 
-        if (!this.world.isRemote) {
-            //for(PlayerEntity p : world.getPlayers()){
-            //    p.sendMessage(new StringTextComponent("ticking spell"));
-            //}//测试
+        if (this.world.isRemote){
+            for(PlayerEntity p : world.getPlayers()){
+                p.sendMessage(new StringTextComponent("ticking spell client" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
+            }//测试
+            Vec3d vec3d = this.getMotion();
+            double d0 = this.getPosX() + vec3d.x;
+            double d1 = this.getPosY() + HALF_SIZE + vec3d.y;
+            double d2 = this.getPosZ() + vec3d.z;
+
+            for(int i = 0; i < 50; ++i) {
+                this.world.addParticle(ParticleTypes.ENCHANT, d0 - vec3d.x * 0.25D, d1 - vec3d.y * 0.25D, d2 - vec3d.z * 0.25D, 0, 0, 0);
+            }
+        }
+        else {
+            for(PlayerEntity p : world.getPlayers()){
+                p.sendMessage(new StringTextComponent("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
+            }//测试
             ++this.ticksAlive;
             RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, this.ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
             //这个includeShooter大概率是指在什么情况下允许射出投掷物的实体被投掷物击中，但是逻辑比较复杂，我读不太懂。此处照抄了DamagingProjectileEntity的逻辑
-
-            if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+            for(PlayerEntity p : world.getPlayers()){
+                p.sendMessage(new StringTextComponent(raytraceresult.getType().toString()));
+            }//测试
+            if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
+            //if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+                for(PlayerEntity p : world.getPlayers()){
+                    p.sendMessage(new StringTextComponent("on impact" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
+                }//测试
                 this.onImpact(raytraceresult);
             }
 
@@ -384,9 +431,6 @@ public class EntitySpellBall extends Entity{
                 f = 0.8F;
             }
             */
-            for(int i = 0; i < 8; ++i) {
-                this.world.addParticle(ParticleTypes.ENCHANT, d0 - vec3d.x * 0.25D, d1 - vec3d.y * 0.25D, d2 - vec3d.z * 0.25D, vec3d.x, vec3d.y, vec3d.z);
-            }
             //this.setMotion(vec3d.add(this.accelerationX, this.accelerationY, this.accelerationZ).scale((double)f));
             //this.world.addParticle(this.getParticle(), d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
             this.setPosition(d0, d1, d2);
@@ -406,6 +450,9 @@ public class EntitySpellBall extends Entity{
             }
 
             if (this.spellBallMPStorage.getMana() == 0D){
+                for(PlayerEntity p : world.getPlayers()){
+                    p.sendMessage(new StringTextComponent("delete spell"));
+                }//测试
                 this.remove();
             }
 

@@ -1,7 +1,9 @@
 package com.ustctuixue.arcaneart.api.spell.entityspellball;
 
 import com.ustctuixue.arcaneart.api.APIRegistries;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -13,7 +15,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientSetUpEvent(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(APIRegistries.Entities.ENTITY_SPELL_REGISTER.get(), (EntityRendererManager manager) -> {
-            return new EntitySpellBallRenderer(manager);
+            return new SpriteRenderer(manager, Minecraft.getInstance().getItemRenderer());
         });
     }
 }
