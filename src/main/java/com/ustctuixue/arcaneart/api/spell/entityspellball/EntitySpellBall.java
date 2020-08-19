@@ -24,6 +24,7 @@ import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
@@ -51,21 +52,28 @@ public class EntitySpellBall extends Entity{
     @Getter @Setter
     public LivingEntity shootingEntity;
 
+    /*
     @Getter @Setter
-    protected double gravityFactor;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
-
+    protected float gravityFactor = 0;//0<=gravityFactor<=1.0. preserved. 为2.0的受重力影响法球预留
     public int ticksAlive = 0;
+     */
+
+    private static final DataParameter<Integer> TICKS_ALIVE = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.VARINT);
+    private static final DataParameter<Float> GRAVITY = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.FLOAT);
+
     public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
     public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
     public ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
     public MPStorage spellBallMPStorage;
 
-    //private static final DataParameter<Integer> tsp = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.VARINT);
+
+
 
     @Override
     protected void registerData() {
-
+        this.dataManager.register(TICKS_ALIVE, 0);
+        this.dataManager.register(GRAVITY, 0F);
     }
 
     @Override
@@ -74,7 +82,7 @@ public class EntitySpellBall extends Entity{
         Vec3d vec3d = this.getMotion();
         compound.put("direction", this.newDoubleNBTList(vec3d.x, vec3d.y, vec3d.z));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
-        compound.putInt("life", this.ticksAlive);
+        compound.putInt("life", this.dataManager.get(TICKS_ALIVE));
         LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
         spellCap.ifPresent((s) -> {
             compound.put("spell", Objects.requireNonNull(new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null)));
@@ -89,7 +97,8 @@ public class EntitySpellBall extends Entity{
     @Override
     public void readAdditional(CompoundNBT compound) {
         //从compound加载实体数据
-        this.ticksAlive = compound.getInt("life");
+        //this.ticksAlive = compound.getInt("life");
+        this.dataManager.set(TICKS_ALIVE, compound.getInt("life"));
         if (compound.contains("direction", 9) && compound.getList("direction", 6).size() == 3) {
             ListNBT listnbt1 = compound.getList("direction", 6);
             this.setMotion(listnbt1.getDouble(0), listnbt1.getDouble(1), listnbt1.getDouble(2));
@@ -161,7 +170,7 @@ public class EntitySpellBall extends Entity{
     private EntitySpellBall(Builder builder){
         super(APIRegistries.Entities.SPELL_BALL_TYPE, builder.world);
         this.setLocationAndAngles(builder.x, builder.y, builder.z, builder.yaw, builder.pitch);
-        this.setGravityFactor(builder.gravityFactor);
+        this.dataManager.set(GRAVITY, builder.gravityFactor);
         this.setShootingEntity(builder.shooter);
         this.setMotion(new Vec3d(builder.vx,builder.vy,builder.vz));
         this.spellBallMPStorage = builder.mps;
@@ -171,7 +180,7 @@ public class EntitySpellBall extends Entity{
         private World world;
         private double x, y, z;
         private double vx, vy, vz;
-        private double gravityFactor;
+        private float gravityFactor;
         private LivingEntity shooter;
         private float yaw, pitch;
         private MPStorage mps;
@@ -236,7 +245,7 @@ public class EntitySpellBall extends Entity{
              this.shooter = shooter;
              return this;
          }
-         public Builder gravity(double gravityFactor){
+         public Builder gravity(float gravityFactor){
              this.gravityFactor = gravityFactor;
              return this;
          }
@@ -391,7 +400,7 @@ public class EntitySpellBall extends Entity{
             }//测试
             Vec3d vec3d = this.getMotion();
             double d0 = this.getPosX() + vec3d.x;
-            double d1 = this.getPosY() + HALF_SIZE + vec3d.y;
+            double d1 = this.getPosY() + HALF_SIZE + vec3d.y;//中心坐标
             double d2 = this.getPosZ() + vec3d.z;
 
             for(int i = 0; i < 50; ++i) {
@@ -402,8 +411,22 @@ public class EntitySpellBall extends Entity{
             for(PlayerEntity p : world.getPlayers()){
                 p.sendMessage(new StringTextComponent("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
             }//测试
-            ++this.ticksAlive;
-            RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, this.ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
+
+            int ticksAlive = this.dataManager.get(TICKS_ALIVE);
+            this.dataManager.set(TICKS_ALIVE, ticksAlive + 1);
+            if(ticksAlive > maxTimer){
+                double mp = this.spellBallMPStorage.getMana();
+                if(mp < 0.01D * this.spellBallMPStorage.getMaxMana()){
+                    mp = 0D;
+                }
+                else{
+                    mp = mp *(1.0D - descendingRate);
+                }
+                this.spellBallMPStorage.setMana(mp);
+            }
+            //指数降低mp存量
+
+            RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
             //这个includeShooter大概率是指在什么情况下允许射出投掷物的实体被投掷物击中，但是逻辑比较复杂，我读不太懂。此处照抄了DamagingProjectileEntity的逻辑
             for(PlayerEntity p : world.getPlayers()){
                 p.sendMessage(new StringTextComponent(raytraceresult.getType().toString()));
@@ -418,7 +441,7 @@ public class EntitySpellBall extends Entity{
 
             Vec3d vec3d = this.getMotion();
             double d0 = this.getPosX() + vec3d.x;
-            double d1 = this.getPosY() + HALF_SIZE + vec3d.y;
+            double d1 = this.getPosY() + vec3d.y;//底面坐标
             double d2 = this.getPosZ() + vec3d.z;
             ProjectileHelper.rotateTowardsMovement(this, 0.2F);
             //float f = this.getMotionFactor();
@@ -436,18 +459,7 @@ public class EntitySpellBall extends Entity{
             this.setPosition(d0, d1, d2);
             
             //随时间而增加的能量消耗写在这
-            ticksAlive++;
-            if(ticksAlive > maxTimer){
-                //指数降低mp存量
-                double mp = this.spellBallMPStorage.getMana();
-                if(mp < 0.01D * this.spellBallMPStorage.getMaxMana()){
-                    mp = 0D;
-                }
-                else{
-                    mp = mp *(1.0D - descendingRate);
-                }
-                this.spellBallMPStorage.setMana(mp);
-            }
+
 
             if (this.spellBallMPStorage.getMana() == 0D){
                 for(PlayerEntity p : world.getPlayers()){
@@ -574,12 +586,12 @@ public class EntitySpellBall extends Entity{
         Vec3d mot = this.getMotion();
         EntitySpellBall spell = new EntitySpellBall.Builder(world)
                 .pos(x, y, z).motion(mot)
-                .gravity(this.gravityFactor)
+                .gravity(this.dataManager.get(GRAVITY))
                 .shooter(this.shootingEntity)
                 .setMP(this.spellBallMPStorage.getMana(), this.spellBallMPStorage.getMaxMana())
                 .build();
         spell.translatedSpellProvider = this.translatedSpellProvider;
-        spell.ticksAlive = this.ticksAlive;
+        spell.dataManager.set(TICKS_ALIVE, this.dataManager.get(TICKS_ALIVE));
         return spell;
     }
 
