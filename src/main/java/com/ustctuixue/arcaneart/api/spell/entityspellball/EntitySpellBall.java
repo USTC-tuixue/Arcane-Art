@@ -148,11 +148,20 @@ public class EntitySpellBall extends Entity{
 
     //@OnlyIn(Dist.DEDICATED_SERVER)
     private SpellCasterSource createSource(){
-        return new SpellCasterSource(
-                this.getPositionVec(), this.getPitchYaw(),
-                (ServerWorld) this.world,
-                this.world.getServer(), this, this.mpSource, tier
-        );
+        if (!this.world.isRemote) {
+            return new SpellCasterSource(
+                    this.getPositionVec(), this.getPitchYaw(),
+                    (ServerWorld) this.world,
+                    this.world.getServer(), this, this.mpSource, tier
+            );
+        }
+        else {
+            return new SpellCasterSource(
+                    this.getPositionVec(), this.getPitchYaw(),
+                    null,
+                    this.world.getServer(), this, this.mpSource, tier
+            );
+        }
     }
 
 

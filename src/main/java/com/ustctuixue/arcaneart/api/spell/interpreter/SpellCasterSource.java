@@ -29,7 +29,7 @@ public class SpellCasterSource
     @Getter
     private final Vec2f rotation;
 
-    @Getter
+    @Getter @Nullable
     private final ServerWorld world;
 
     @Getter

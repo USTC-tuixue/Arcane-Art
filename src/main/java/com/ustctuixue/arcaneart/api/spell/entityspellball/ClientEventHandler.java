@@ -15,7 +15,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientSetUpEvent(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(APIRegistries.Entities.ENTITY_SPELL_REGISTER.get(), (EntityRendererManager manager) -> {
-            return new SpriteRenderer(manager, Minecraft.getInstance().getItemRenderer());
+            return new EntitySpellBallRenderer(manager);
         });
     }
 }
