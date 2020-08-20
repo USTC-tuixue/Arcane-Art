@@ -1,0 +1,9 @@
+{
+    "parent": "block/block",
+	"loader": "forge:obj",
+    "textures": {
+    "particle": "arcaneart:block/prism_2"
+    },
+    "model": "arcaneart:models/block/lux_splitter.obj",
+    "flip-v": true
+}

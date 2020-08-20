@@ -1,0 +1,9 @@
+{
+    "parent": "block/block",
+	"loader": "forge:obj",
+    "textures": {
+    "particle": "arcaneart:block/solar_crystal"
+    },
+    "model": "arcaneart:models/block/solar_crystal.obj",
+    "flip-v": true
+}
