@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.network.PacketSyncMP;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.client.KeyLoader;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
@@ -79,6 +80,7 @@ public class ArcaneArt
     {
         LOGGER.info(COMMON_SETUP, "FML Common Setup Event");
     	KeyEvent.registerMessage();
+        PacketSyncMP.registerChannel();
     }
 
     @SubscribeEvent
