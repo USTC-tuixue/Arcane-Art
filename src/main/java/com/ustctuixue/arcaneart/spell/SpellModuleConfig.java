@@ -57,7 +57,7 @@ public class SpellModuleConfig
 
                 static EffectMagicTraits fromString(String s)
                 {
-                    String[] list = s.split("\\|", 1);
+                    String[] list = s.split("\\|", 2);
 
                     double cost = 0;
                     double complexity = 0;
