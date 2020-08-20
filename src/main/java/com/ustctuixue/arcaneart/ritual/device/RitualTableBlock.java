@@ -78,10 +78,13 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
                 return ActionResultType.PASS;
             }
             ritualTableTileEntity.start(state, worldIn, pos, player);
+<<<<<<< HEAD
             return ActionResultType.SUCCESS;
         }
         else {
             return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+=======
+>>>>>>> 5af4766b3968c6623cf99693f8d913c776d5328d
         }
     }
 
