@@ -60,6 +60,17 @@ public class SpellKeyWords
         EN_US.addTranslationFor(TOWARDS, "towards");
         EN_US.addTranslationFor(NEAREST_ENTITY, "nearest entity");
         EN_US.addTranslationFor(MAKE, "make");
+        EN_US.addTranslationFor(NEAREST_ENEMY, "nearest enemy");
+        EN_US.addTranslationFor(NEAREST_ALLY, "nearest ally");
+        EN_US.addTranslationFor(NEAREST_ANIMAL, "nearest animal");
+        EN_US.addTranslationFor(NEAREST_PLAYER, "nearest player");
+        EN_US.addTranslationFor(NEAREST_ITEM, "nearest item");
+        EN_US.addTranslationFor(NEAREST_PROJECTILE, "nearest projectile");
+        EN_US.addTranslationFor(IN_RANGE, "in range");
+        EN_US.addTranslationFor(FROM, "from");
+        EN_US.addTranslationFor(MAX_COUNT, "max count");
+        EN_US.addTranslationFor(SELF, "self");
+        EN_US.addTranslationFor(MAKE, "make");
         EN_US.setLeftQuote("\"");
         EN_US.setRightQuote("\"");
         EN_US.setSemicolon(";");
