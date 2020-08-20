@@ -17,7 +17,11 @@ public class RitualThunder implements IRitualEffect {
     @Override
     public void execute(World world, BlockPos pos, LazyOptional<PlayerEntity> caster) {
         if(!world.isRemote()) {
-            world.setThunderStrength(world.getThunderStrength(1F)+100F);
+            world.getWorldInfo().setClearWeatherTime(0);
+            world.getWorldInfo().setRainTime(6000);
+            world.getWorldInfo().setThunderTime(6000);
+            world.getWorldInfo().setRaining(true);
+            world.getWorldInfo().setThundering(true);
         }
     }
 

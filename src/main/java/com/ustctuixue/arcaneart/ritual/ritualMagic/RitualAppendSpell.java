@@ -20,7 +20,7 @@ import org.lwjgl.system.CallbackI;
 
 import java.util.concurrent.CountDownLatch;
 
-public abstract class RitualAppendSpell implements IRitualEffect {
+public class RitualAppendSpell implements IRitualEffect {
     //
 
     @Override
