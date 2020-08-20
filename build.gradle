@@ -107,18 +107,19 @@ dependencies {
     shade 'com.udojava:EvalEx:2.5'
 }
 
-// repositories {
-//    maven {
+repositories {
+    maven {
         // location of the maven that hosts JEI files
-//        name = "Progwml6 maven"
-//        url = "https://dvs1.progwml6.com/files/maven/"
-//    }
-//    maven {
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
         // location of a maven mirror for JEI files, as a fallback
-//        name = "ModMaven"
-//        url = "https://modmaven.k-4u.nl"
-//    }
-// }
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    mavenCentral()
+}
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
