@@ -358,9 +358,10 @@ public class EntitySpellBall extends Entity{
                             s.setMana(mana + leftOverMana);
                         }
                     });//return the leftover mana to the caster
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
                 else if (block.hasTileEntity()) {
-                    TileEntity te = world.getTileEntity(((BlockRayTraceResult) result).getPos());
+                    TileEntity te = world.getTileEntity(pos);
                     assert te != null;
                     LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
                     mpStorageCapLazyOptional.ifPresent((s) -> {
@@ -395,6 +396,7 @@ public class EntitySpellBall extends Entity{
                             s.setMana(mana + leftOverMana);
                         }
                     });//return the leftover mana to the caster
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
                 else {
                     //没有携带法术，给实体补充能量
@@ -412,8 +414,9 @@ public class EntitySpellBall extends Entity{
                             }
                         });
                     }
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
-                this.spellBallMPStorage.setMana(0D);//delete this spell ball
+
             }
         //}
     }
