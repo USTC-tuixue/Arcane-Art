@@ -48,6 +48,8 @@ public class MagmaCrystalTileEntity extends AbstractCollectiveCrystalTileEntity 
                 assert world != null;
                 if (((i == -2)||(i == 2))&&((j == -2)||(j == 2)))
                     continue;
+                if ((i == 0)&&(j == 0))
+                    continue;
                 if (world.getBlockState(newpos).getMaterial() != Material.LAVA)
                     return 0.0D;
             }

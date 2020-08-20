@@ -13,5 +13,11 @@ public class RenderTypeRegistry {
     @SubscribeEvent
     public static void onRenderTypeSetup(FMLClientSetupEvent event) {
         RenderTypeLookup.setRenderLayer(AutomationRegistry.LUX_REFLECTOR_BLOCK.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(AutomationRegistry.LUX_SPLITTER_BLOCK.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(AutomationRegistry.SOLAR_CRYSTAL_BLOCK.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(AutomationRegistry.VOID_CRYSTAL_BLOCK.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(AutomationRegistry.FROZEN_CRYSTAL_BLOCK.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(AutomationRegistry.MAGMA_CRYSTAL_BLOCK.get(), RenderType.getTranslucent());
+
     }
 }

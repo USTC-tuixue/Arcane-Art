@@ -1,0 +1,9 @@
+{
+    "parent": "block/block",
+	"loader": "forge:obj",
+    "textures": {
+    "particle": "arcaneart:block/void_crystal"
+    },
+    "model": "arcaneart:models/block/void_crystal.obj",
+    "flip-v": true
+}
