@@ -17,6 +17,7 @@ public class EntitySpellBallRenderer extends EntityRenderer<EntitySpellBall> {
 
     public EntitySpellBallRenderer(EntityRendererManager renderManager) {
         super(renderManager);
+        SpellModel = new SpellBallModel();
     }
 
     @Override

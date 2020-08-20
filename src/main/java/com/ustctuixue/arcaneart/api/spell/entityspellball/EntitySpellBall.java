@@ -43,6 +43,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Random;
 
 public class EntitySpellBall extends Entity{
     //直接转extends Entity，告辞
@@ -224,30 +225,38 @@ public class EntitySpellBall extends Entity{
              if(FACING == Direction.UP){
                  this.y += len;
                  this.vy = speed;
+                 this.pitch = +90;
              }
              else if(FACING == Direction.DOWN){
                  this.y -= len;
                  this.vy = -speed;
+                 this.pitch = -90;
              }
              else if(FACING == Direction.EAST){
                  this.x += len;
                  this.vx = speed;
+                 this.yaw = 90;
              }
              else if(FACING == Direction.WEST){
                  this.x -= len;
                  this.vx = -speed;
+                 this.yaw = 270;
              }
              else if(FACING == Direction.SOUTH){
                  this.z += len;
                  this.vz = speed;
+                 this.yaw = 180;
              }
              else if(FACING == Direction.NORTH){
                  this.z -= len;
                  this.vz = -speed;
+                 this.yaw = 0;
              }
+             /*
              for(PlayerEntity p : world.getPlayers()){
                  p.sendMessage(new StringTextComponent(vx + "," + vy + "," + vz + "," + x + "," + y + "," + z));
              }//测试
+              */
              return this;
          }
          public Builder shooter(LivingEntity shooter){
@@ -299,10 +308,19 @@ public class EntitySpellBall extends Entity{
             //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
             //不考虑任何折射，摸了
             //和MPStorage的te碰撞时赋予其能量
+
+
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
                 BlockPos pos = ((BlockRayTraceResult) result).getPos();
                 BlockState block = world.getBlockState(pos);
+
+                /*
+                for(PlayerEntity p : world.getPlayers()){
+                    p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
+                }//测试
+                 */
+
                 if (block.getBlock() instanceof LuxReflector) {
                     this.reflect(block.get(LuxReflector.FACING), pos);
                     //TODO
@@ -399,27 +417,34 @@ public class EntitySpellBall extends Entity{
         //}
     }
 
+
     @Override
     public void tick(){
         super.tick();
 
         if (this.world.isRemote){
+            /*
             for(PlayerEntity p : world.getPlayers()){
                 p.sendMessage(new StringTextComponent("ticking spell client" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
             }//测试
+            */
             Vec3d vec3d = this.getMotion();
             double d0 = this.getPosX() + vec3d.x;
             double d1 = this.getPosY() + HALF_SIZE + vec3d.y;//中心坐标
             double d2 = this.getPosZ() + vec3d.z;
 
-            for(int i = 0; i < 50; ++i) {
-                this.world.addParticle(ParticleTypes.ENCHANT, d0 - vec3d.x * 0.25D, d1 - vec3d.y * 0.25D, d2 - vec3d.z * 0.25D, 0, 0, 0);
+            for(int i = 0; i < 2; ++i) {
+                float posRand = 0F;
+                float motionRand = 0.1F;//控制随机运动的，和粒子数量一起下次从cfg读
+                this.world.addParticle(ParticleTypes.END_ROD, d0 - vec3d.x * 0.25D + posRand * (Math.random() - 0.5), d1 - vec3d.y * 0.25D + posRand * (Math.random() - 0.5), d2 - vec3d.z * 0.25D + posRand * (Math.random() - 0.5), vec3d.x + motionRand * (Math.random() - 0.5), vec3d.y + motionRand * (Math.random() - 0.5), vec3d.z + motionRand * (Math.random() - 0.5));
             }
         }
         else {
+            /*
             for(PlayerEntity p : world.getPlayers()){
                 p.sendMessage(new StringTextComponent("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
             }//测试
+             */
 
             int ticksAlive = this.dataManager.get(TICKS_ALIVE);
             this.dataManager.set(TICKS_ALIVE, ticksAlive + 1);
@@ -437,14 +462,18 @@ public class EntitySpellBall extends Entity{
 
             RayTraceResult raytraceresult = ProjectileHelper.rayTrace(this, true, ticksAlive >= 25, this.shootingEntity, RayTraceContext.BlockMode.COLLIDER);
             //这个includeShooter大概率是指在什么情况下允许射出投掷物的实体被投掷物击中，但是逻辑比较复杂，我读不太懂。此处照抄了DamagingProjectileEntity的逻辑
+            /*
             for(PlayerEntity p : world.getPlayers()){
                 p.sendMessage(new StringTextComponent(raytraceresult.getType().toString()));
             }//测试
+             */
             if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
             //if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+                /*
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent("on impact" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
                 }//测试
+                 */
                 this.onImpact(raytraceresult);
             }
 
@@ -471,9 +500,11 @@ public class EntitySpellBall extends Entity{
 
 
             if (this.spellBallMPStorage.getMana() == 0D){
+                /*
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent("delete spell"));
                 }//测试
+                */
                 this.remove();
             }
 
