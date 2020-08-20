@@ -312,7 +312,8 @@ public class EntitySpellBall extends Entity{
 
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
-                BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
+                //getPos拿到的是在撞上之前最后一个经过的方块
                 BlockState block = world.getBlockState(pos);
 
                 /*
