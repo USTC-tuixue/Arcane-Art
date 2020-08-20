@@ -15,6 +15,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -26,6 +29,15 @@ import java.util.Random;
 
 
 public class RitualTableBlock extends Block implements IWaterLoggable {
+    private static VoxelShape shape;
+    static {
+        shape = VoxelShapes.or(
+                Block.makeCuboidShape(4,0,4,12,2,12),
+                Block.makeCuboidShape(6,2,6,10,8,10),
+                Block.makeCuboidShape(4,8,4,12,10,12),
+                Block.makeCuboidShape(2,10,2,14,15,14)
+        );
+    }
 
     public RitualTableBlock() {
         super(Properties
@@ -35,23 +47,16 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
                 .harvestTool(ToolType.PICKAXE));
         this.setDefaultState(this.stateContainer.getBaseState()
                 .with(LOCK, false)
-                .with(FACE_NS, true)
                 .with(BlockStateProperties.WATERLOGGED, false));
     }
 
     public static final BooleanProperty LOCK = BooleanProperty.create("lock");
-    public static final BooleanProperty FACE_NS = BooleanProperty.create("face_ns");
+    //public static final BooleanProperty FACE_NS = BooleanProperty.create("face_ns");
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(LOCK).add(FACE_NS).add(BlockStateProperties.WATERLOGGED);
+        builder.add(LOCK).add(BlockStateProperties.WATERLOGGED);
         super.fillStateContainer(builder);
-    }
-
-    @Override
-    public BlockState getStateForPlacement (BlockItemUseContext context) {
-        boolean faceNS = context.getPlacementHorizontalFacing() == Direction.NORTH || context.getPlacementHorizontalFacing() == Direction.SOUTH;
-        return this.getDefaultState().with(FACE_NS, faceNS);
     }
 
     @Override
@@ -73,10 +78,23 @@ public class RitualTableBlock extends Block implements IWaterLoggable {
                 return ActionResultType.PASS;
             }
             ritualTableTileEntity.start(state, worldIn, pos, player);
+<<<<<<< HEAD
+            return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        else {
+            return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+=======
+>>>>>>> 5af4766b3968c6623cf99693f8d913c776d5328d
+        }
     }
 
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return shape;
+    }
 
-
+    @Override
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+        return state.get(LOCK) ? 6 : 0;
+    }
 }

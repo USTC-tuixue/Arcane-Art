@@ -48,9 +48,11 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
                             //必须有足够一次发射的能量才运作，抽取这些能量
                             s.setMana(MP - emitterTransferAmount);
                             //新建一个法球实体
+                            /*
                             for(PlayerEntity p : world.getPlayers()){
                                 p.sendMessage(new StringTextComponent("emit spell"));
                             }//测试
+                             */
                             world.addEntity(new EntitySpellBall.Builder(world).emitFromBlock(this.getPos(), this.getBlockState().get(LuxEmitter.FACING), AutomationConfig.Emitter.EMIT_SPEED.get()).setFullMP(emitterTransferAmount).build());
                         }
                     });

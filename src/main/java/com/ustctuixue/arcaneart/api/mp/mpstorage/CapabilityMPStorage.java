@@ -18,8 +18,8 @@ public class CapabilityMPStorage
 
     public static class Storage implements Capability.IStorage<MPStorage>
     {
-        static final String MAX_MP = "maxMP";
-        static final String CURRENT_MP = "mp";
+        static final String MAX_MP = "max_mana";
+        static final String CURRENT_MP = "mana";
 
         @Nullable
         @Override
