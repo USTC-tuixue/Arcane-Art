@@ -40,5 +40,6 @@
   "info.arcaneart.deletespell": "删除法术",
   "item.arcaneart.staff": "法杖",
   "item.arcaneart.advanced_staff": "进阶法杖",
-  "title.arcaneart.bookshelf": "书架"
+  "title.arcaneart.bookshelf": "书架",
+  "itemGroup.Arcane Art": "奥法艺术"
 }
