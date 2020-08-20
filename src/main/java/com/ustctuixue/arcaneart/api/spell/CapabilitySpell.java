@@ -46,7 +46,7 @@ public class CapabilitySpell
             translatedSpell.setName(compoundNBT.getString(TITLE));
             translatedSpell.addAllCommonSentences(decodeIncantation(compoundNBT.getList(PRE_PROCESS, 8)));
             translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
-            translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
+            translatedSpell.addAllOnReleaseSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
             instance.setSpell(translatedSpell);
         }
 

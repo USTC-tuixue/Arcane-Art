@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import org.apache.logging.log4j.LogManager;
 
 public class EffectSpell implements ISpell
 {
@@ -52,6 +53,7 @@ public class EffectSpell implements ISpell
     @Override
     public void execute(SpellCasterSource source)
     {
+        LogManager.getLogger(this.getClass()).debug("Effect Instance: " + this.effectInstance);
         if (this.effectInstance != null)
         {
             EntityList targetList = this.target.build(source);
@@ -61,6 +63,7 @@ public class EffectSpell implements ISpell
                 if (entity instanceof LivingEntity)
                 {
                     LivingEntity entityLiving = (LivingEntity) entity;
+                    LogManager.getLogger(this.getClass()).debug("Target:" + entity);
                     if (effectInstance.getPotion().isInstant()) {
                         effectInstance.getPotion().affectEntity(source.getEntity(), source.getEntity(), entityLiving, effectInstance.getAmplifier(), 1.0D);
                     } else {

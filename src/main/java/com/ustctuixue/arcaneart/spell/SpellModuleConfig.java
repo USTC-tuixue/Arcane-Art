@@ -143,7 +143,7 @@ public class SpellModuleConfig
                                 "n as target number",
                                 "Expression Usage: https://github.com/uklimaschewski/EvalEx"
                         )
-                        .define("manaCostAmplifier", "((lvl + 1) * t) ^ 2 / 40000 * n");
+                        .define("manaCostAmplifier", "((lvl + 1) * t) ^ 2 / 400000 * n");
 
                 COMPLEXITY_AMPLIFIER_EXP = builder
                         .comment(

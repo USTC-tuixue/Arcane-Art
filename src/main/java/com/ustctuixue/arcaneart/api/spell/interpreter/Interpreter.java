@@ -9,6 +9,8 @@ import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import net.minecraft.item.ItemStack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -74,8 +76,12 @@ public class Interpreter
     public static SpellContainer compile(@Nonnull TranslatedSpell spell)
     {
         SpellContainer container = new SpellContainer();
+        Logger logger = LogManager.getLogger(Interpreter.class);
+        logger.debug("Compiling preprocessors");
         compilePerProcess(spell.getPreProcessSentences(), container.preProcess);
+        logger.debug("Compiling on holds");
         compilePerProcess(spell.getOnHoldSentences(), container.onHold);
+        logger.debug("Compiling on releases");
         compilePerProcess(spell.getOnReleaseSentences(), container.onRelease);
         return container;
     }

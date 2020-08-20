@@ -1,6 +1,7 @@
 package com.ustctuixue.arcaneart.api.spell.interpreter;
 
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class SpellContainer
 
     public void executeOnRelease(SpellCasterSource source)
     {
+        LogManager.getLogger(this.getClass()).debug("Execute on release: " + onRelease);
         onRelease.forEach(iSpell -> iSpell.execute(source));
     }
 
