@@ -68,6 +68,7 @@ public class PacketSyncMP
                 manabar.ifPresent(bar -> new CapabilityMP.Storage().readNBT(CapabilityMP.MANA_BAR_CAP, bar, null, this.manaBar));
             }
         });
+        ctx.get().setPacketHandled(true);
     }
 
     public void toBytes(PacketBuffer buf)
