@@ -40,5 +40,6 @@
   "info.arcaneart.deletespell": "Delete Spell",
   "item.arcaneart.staff": "Staff",
   "item.arcaneart.advanced_staff": "Advanced Staff",
-  "title.arcaneart.bookshelf": "Book Shelf"
+  "title.arcaneart.bookshelf": "Book Shelf",
+  "itemGroup.Arcane Art": "Arcane Art"
 }
