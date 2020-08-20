@@ -8,7 +8,6 @@ import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
 import com.ustctuixue.arcaneart.api.spell.SpellKeyWord;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
-import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

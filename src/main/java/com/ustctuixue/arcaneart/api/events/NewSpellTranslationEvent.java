@@ -7,11 +7,12 @@ import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 
 public class NewSpellTranslationEvent extends ModLifecycleEvent
 {
-    public NewSpellTranslationEvent(ModContainer container)
+    NewSpellTranslationEvent(ModContainer container)
     {
         super(container);
     }
 
+    @SuppressWarnings("unused")
     public LanguageProfile getProfile(String name)
     {
         return LanguageManager.getInstance().getLanguageProfile(name);

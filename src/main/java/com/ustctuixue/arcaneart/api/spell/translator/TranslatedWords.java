@@ -2,7 +2,6 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,19 +26,28 @@ public class TranslatedWords
 
     public TranslatedWords add(String word)
     {
-        this.words.add(word);
+        if (!this.words.contains(word))
+        {
+            this.words.add(word);
+        }
         return this;
     }
 
     public TranslatedWords addAll(String... words)
     {
-        return this.addAll(Arrays.asList(words));
-
+        for (String word : words)
+        {
+            this.add(word);
+        }
+        return this;
     }
 
     public TranslatedWords addAll(Collection<String> words)
     {
-        this.words.addAll(words);
+        for (String word : words)
+        {
+            this.add(word);
+        }
         return this;
     }
 

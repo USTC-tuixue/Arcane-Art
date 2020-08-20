@@ -5,14 +5,12 @@ import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.SpellCasterTiers;
-import com.ustctuixue.arcaneart.api.spell.modifier.ISpellCostModifier;
 import lombok.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
@@ -31,7 +29,7 @@ public class SpellCasterSource
     @Getter
     private final Vec2f rotation;
 
-    @Getter
+    @Getter @Nullable
     private final ServerWorld world;
 
     @Getter
@@ -50,28 +48,28 @@ public class SpellCasterSource
     private final IMPConsumer mpConsumer;
 
     @Getter
-    private final int casterTier;
+    private final double complexityTolerance;
 
 
-    public SpellCasterSource(ServerWorld worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
+    public SpellCasterSource(ServerWorld worldIn, @Nonnull Entity entityIn, @Nullable MPStorage mpStorageIn, double toleranceIn)
     {
         this(entityIn.getPositionVec(), entityIn.getPitchYaw(),
                 worldIn,
-                worldIn.getServer(), entityIn, mpStorageIn, tierIn
+                worldIn.getServer(), entityIn, mpStorageIn, toleranceIn
         );
     }
 
     public SpellCasterSource(
             Vec3d posIn, Vec2f rotationIn, ServerWorld worldIn,
             MinecraftServer serverIn,
-            @Nullable Entity entityIn, @Nullable MPStorage mpStorageIn, int tierIn)
+            @Nullable Entity entityIn, @Nullable MPStorage mpStorageIn, double toleranceIn)
     {
         this.pos = posIn;
         this.rotation = rotationIn;
         this.world = worldIn;
         this.server = serverIn;
         this.entity = entityIn;
-        this.casterTier = tierIn;
+        this.complexityTolerance = toleranceIn;
         if (entityIn != null)
         {
             LazyOptional<IManaBar> optionalManaBar = entityIn.getCapability(CapabilityMP.MANA_BAR_CAP);

@@ -16,10 +16,10 @@ public class RelativeVec3dListArgument implements ArgumentType<RelativeVec3dList
     public RelativeVec3dListBuilder parse(StringReader reader) throws CommandSyntaxException
     {
 
-        try{
+        try{        // Try get pos from entity list
             RelativeEntityListBuilder builder = new EntityListArgument().parse(reader);
             return new RelativeVec3dListBuilder(builder);
-        }catch (CommandSyntaxException e)
+        }catch (CommandSyntaxException e)   // if cannot
         {
             double x, y, z;
             ArcaneArtAPI.LOGGER.debug(reader.getRemaining());
@@ -31,6 +31,5 @@ public class RelativeVec3dListArgument implements ArgumentType<RelativeVec3dList
             z = reader.readDouble();
             return new RelativeVec3dListBuilder(x, y, z);
         }
-
     }
 }

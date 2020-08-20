@@ -2,8 +2,6 @@ package com.ustctuixue.arcaneart.api.spell.modifier;
 
 import com.google.common.collect.Lists;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.World;
 
 import java.util.Collection;
 import java.util.List;

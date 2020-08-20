@@ -7,79 +7,93 @@ import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageManager;
 import com.ustctuixue.arcaneart.api.spell.translator.LanguageProfile;
 import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
+@Data
 public class TranslatedSpell
 {
-    @Getter @Setter
     private String name;
 
-    @Getter @Nonnull
     private final List<String> preProcessSentences = Lists.newArrayList();
 
-    @Getter @Nonnull
     private final List<String> onHoldSentences = Lists.newArrayList();
 
-    @Getter @Nonnull
     private final List<String> onReleaseSentences = Lists.newArrayList();
+
+    @Nullable
+    private final SpellAuthor author;
 
     @SuppressWarnings("WeakerAccess")
     public TranslatedSpell()
     {
-        this("");
+        this("", null);
+    }
+
+    public TranslatedSpell(String name)
+    {
+        this(name, null);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public TranslatedSpell(String name)
+    public TranslatedSpell(String name, @Nullable SpellAuthor authorIn)
     {
         this.name = name;
+        this.author = authorIn;
     }
 
-    @SuppressWarnings(value={"WeakerAccess", ""})
+    @SuppressWarnings(value={"WeakerAccess", "UnusedReturnValue"})
     public TranslatedSpell addCommonSentence(String s)
     {
         preProcessSentences.add(s);
         return this;
     }
 
+    @SuppressWarnings(value={"WeakerAccess", "UnusedReturnValue"})
     public TranslatedSpell addOnHoldSentence(String s)
     {
         onHoldSentences.add(s);
         return this;
     }
 
+    @SuppressWarnings(value={"WeakerAccess", "UnusedReturnValue"})
     public TranslatedSpell addOnReleaseSentence(String s)
     {
         onReleaseSentences.add(s);
         return this;
     }
 
+    @SuppressWarnings(value={"WeakerAccess", "UnusedReturnValue"})
     public TranslatedSpell addAllCommonSentences(Collection<String> sentences)
     {
         preProcessSentences.addAll(sentences);
         return this;
     }
 
+    @SuppressWarnings(value={"WeakerAccess", "UnusedReturnValue"})
     public TranslatedSpell addAllOnHoldSentences(Collection<String> sentences)
     {
         onHoldSentences.addAll(sentences);
         return this;
     }
 
+    @SuppressWarnings(value={"UnusedReturnValue", "unused"})
     public TranslatedSpell addAllOnReleaseSentences(Collection<String> sentences)
     {
         onReleaseSentences.addAll(sentences);
         return this;
+    }
+
+    public boolean isEmpty()
+    {
+        return this.onHoldSentences.isEmpty() && this.onReleaseSentences.isEmpty() && this.preProcessSentences.isEmpty();
     }
 
     @Nullable
@@ -137,7 +151,7 @@ public class TranslatedSpell
     public static TranslatedSpell translateFromRawSpell(RawSpell rawSpell, LanguageProfile profile)
     {
         List<String> translated = profile.translate(rawSpell.getIncantations());
-        TranslatedSpell result = new TranslatedSpell(rawSpell.getName());
+        TranslatedSpell result = new TranslatedSpell(rawSpell.getName(), rawSpell.getAuthor());
         for (String s : translated)
         {
             SpellKeyWord kw = getFirstKeyWord(s);

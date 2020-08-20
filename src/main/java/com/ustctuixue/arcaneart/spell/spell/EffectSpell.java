@@ -9,7 +9,7 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.EntityListVariableArgument;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.entitylist.RelativeEntityListBuilder;
 import com.ustctuixue.arcaneart.api.util.EntityList;
-import com.ustctuixue.arcaneart.spell.SpellConfig;
+import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.command.arguments.PotionArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -22,15 +22,15 @@ public class EffectSpell implements ISpell
     private RelativeEntityListBuilder target;
 
     @Override
-    public double getComplexity(SpellCasterSource source)
+    public double getComplexityBase(SpellCasterSource source)
     {
-        double amp = SpellConfig.SpellProperty.EffectSpell
+        double amp = SpellModuleConfig.SpellProperty.EffectSpell
                 .getComplexityAmplifier(
                         this.effectInstance.getAmplifier(),
                         this.effectInstance.getDuration(),
                         this.target.build(source).size() 
                 );
-        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+        return SpellModuleConfig.SpellProperty.EffectSpell.getEffectSettings()
                 .get(this.effectInstance.getPotion()).getBasicComplexity()
                 * amp;
     }
@@ -38,15 +38,15 @@ public class EffectSpell implements ISpell
     @Override
     public double getManaCostBase(SpellCasterSource source)
     {
-        double amp = SpellConfig.SpellProperty.EffectSpell
+        double amp = SpellModuleConfig.SpellProperty.EffectSpell
                 .getManaCostAmplifier(
                         this.effectInstance.getAmplifier(),
                         this.effectInstance.getDuration(),
                         this.target.build(source).size()
                 );
-        return SpellConfig.SpellProperty.EffectSpell.getEffectSettings()
+        return SpellModuleConfig.SpellProperty.EffectSpell.getEffectSettings()
                 .get(this.effectInstance.getPotion()).getBasicCost()
-                * target.build(source).size() * amp;
+                * amp;
     }
 
     @Override
@@ -110,5 +110,19 @@ public class EffectSpell implements ISpell
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public double guessManaCost(SpellCasterSource source)
+    {
+        double amp = SpellModuleConfig.SpellProperty.EffectSpell
+                .getManaCostAmplifier(
+                        this.effectInstance.getAmplifier(),
+                        this.effectInstance.getDuration(),
+                        this.target.getLimit()
+                );
+        return SpellModuleConfig.SpellProperty.EffectSpell.getEffectSettings()
+                .get(this.effectInstance.getPotion()).getBasicCost()
+                * amp;
     }
 }

@@ -2,7 +2,6 @@ package com.ustctuixue.arcaneart.api.spell.translator;
 
 import com.google.common.collect.Maps;
 import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.Marker;

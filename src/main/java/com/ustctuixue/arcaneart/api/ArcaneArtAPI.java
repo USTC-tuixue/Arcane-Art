@@ -37,7 +37,6 @@ public class ArcaneArtAPI
         return new Object[]{
                 new InGameMPEventHandler(),
                 new InGameAPIEventHandler(),
-                new InGameAPIClientEventHandler(),
                 new ServerLifecycleAPIEventHandler()
         };
     }

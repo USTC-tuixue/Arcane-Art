@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,7 +28,7 @@ public class RitualRegistries {
     public static RegistryObject<Block> dingBlockCenter = BLOCKS.register("ding_center", ()->{
         return new DingBlock(DingBlock.EnumShape.CENTER);
     });
-    public static RegistryObject<Block> ritualTableBlock = BLOCKS.register("table", RitualTableBlock::new);
+    public static RegistryObject<Block> ritualTableBlock = BLOCKS.register("ritual_table", RitualTableBlock::new);
 
     public static RegistryObject<Item> dingItemCircle = ITEMS.register("item_ding_circle", ()->{
         return new BlockItem(dingBlockCircle.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP));
@@ -38,7 +39,7 @@ public class RitualRegistries {
     public static RegistryObject<Item> dingItemCenter = ITEMS.register("item_ding_center", ()->{
         return new BlockItem(dingBlockCenter.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP));
     });
-    public static RegistryObject<Item> tableItem = ITEMS.register("item_table", ()->{
+    public static RegistryObject<Item> tableItem = ITEMS.register("item_ritual_table", ()->{
         return new BlockItem(ritualTableBlock.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP));
     });
 

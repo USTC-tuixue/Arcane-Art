@@ -2,13 +2,7 @@ package com.ustctuixue.arcaneart.api.util;
 
 import net.minecraft.util.math.Vec3d;
 
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Vec3dList extends IteratingNonNullList<Vec3d>
 {

@@ -1,13 +1,10 @@
 package com.ustctuixue.arcaneart.api.ritual;
 
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import lombok.Getter;
-import lombok.Setter;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.tags.ItemTags;
+import lombok.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -17,7 +14,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class Ritual implements IForgeRegistryEntry<Ritual> {
+@Builder @Data
+public class Ritual implements IForgeRegistryEntry<Ritual>
+{
 
     public static ForgeRegistry<Ritual> REGISTRY
             = (ForgeRegistry<Ritual>) new RegistryBuilder<Ritual>()
@@ -25,52 +24,31 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             .setName(ArcaneArtAPI.getResourceLocation("ritual"))
             .create();
 
-    private ResourceLocation name;
     private static final int MAX_DING_NUMBER = 9;
 
-    public Ritual(IRitual iRitual, @Nonnull Item... ingredients) {
-        this.setIngredients(ingredients).setExecRitual(iRitual);
-    }
+    private final Ingredient[] ingredients;
 
-    @Getter
-    private Item[] ingredients;
+    private final Supplier<IRitualEffect> execRitual;
 
-    @Getter @Setter
-    private IRitual execRitual = null;
+    private final boolean rotatable;
 
-    @Getter @Setter
-    private boolean rotatable = true;
+    private final boolean flippable;
 
-    @Getter @Setter
-    private boolean flippable = false;
+    private final int cost;
 
-    @Getter @Setter
-    private double cost = 5000;
-
-    @Getter @Setter
-    private double consumeSpeed = 50;
-
-    public Ritual setIngredients(@Nonnull Item... ingredients) {
-        if(isValidIngredients(ingredients)) {
-            this.ingredients = formatIngredients(ingredients);
-            return this;
-        }
-        throw new IllegalArgumentException("Can not create ritual recipe with no item or more than 9 items.");
-    }
+    private final int consumeSpeed;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ritual ritual = (Ritual) o;
-        return matches(ritual.ingredients);
+        return matches(ritual.ingredients) || ritual.matches(this.ingredients);
     }
 
     @Override
     public int hashCode() {
-        int i = Arrays.hashCode(ingredients);
-        return i;
-
+        return Arrays.hashCode(ingredients);
     }
 
     private static final int[][] ROTATE_TRANS_MAT = {
@@ -83,14 +61,57 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             {6, 7, 8, 3, 4, 5, 0, 1, 2} //flip vertical
     };
 
-    public boolean matches(Item[] Item) {
-
-        Item[] ingredients = formatIngredients(Item);
-        if(!isValidIngredients(Item)) {
+    public boolean matches(ItemStack[] itemStacks) {
+        ItemStack[] input = new ItemStack[MAX_DING_NUMBER];
+        int nullStacks = 0;
+        System.arraycopy(itemStacks, 0, input, 0, Math.min(MAX_DING_NUMBER, itemStacks.length));
+        for(int i = 0; i < MAX_DING_NUMBER; ++i) {
+            if(input[i] == null) {
+                input[i] = ItemStack.EMPTY;
+                nullStacks++;
+            }
+        }
+        if(nullStacks == MAX_DING_NUMBER) {
             return false;
         }
+        if(this.rotatable && itemTransMatch(input, ROTATE_TRANS_MAT)) {
+            return true;
+        }
+        if(this.flippable && itemTransMatch(input, FLIP_TRANS_MAT)) {
+            return true;
+        }
+        return itemTransMatch(input, null);
+    }
 
-        boolean result = true;
+    private boolean itemTransMatch(ItemStack[] input, int[][] transMat) {
+        if(transMat == null) {
+            for(int i = 0; i < MAX_DING_NUMBER; ++i) {
+                if(!ingredients[i].test(input[i])){
+                    return false;
+                }
+            }
+            return true;
+        }
+        else {
+            boolean result;
+            for(int[] ignored : transMat) {
+                result = true;
+                for(int i = 0; i < MAX_DING_NUMBER; ++i) {
+                    result = ingredients[i].test(input[i]);
+                    if(!result) break;
+                }
+                if(result) return true;
+            }
+            return false;
+        }
+    }
+
+    private boolean matches(Ingredient[] item) {
+
+        Ingredient[] ingredients = formatIngredients(item);
+        if(!isValidIngredients(ingredients)) {
+            return false;
+        }
         if(this.rotatable && ingredientsTransMatch(ingredients, ROTATE_TRANS_MAT)) {
             return true;
         }
@@ -100,7 +121,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
         return ingredientsTransMatch(ingredients, null);
     }
 
-    private boolean ingredientsTransMatch(Item [] ingredients, int [][] transMat) {
+    private boolean ingredientsTransMatch(Ingredient [] ingredients, int [][] transMat) {
         if(transMat == null) {
             for(int i = 0; i < MAX_DING_NUMBER; ++i) {
                 if(!ItemMatches(this.ingredients[i], ingredients[i])){
@@ -110,7 +131,7 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
             return true;
         }
         else {
-            boolean result = true;
+            boolean result;
             for(int[] mat : transMat) {
                 result = true;
                 for(int i = 0; i < MAX_DING_NUMBER; ++i) {
@@ -123,89 +144,63 @@ public class Ritual implements IForgeRegistryEntry<Ritual> {
         }
     }
 
-    static private boolean ItemMatches(Item itemRecipe, Item itemInput) {
-        boolean recipeIsEmpty = (itemRecipe == null || itemRecipe == Items.AIR);
-        boolean inputIsEmpty = (itemInput == null || itemInput == Items.AIR);
+    static private boolean ItemMatches(Ingredient itemRecipe, Ingredient itemInput) {
+        boolean recipeIsEmpty = (itemRecipe == null || itemRecipe.hasNoMatchingItems());
+        boolean inputIsEmpty = (itemInput == null || itemInput.hasNoMatchingItems());
         if( recipeIsEmpty && inputIsEmpty ) {
             return true;
         }
         if( !recipeIsEmpty && !inputIsEmpty) {
-            return itemRecipe.getItem() == itemInput.getItem();
+            for(ItemStack i : itemRecipe.getMatchingStacks()) {
+                if(!itemInput.test(i)) {
+                    return false;
+                }
+            }
+            for(ItemStack i : itemInput.getMatchingStacks()) {
+                if(!itemRecipe.test(i)) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }
 
-    static public boolean isValidIngredients(@Nonnull Item... ingredients) {
-        if(ingredients.length <= 0 || ingredients.length > MAX_DING_NUMBER) {
+    private static boolean isValidIngredients(@Nonnull Ingredient[] ingredients) {
+        if(ingredients.length != MAX_DING_NUMBER) {
             return false;
         }
-        for(Item i : ingredients) {
-            if( !(i == null || i == Items.AIR)) return true;
+        for(Ingredient i : ingredients) {
+            if( !(i == null || i.hasNoMatchingItems())) return true;
         }
         return false;
     }
 
-    private static Item[] formatIngredients(@Nonnull Item... ingredients) {
+    private static Ingredient[] formatIngredients(@Nonnull Ingredient... ingredients) {
         if(ingredients.length != MAX_DING_NUMBER) {
-            Item[] Item = new Item[MAX_DING_NUMBER];
-            System.arraycopy(ingredients, 0, Item, 0, ingredients.length);
-            return Item;
+            Ingredient[] item = new Ingredient[MAX_DING_NUMBER];
+            System.arraycopy(ingredients, 0, item, 0, Math.min(ingredients.length, MAX_DING_NUMBER));
+            return item;
         }
         return ingredients;
     }
 
+
+    ////////////////////////////////////////////////////
+    // Forge Registry Entry part here
+    ////////////////////////////////////////////////////
+
+    @Getter @Nullable
+    private ResourceLocation registryName;
+
     @Override
     public Ritual setRegistryName(ResourceLocation name) {
-        this.name = name;
+        this.registryName = name;
         return this;
-    }
-
-    @Nullable
-    @Override
-    public ResourceLocation getRegistryName() {
-        return this.name;
     }
 
     @Override
     public Class<Ritual> getRegistryType() {
         return Ritual.class;
-    }
-
-    public static class Builder {
-
-        Ritual ritual;
-        public Builder() {
-            ritual = new Ritual(null, Items.BEDROCK);
-        }
-        public Builder setExecRitual(IRitual iRitual) {
-            this.ritual.setExecRitual(iRitual);
-            return this;
-        }
-        public Builder setIngredients(@Nonnull Item... item) {
-            this.ritual.setIngredients(item);
-            return this;
-        }
-        public Builder setRotatable(boolean rotatable) {
-            this.ritual.setRotatable(rotatable);
-            return this;
-        }
-        public Builder setFlippable(boolean flippable) {
-            this.ritual.setFlippable(flippable);
-            return this;
-        }
-        public Builder setManaCost(int cost) {
-            this.ritual.setCost(cost);
-            return this;
-        }
-        public Builder setManaConsumeSpeed(int speed) {
-            this.ritual.setConsumeSpeed(speed);
-            return this;
-        }
-        public Ritual create() {
-            return this.ritual;
-        }
-        public Supplier<Ritual> supplier() {
-            return this::create;
-        }
     }
 }

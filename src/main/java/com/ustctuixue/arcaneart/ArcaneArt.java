@@ -1,8 +1,7 @@
 package com.ustctuixue.arcaneart;
 
+import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
-import com.ustctuixue.arcaneart.api.test.TestEventHandler;
-import com.ustctuixue.arcaneart.api.test.TestObjects;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
 import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
@@ -55,14 +54,13 @@ public class ArcaneArt
 
         SpellModuleRegistries.SpellKeyWords.SPELL_KEY_WORD_DEFERRED_REGISTER.register(modLoadingEventBus);
 
-        modLoadingEventBus.register(new TestEventHandler());
-        TestObjects.register();
 
         modLoadingEventBus.addListener(this::commonSetup);
         modLoadingEventBus.addListener(this::clientSetup);
 
 
         MinecraftForge.EVENT_BUS.register(this);
+        APIRegistries.Entities.ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.BLOCK_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.ITEM_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         AutomationRegistry.TILE_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -72,6 +70,7 @@ public class ArcaneArt
         RitualRegistries.ITEMS.register(modLoadingEventBus);
         RitualRegistries.TILE_ENTITIES.register(modLoadingEventBus);
         RitualModuleRegistries.RITUAL_DEFERRED_REGISTER.register(modLoadingEventBus);
+        RitualModuleRegistries.ITEMS.register(modLoadingEventBus);
     }
 
     @Nonnull
@@ -91,8 +90,6 @@ public class ArcaneArt
     public void clientSetup(FMLClientSetupEvent event)
     {
         KeyLoader.register();
-        ScreenManager.registerFactory(ContainerTypeRegistry.magicContainer.get(), MagicMenu::new);
-        ScreenManager.registerFactory(ContainerTypeRegistry.bookShelfContainer.get(), BookShelfScreen::new);
     }
 
 

@@ -27,7 +27,7 @@ public class RelativeEntityListBuilder implements IRelativeArgumentBuilder<Entit
     protected MinMaxBound<Double> distance = MinMaxBound.unBounded();
     @Setter
     protected RelativeVec3dListBuilder originPos = new RelativeVec3dListBuilder();
-    @Setter
+    @Setter @Getter
     protected int limit = 1;
 
     protected Predicate<Entity> predicate = entity -> true;

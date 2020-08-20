@@ -16,7 +16,7 @@ public class InGameMPEventHandler
 {
     /**
      * 玩家死亡时保留 MP 数据
-     * @param event
+     * @param event clone event
      */
     @SubscribeEvent
     @SuppressWarnings("unused")
@@ -30,7 +30,7 @@ public class InGameMPEventHandler
                                 * APIConfig.MP.DEATH_RESET_RATIO.get());
                         iManaBarNew.setRegenCoolDown(APIConfig.MP.Regeneration.COOLDOWN_TICK.get());
                         iManaBarNew.setMagicLevel(iManaBar.getMagicLevel());
-                        iManaBarNew.setMagicExperience(iManaBar.getMagicExperience());
+                        iManaBarNew.setMagicExperience(iManaBar.getMagicExperience(), event.getEntityLiving());
                     }))
             ));
         }
@@ -38,20 +38,24 @@ public class InGameMPEventHandler
 
     /**
      * 玩家受到伤害时重置回复冷却计时器
-     * @param event
+     * @param event damage event
      */
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void resetRegenTimer(LivingDamageEvent event)
     {
-        event.getEntityLiving().getCapability(CapabilityMP.MANA_BAR_CAP).ifPresent((iManaBar -> {
-            iManaBar.setRegenCoolDown(APIConfig.MP.Regeneration.COOLDOWN_TICK.get());
-        }));
+        event.getEntityLiving().getCapability(CapabilityMP.MANA_BAR_CAP)
+                .ifPresent(
+                        iManaBar ->
+                                iManaBar.setRegenCoolDown(
+                                        APIConfig.MP.Regeneration.COOLDOWN_TICK.get()
+                                )
+                );
     }
 
     /**
      * 回复 MP
-     * @param event
+     * @param event tick event
      */
     @SubscribeEvent
     @SuppressWarnings("unused")
@@ -79,5 +83,11 @@ public class InGameMPEventHandler
                 // LOGGER.info("Mana of " + event.player.getUniqueID().toString() + ":" + manaBar.getMana());
             }
         });
+    }
+
+    @SubscribeEvent @SuppressWarnings("unused")
+    public void addExp(MPEvent.CastSpell.Post event)
+    {
+        event.getManaBar().addMagicExperience(event.getComplexity(), event.getEntityLiving());
     }
 }

@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class ServerLifecycleAPIEventHandler
 {
-    public static final PacketHandler packetHandler = new PacketHandler();
+    static final PacketHandler packetHandler = new PacketHandler();
 
     @SubscribeEvent @SuppressWarnings("unused")
     public void onServerStart(@Nonnull FMLServerStartingEvent event)

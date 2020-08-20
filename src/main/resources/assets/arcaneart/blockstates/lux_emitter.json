@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=up": { "model": "arcaneart:block/lux_emitter", "x": 270 },
+        "facing=down": { "model": "arcaneart:block/lux_emitter", "x": 90 },
+        "facing=north": { "model": "arcaneart:block/lux_emitter" },
+        "facing=south": { "model": "arcaneart:block/lux_emitter", "y": 180 },
+        "facing=west": { "model": "arcaneart:block/lux_emitter", "y": 270 },
+        "facing=east": { "model": "arcaneart:block/lux_emitter", "y": 90 }
+    }
+}

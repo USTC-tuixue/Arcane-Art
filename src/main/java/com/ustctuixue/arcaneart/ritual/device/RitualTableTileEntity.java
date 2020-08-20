@@ -1,23 +1,32 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
+import com.ustctuixue.arcaneart.ArcaneArt;
+import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.DefaultManaBar;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
-import com.ustctuixue.arcaneart.api.mp.tile.CapabilityMPStorage;
-import com.ustctuixue.arcaneart.api.mp.tile.MPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
+import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
+import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import com.ustctuixue.arcaneart.ritual.RitualConfig;
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import com.ustctuixue.arcaneart.spell.SpellConfig;
+import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -26,11 +35,12 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class RitualTableTileEntity extends TileEntity implements ITickableTileEntity {
     public RitualTableTileEntity() {
         super(RitualRegistries.ritualTableTileEntity.get());
-        mpStorage.setMaxMP(10000);
+        mpStorage.setMaxMana(10000);
         mpStorage.setMana(6000);
         neverExec = RitualConfig.HIGHEST_HEIGHT_OF_DING.get() < RitualConfig.LOWEST_HEIGHT_OF_DING.get() ||
                 RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get() < RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get();
@@ -54,8 +64,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private PlayerEntity playerEntity = null;
     private Direction playerFacing;
     private BlockPos tablePos;
-    private BlockState tableState;
-    private boolean tableFacingNS;
     private Ritual ritual;
     private World worldIn;
     private double manaConsumed = 0;
@@ -63,7 +71,9 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private int executeStage = -1;
     private double totalMana;
     private double consumeSpeed;
+    private IRitualEffect ritualEffect;
     private double tableCostAmplifier;
+    private boolean isCreativePlayer = false;
 
 
     public void start(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player) {
@@ -75,10 +85,11 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         this.playerEntity = player;
         this.playerFacing = player.getHorizontalFacing();
         this.tablePos = pos;
-        this.tableState = blockState.getBlockState();
-        this.tableFacingNS = tableState.get(RitualTableBlock.FACE_NS);
         this.worldIn = worldIn;
         this.manaConsumed = 0;
+        if(!worldIn.isRemote()) {
+            isCreativePlayer = ((ServerPlayerEntity) player).interactionManager.getGameType() == GameType.CREATIVE;
+        }
     }
 
     @Override
@@ -111,12 +122,8 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
 
     private boolean checkRitualStructure() {
         ArcaneArtAPI.LOGGER.info("Checking if ritual structure is complete.");
-        if(tableFacingNS ^ (playerFacing == Direction.NORTH || playerFacing == Direction.SOUTH)) {
-            playerEntity.sendMessage(new StringTextComponent("Wrong facing!"));
-            return false;
-        }
         if( !findDing(worldIn, playerEntity.getHorizontalFacing(), pos)) {
-            playerEntity.sendMessage(new StringTextComponent("Cannot find Legal Dings!"));
+            sendMessage("msg.arcaneart.ritual.illegal_ding");
             return false;
         }
         for(BlockPos bp : dingPos) {
@@ -127,28 +134,39 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
 
     private boolean matchRitual() {
         ArcaneArtAPI.LOGGER.info("Checking if there is a matching recipe.");
-        Item[] items = new Item[9];
+        ItemStack[] items = new ItemStack[9];
 
         for(int i = 0; i < 9; ++i) {
-            items[i] = dingItemHandlers[i].getStackInSlot(0).getItem();
+            items[i] = dingItemHandlers[i].getStackInSlot(0);
         }
-        ritual = new Ritual.Builder().setIngredients(items).create();
 
         boolean hasFound = false;
         for(Ritual ap : Ritual.REGISTRY) {
-            if(ritual.equals(ap)) {
+            if(ap.matches(items)) {
                 hasFound = true;
                 ritual = ap;
                 break;
             }
         }
         if(!hasFound) {
-            playerEntity.sendMessage(new StringTextComponent("Cannot find Ritual Recipe!"));
+            sendMessage("msg.arcaneart.ritual.no_recipe");
             return false;
         }
-        this.totalMana = ritual.getCost() * SpellConfig.SpellProperty.MANA_COST_AMPLIFIER.get();
+        //*/
+        String ritualName = ritual.getRegistryName() == null ?
+                "arcaneart.ritual.anonymous" : ritual.getRegistryName().toString();
+        this.ritualEffect = ritual.getExecRitual().get();
+        if(!ritualEffect.validateRitualCondition(worldIn, pos)) {
+            playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.not_valid",
+                    new TranslationTextComponent(ritualName)));
+            return false;
+        }
+        else {
+            playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.begin",
+                    new TranslationTextComponent(ritualName)));
+        }
+        this.totalMana = isCreativePlayer ? 0 : ritual.getCost() * APIConfig.MP.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
-        //ritual = Ritual.REGISTRY.getRaw(Ritual.REGISTRY.getKey(new Ritual.Builder().setIngredients(items).create()));
         return true;
     }
 
@@ -160,8 +178,10 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         BlockState nowTableState = worldIn.getBlockState(tablePos);
         if(checkAllDings(worldIn, true)
                 && nowTableState.get(RitualTableBlock.LOCK)
-                && nowTableState.get(RitualTableBlock.FACE_NS) == this.tableFacingNS
-                && playerEntity.getHorizontalFacing() == playerFacing) {
+                && checkItemsInDings()
+                && worldIn.getPlayers().contains(playerEntity)
+                && playerEntity.getHorizontalFacing() == playerFacing
+                && playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).isPresent()) {
 
             IManaBar playerMana = playerEntity.getCapability(CapabilityMP.MANA_BAR_CAP).orElse(new DefaultManaBar());
             double tableRealCost = Math.min(consumeSpeed*tableCostAmplifier, this.mpStorage.getMana());
@@ -179,22 +199,33 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             playerMana.consumeMana(playerRealCost);
 
             if(manaConsumed == totalMana) {
-                this.ritual.getExecRitual().execute(world, pos, LazyOptional.of(()->playerEntity));
+                this.finishRitual();
                 return false;
             }
             return true;
         }
+        sendMessage("msg.arcaneart.ritual.cancel");
         return false;
+    }
+
+    private void finishRitual() {
+        if(!isCreativePlayer) for(IItemHandler i : dingItemHandlers) {
+            i.extractItem(0, 1, false);
+        }
+        ritualEffect.execute(world, dingPos[4], LazyOptional.of(()->playerEntity));
+        sendMessage("msg.arcaneart.ritual.finish");
     }
 
     private void cancelRitual() {
         for(BlockPos bp : dingPos) {
-            if(bp != null) {
+            if(bp != null && worldIn.getBlockState(bp).has(DingBlock.LOCK)) {
                 worldIn.setBlockState(bp, worldIn.getBlockState(bp).with(DingBlock.LOCK, false));
             }
             bp = null;
         }
-        worldIn.setBlockState(tablePos, worldIn.getBlockState(tablePos).with(RitualTableBlock.LOCK, false));
+        if(worldIn.getBlockState(tablePos).has(RitualTableBlock.LOCK)) {
+            worldIn.setBlockState(tablePos, getBlockState().with(RitualTableBlock.LOCK, false));
+        }
         executeStage = -1;
     }
 
@@ -207,21 +238,22 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
      * @return 是否找到了全部位置合理的鼎
      */
     private boolean findDing(World worldIn, Direction facing, BlockPos pos) {
-        int dMin = RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get();
-        int dMax = RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get();
+        int dMin = RitualConfig.SHORTEST_DISTANCE_FROM_TABLE_TO_DING.get()-3;//为了设置好写，写的是距离中心鼎的水平距离，
+        int dMax = RitualConfig.LONGEST_DISTANCE_FROM_TABLE_TO_DING.get()-2;//但检测的时候先检测边鼎会省去部分工作量
         int hMin = RitualConfig.LOWEST_HEIGHT_OF_DING.get();
         int hMax = RitualConfig.HIGHEST_HEIGHT_OF_DING.get();
-        BlockPos bottomEdge = pos.offset(facing, dMin).offset(Direction.DOWN, hMin);
+        int d, h;
+
         BlockPos current;
 
         BlockPos nearEdgeDingPos = null;
         int dingInterSpace = 0;
 findEdgeDing:
-        for(int d = dMin; d <= dMax; ++d, bottomEdge = bottomEdge.offset(facing)) {
-            current = bottomEdge;
-            for(int h = hMin; h <= hMax; ++h, current = current.offset(Direction.UP)) {
-                if(checkDing(worldIn, current, DingBlock.EnumShape.CIRCLE, false)) {
-                    nearEdgeDingPos = current;
+        for(d = dMin; d <= dMax; ++d) {
+            current = pos.offset(facing, d);
+            for(h = hMin; h <= hMax; ++h) {
+                if(checkDing(worldIn, current.offset(Direction.UP, h), DingBlock.EnumShape.CIRCLE, false)) {
+                    nearEdgeDingPos = current.offset(Direction.UP, h);
                     break findEdgeDing;
                 }
             }
@@ -229,6 +261,17 @@ findEdgeDing:
         if(nearEdgeDingPos == null) {
             return false;
         }
+
+        if(checkDing(worldIn, nearEdgeDingPos.offset(facing, 1), DingBlock.EnumShape.CENTER, false)) {
+            dingInterSpace = 1;
+        }
+        else if(checkDing(worldIn, nearEdgeDingPos.offset(facing, 2), DingBlock.EnumShape.CENTER, false)) {
+            dingInterSpace = 2;
+        }
+        else {
+            return false;
+        }
+
         calculateBlockPos(nearEdgeDingPos, facing, dingInterSpace);
         if (!checkAllDings(worldIn, false)) {
             return false;
@@ -264,7 +307,6 @@ findEdgeDing:
     }
 
     private boolean checkDing(World worldIn, BlockPos pos, DingBlock.EnumShape shape, Boolean isLock) {
-
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(tileEntity instanceof DingTileEntity) {
             BlockState state = worldIn.getBlockState(pos);
@@ -288,9 +330,51 @@ findEdgeDing:
         dingPos[2] = dingPos[1].offset(face.rotateY(), interSpace);
     }
 
+    private boolean checkItemsInDings() {
+        ItemStack[] items = new ItemStack[9];
+
+        for(int i = 0; i < 9; ++i) {
+            items[i] = dingItemHandlers[i].getStackInSlot(0);
+        }
+        return this.ritual.matches(items);
+    }
+
     @Override
     protected void finalize() throws Throwable {
-        cancelRitual();
+        if(this.worldIn != null && !this.worldIn.isRemote) {
+            cancelRitual();
+        }
         super.finalize();
+    }
+
+    @Override
+    public void remove() {
+        if(this.worldIn != null && !this.worldIn.isRemote) {
+            cancelRitual();
+        }
+        super.remove();
+    }
+
+    private void sendMessage(String key) {
+        if(playerEntity != null) {
+            playerEntity.sendMessage(new TranslationTextComponent(key));
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        cancelRitual();
+    }
+
+    @Override
+    public void read(CompoundNBT compound) {
+        mpStorage.deserializeNBT(compound.getCompound("mana"));
+        super.read(compound);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        compound.put("mana", mpStorage.serializeNBT());
+        return super.write(compound);
     }
 }
