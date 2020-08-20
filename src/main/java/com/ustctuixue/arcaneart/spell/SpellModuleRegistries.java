@@ -41,6 +41,10 @@ public class SpellModuleRegistries
                 new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.ON_RELEASE).getSupplier()
         );
 
+        public static final RegistryObject<SpellKeyWord> WITH_SPEED
+                = SPELL_KEY_WORD_DEFERRED_REGISTER.register("with_speed",
+                new SpellKeyWord.Property().withType(SpellKeyWord.ExecuteType.NOT_EXECUTABLE).getSupplier());
+
     }
 
     public static class SpellTranslations
@@ -51,6 +55,9 @@ public class SpellModuleRegistries
         public void addTranslations(FMLCommonSetupEvent event)
         {
             EN_US.addTranslationFor(SpellKeyWords.EFFECT.get(), "effect");
+            EN_US.addTranslationFor(SpellKeyWords.GRAB.get(), "grab");
+            EN_US.addTranslationFor(SpellKeyWords.SUMMON.get(), "summon");
+            EN_US.addTranslationFor(SpellKeyWords.WITH_SPEED.get(), "with speed");
         }
     }
 

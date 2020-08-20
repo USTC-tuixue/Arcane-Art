@@ -1,0 +1,9 @@
+{
+    "parent": "block/block",
+	"loader": "forge:obj",
+    "textures": {
+    "particle": "arcaneart:block/fragment"
+    },
+    "model": "arcaneart:models/block/fragment.obj",
+    "flip-v": true
+}

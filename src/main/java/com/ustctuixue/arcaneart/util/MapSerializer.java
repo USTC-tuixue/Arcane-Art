@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.With;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,8 @@ public class MapSerializer<K, V>
         }
         for (String s : serialized)
         {
-            String[] divided = s.split(regex, 1);
+            LogManager.getLogger(this.getClass()).debug("serialized string: " + s);
+            String[] divided = s.split(regex, 2);
             K key = keyDeserializer.deserialize(divided[0]);
             if (key != null)
             {

@@ -90,4 +90,10 @@ public class InGameMPEventHandler
     {
         event.getManaBar().addMagicExperience(event.getComplexity(), event.getEntityLiving());
     }
+
+    @SubscribeEvent @SuppressWarnings("unused")
+    public void syncMP(TickEvent.PlayerTickEvent event)
+    {
+
+    }
 }

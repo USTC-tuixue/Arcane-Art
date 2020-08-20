@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api.network;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,7 @@ public class PacketSwitchSpell
             ItemStack stack = playerEntity.getHeldItem(Hand.MAIN_HAND);
             if (stack.getItem() instanceof ItemSpellCaster)
             {
-                ((ItemSpellCaster) stack.getItem()).setSpellSlot(stack, packet.switchedSpell);
+                ItemSpellCaster.setSpellSlot(stack, packet.switchedSpell);
             }
         });
     }

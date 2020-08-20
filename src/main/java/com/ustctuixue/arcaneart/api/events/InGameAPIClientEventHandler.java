@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.api.events;
 
-import com.ustctuixue.arcaneart.api.network.PacketSwitchSpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.ItemSpellCaster;
 import com.ustctuixue.arcaneart.client.KeyLoader;
@@ -54,7 +53,7 @@ public class InGameAPIClientEventHandler {
 		}
 		if (event.getAction() == 0 && event.getKey() == KeyLoader.shortcut.getKey().getKeyCode()) {
 			if (Minecraft.getInstance().player!=null && Minecraft.getInstance().player.getHeldItemMainhand().getItem() instanceof ItemSpellCaster ) {
-				KeyEvent.INSTANCE.sendToServer(new KeyPack("Switch:"+String.valueOf(pointer)));
+				KeyEvent.INSTANCE.sendToServer(new KeyPack("Switch:"+ pointer));
 				pointer=-1;
 			}
 		}
