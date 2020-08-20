@@ -57,7 +57,7 @@ public class RitualModuleRegistries {
     public static final RegistryObject<Ritual> RITUAL_THUNDER
             = RITUAL_DEFERRED_REGISTER.register("ritual_thunder",
             Ritual.builder()
-                    .execRitual(RitualClear::new)
+                    .execRitual(RitualThunder::new)
                     .ingredients(new Ingredient[]{
                             Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.EMPTY,
                             Ingredient.EMPTY, Ingredient.fromItems(Items.TRIDENT), Ingredient.EMPTY,
@@ -71,7 +71,7 @@ public class RitualModuleRegistries {
     public static final RegistryObject<Ritual> RITUAL_APPEND_SPELL
             = RITUAL_DEFERRED_REGISTER.register("ritual_append_spell",
             Ritual.builder()
-                    .execRitual(RitualClear::new)
+                    .execRitual(RitualAppendSpell::new)
                     .ingredients(new Ingredient[]{
                             Ingredient.EMPTY, Ingredient.EMPTY, Ingredient.EMPTY,
                             Ingredient.EMPTY, Ingredient.fromItems(Items.GOLDEN_AXE), Ingredient.EMPTY,
