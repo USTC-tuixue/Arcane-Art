@@ -312,8 +312,10 @@ public class EntitySpellBall extends Entity{
 
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
-                BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                //BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                //BlockState block = world.getBlockState(pos);
 
+                BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
                 BlockState block = world.getBlockState(pos);
 
                 /*
@@ -321,6 +323,8 @@ public class EntitySpellBall extends Entity{
                     p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
                 }//测试
                  */
+
+
 
                 if (block.getBlock() instanceof LuxReflector) {
                     this.reflect(block.get(LuxReflector.FACING), pos);
@@ -342,8 +346,11 @@ public class EntitySpellBall extends Entity{
                     //https://www.bilibili.com/read/cv4565671/
                     //net\minecraft\world\IWorldWriter.java line 9-19
                 }
-                else if (!world.hasNoCollisions(this, this.getBoundingBox())){
+                else if (true){
                     //getPos拿到的是在撞上之前最后一个经过的方块（或实体所在的blockpos），因此后面施法和充能需要判断是不是已经在方块内
+                    //把那个if true替换成“若该实体和方块有碰撞箱重叠”，然后把下面两句调出来
+                    //BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                    //BlockState block = world.getBlockState(pos);
                     if (this.translatedSpellProvider.hasSpell()) {
                         //执行瞬时施法操作
                         TranslatedSpell spell = this.translatedSpellProvider.getSpell();
