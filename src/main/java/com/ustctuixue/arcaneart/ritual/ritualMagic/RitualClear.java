@@ -1,6 +1,8 @@
 package com.ustctuixue.arcaneart.ritual.ritualMagic;
 
+import com.mojang.brigadier.Command;
 import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
+import net.minecraft.command.Commands;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +19,11 @@ public class RitualClear implements IRitualEffect {
     @Override
     public void execute(World world, BlockPos pos, LazyOptional<PlayerEntity> caster) {
         if(!world.isRemote()) {
-            world.setRainStrength(world.getRainStrength(1F)-100F);
+            world.getWorldInfo().setClearWeatherTime(6000);
+            world.getWorldInfo().setRainTime(0);
+            world.getWorldInfo().setThunderTime(0);
+            world.getWorldInfo().setRaining(false);
+            world.getWorldInfo().setThundering(false);
         }
     }
 

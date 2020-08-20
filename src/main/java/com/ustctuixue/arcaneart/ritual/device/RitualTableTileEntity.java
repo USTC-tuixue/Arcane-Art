@@ -16,6 +16,7 @@ import com.ustctuixue.arcaneart.spell.SpellConfig;
 import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,6 +26,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -71,6 +73,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private double consumeSpeed;
     private IRitualEffect ritualEffect;
     private double tableCostAmplifier;
+    private boolean isCreativePlayer = false;
 
 
     public void start(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player) {
@@ -84,6 +87,9 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         this.tablePos = pos;
         this.worldIn = worldIn;
         this.manaConsumed = 0;
+        if(!worldIn.isRemote()) {
+            isCreativePlayer = ((ServerPlayerEntity) player).interactionManager.getGameType() == GameType.CREATIVE;
+        }
     }
 
     @Override
@@ -159,7 +165,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
             playerEntity.sendMessage(new TranslationTextComponent("msg.arcaneart.ritual.begin",
                     new TranslationTextComponent(ritualName)));
         }
-        this.totalMana = ritual.getCost() * APIConfig.MP.MANA_COST_AMPLIFIER.get();
+        this.totalMana = isCreativePlayer ? 0 : ritual.getCost() * APIConfig.MP.MANA_COST_AMPLIFIER.get();
         this.consumeSpeed = ritual.getConsumeSpeed();
         return true;
     }
@@ -203,7 +209,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void finishRitual() {
-        for(IItemHandler i : dingItemHandlers) {
+        if(!isCreativePlayer) for(IItemHandler i : dingItemHandlers) {
             i.extractItem(0, 1, false);
         }
         ritualEffect.execute(world, dingPos[4], LazyOptional.of(()->playerEntity));
