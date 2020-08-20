@@ -62,7 +62,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private PlayerEntity playerEntity = null;
     private Direction playerFacing;
     private BlockPos tablePos;
-    private boolean tableFacingNS;
     private Ritual ritual;
     private World worldIn;
     private double manaConsumed = 0;
@@ -83,7 +82,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         this.playerEntity = player;
         this.playerFacing = player.getHorizontalFacing();
         this.tablePos = pos;
-        this.tableFacingNS = blockState.get(RitualTableBlock.FACE_NS);
         this.worldIn = worldIn;
         this.manaConsumed = 0;
     }
@@ -118,10 +116,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
 
     private boolean checkRitualStructure() {
         ArcaneArtAPI.LOGGER.info("Checking if ritual structure is complete.");
-        if(tableFacingNS ^ (playerFacing == Direction.NORTH || playerFacing == Direction.SOUTH)) {
-            sendMessage("msg.arcaneart.ritual.wrong_facing");
-            return false;
-        }
         if( !findDing(worldIn, playerEntity.getHorizontalFacing(), pos)) {
             sendMessage("msg.arcaneart.ritual.illegal_ding");
             return false;
@@ -178,7 +172,6 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         BlockState nowTableState = worldIn.getBlockState(tablePos);
         if(checkAllDings(worldIn, true)
                 && nowTableState.get(RitualTableBlock.LOCK)
-                && nowTableState.get(RitualTableBlock.FACE_NS) == this.tableFacingNS
                 && checkItemsInDings()
                 && worldIn.getPlayers().contains(playerEntity)
                 && playerEntity.getHorizontalFacing() == playerFacing
