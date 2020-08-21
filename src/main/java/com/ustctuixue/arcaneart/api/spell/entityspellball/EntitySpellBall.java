@@ -412,7 +412,7 @@ public class EntitySpellBall extends Entity{
                 else {
                     //没有携带法术，给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
-                    if (entity.isLiving()) {
+                    if (entity instanceof LivingEntity) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
