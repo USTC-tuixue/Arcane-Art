@@ -96,15 +96,21 @@ public class InGameMPEventHandler
         event.getManaBar().addMagicExperience(event.getComplexity(), event.getEntityLiving());
     }
 
+    static int counter = 0;
     @SubscribeEvent @SuppressWarnings("unused")
     public void syncMP(TickEvent.PlayerTickEvent event)
     {
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->
-                PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
-                        () -> (ServerPlayerEntity) event.player
-                        ),
-                        new PacketSyncMP(event.player)
-                )
+                {
+                    if (counter++ % 20 == 0)
+                    {
+                        PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
+                                () -> (ServerPlayerEntity) event.player
+                                ),
+                                new PacketSyncMP(event.player)
+                        );
+                    }
+                }
         );
     }
 }
