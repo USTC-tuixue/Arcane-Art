@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -96,22 +97,22 @@ public class InGameMPEventHandler
         event.getManaBar().addMagicExperience(event.getComplexity(), event.getEntityLiving());
     }
 
-    static int counter = 0;
+    private static int counter = 0;
     @SubscribeEvent @SuppressWarnings("unused")
     public void syncMP(TickEvent.PlayerTickEvent event)
     {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->
-                {
-                    if (++counter % 20 == 0)
-                    {
-                        PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
-                                () -> (ServerPlayerEntity) event.player
-                                ),
-                                new PacketSyncMP(event.player)
-                        );
-                        counter = 0;
-                    }
-                }
-        );
+       if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END)
+        {
+            if (++counter % 20 == 0)
+            {
+                PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
+                        () -> (ServerPlayerEntity) event.player
+                        ),
+                        new PacketSyncMP(event.player)
+                );
+                counter = 0;
+            }
+        }
+
     }
 }
