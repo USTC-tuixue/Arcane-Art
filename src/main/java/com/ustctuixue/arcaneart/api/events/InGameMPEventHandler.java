@@ -109,6 +109,7 @@ public class InGameMPEventHandler
                                 ),
                                 new PacketSyncMP(event.player)
                         );
+                        counter = 0;
                     }
                 }
         );
