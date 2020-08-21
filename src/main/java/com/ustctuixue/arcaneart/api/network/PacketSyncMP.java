@@ -61,12 +61,12 @@ public class PacketSyncMP
     public void handle(Supplier<NetworkEvent.Context> ctx)
     {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity playerEntity = ctx.get().getSender();
-            if (Minecraft.getInstance().player.getUniqueID().equals(playerEntity.getUniqueID()))
-            {
+            //PlayerEntity playerEntity = ctx.get().getSender();
+            //if (Minecraft.getInstance().player.getUniqueID().equals(playerEntity.getUniqueID()))
+            //{
                 LazyOptional<IManaBar> manabar = Minecraft.getInstance().player.getCapability(CapabilityMP.MANA_BAR_CAP);
                 manabar.ifPresent(bar -> new CapabilityMP.Storage().readNBT(CapabilityMP.MANA_BAR_CAP, bar, null, this.manaBar));
-            }
+            //}
         });
         ctx.get().setPacketHandled(true);
     }
