@@ -102,7 +102,7 @@ public class InGameMPEventHandler
     {
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->
                 {
-                    if (counter++ % 20 == 0)
+                    if (++counter % 20 == 0)
                     {
                         PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
                                 () -> (ServerPlayerEntity) event.player
