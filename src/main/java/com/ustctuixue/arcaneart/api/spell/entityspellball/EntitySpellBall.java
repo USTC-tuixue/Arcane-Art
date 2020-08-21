@@ -65,8 +65,8 @@ public class EntitySpellBall extends Entity{
     public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
     public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
-    public ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
-    public MPStorage spellBallMPStorage;
+    public final ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
+    public final MPStorage spellBallMPStorage = new MPStorage();
 
 
 
@@ -84,14 +84,8 @@ public class EntitySpellBall extends Entity{
         compound.put("direction", this.newDoubleNBTList(vec3d.x, vec3d.y, vec3d.z));
         //compound.put("power", this.newDoubleNBTList(new double[]{this.accelerationX, this.accelerationY, this.accelerationZ}));
         compound.putInt("life", this.dataManager.get(TICKS_ALIVE));
-        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
-        spellCap.ifPresent((s) -> {
-            compound.put("spell", Objects.requireNonNull(new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null)));
-        });
-        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-        mpCap.ifPresent((s) -> {
-            compound.put("mpstorage", Objects.requireNonNull(new CapabilityMPStorage.Storage().writeNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null)));
-        });
+        compound.put("spell", new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null));
+        compound.put("mpstorage", new CapabilityMPStorage.Storage().writeNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null));
 
     }
 
@@ -106,14 +100,8 @@ public class EntitySpellBall extends Entity{
         } else {
             this.remove();
         }
-        LazyOptional<ITranslatedSpellProvider> spellCap = this.getCapability(CapabilitySpell.SPELL_CAP);
-        spellCap.ifPresent((s) -> {
-            new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, compound.get("spell"));
-        });
-        LazyOptional<MPStorage> mpCap = this.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-        mpCap.ifPresent((s) -> {
-            new CapabilityMPStorage.Storage().readNBT(CapabilityMPStorage.MP_STORAGE_CAP, s, null, compound.get("mpstorage"));
-        });
+        new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, this.translatedSpellProvider, null, compound.get("spell"));
+        new CapabilityMPStorage.Storage().readNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null, compound.get("mpstorage"));
     }
 
     @Override
@@ -183,21 +171,23 @@ public class EntitySpellBall extends Entity{
         this.dataManager.set(GRAVITY, builder.gravityFactor);
         this.setShootingEntity(builder.shooter);
         this.setMotion(new Vec3d(builder.vx,builder.vy,builder.vz));
-        this.spellBallMPStorage = builder.mps;
+        this.spellBallMPStorage.setMana(builder.mps.getMana());
+        this.spellBallMPStorage.setMaxMana(builder.mps.getMaxMana());
     }
 
     public static class Builder{
-        private World world;
+        private final World world;
         private double x, y, z;
         private double vx, vy, vz;
         private float gravityFactor;
         private LivingEntity shooter;
         private float yaw, pitch;
-        private MPStorage mps;
+        private final MPStorage mps = new MPStorage();
 
-         public Builder (World world){
-             this.world =world;
+         public Builder (World world) {
+             this.world = world;
          }
+
          public Builder pos(double x, double y, double z){
              this.x = x;
              this.y = y;
@@ -277,20 +267,17 @@ public class EntitySpellBall extends Entity{
          gives out a spell ball with full mp
           */
          public Builder setFullMP(double maxMP) {
-             MPStorage mps = new MPStorage();
              mps.setMaxMana(maxMP);
              mps.setMana(maxMP);
-             this.mps = mps;
              return this;
          }
 
-        public Builder setMP(double mana, double maxMP) {
-            MPStorage mps = new MPStorage();
-            mps.setMaxMana(maxMP);
-            mps.setMana(mana);
-            this.mps = mps;
-            return this;
-        }
+         public Builder setMP(double mana, double maxMP) {
+             mps.setMaxMana(maxMP);
+             mps.setMana(mana);
+             return this;
+         }
+
          public EntitySpellBall build(){
              return new EntitySpellBall(this);
          }
@@ -645,7 +632,7 @@ public class EntitySpellBall extends Entity{
                 .shooter(this.shootingEntity)
                 .setMP(this.spellBallMPStorage.getMana(), this.spellBallMPStorage.getMaxMana())
                 .build();
-        spell.translatedSpellProvider = this.translatedSpellProvider;
+        spell.translatedSpellProvider.setSpell(this.translatedSpellProvider.getSpell());
         spell.dataManager.set(TICKS_ALIVE, this.dataManager.get(TICKS_ALIVE));
         return spell;
     }

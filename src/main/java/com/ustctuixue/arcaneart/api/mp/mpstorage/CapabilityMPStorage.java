@@ -21,7 +21,7 @@ public class CapabilityMPStorage
         static final String MAX_MP = "max_mana";
         static final String CURRENT_MP = "mana";
 
-        @Nullable
+        @Nonnull
         @Override
         public INBT writeNBT(Capability<MPStorage> capability, MPStorage instance, Direction side)
         {

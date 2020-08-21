@@ -25,7 +25,7 @@ public class CapabilitySpell
         private static final String ON_HOLD = "onHoldSentences";
         private static final String ON_RELEASE = "onReleaseSentences";
 
-        @Nullable
+        @Nonnull
         @Override
         public INBT writeNBT(Capability<ITranslatedSpellProvider> capability, ITranslatedSpellProvider instance, Direction side)
         {
