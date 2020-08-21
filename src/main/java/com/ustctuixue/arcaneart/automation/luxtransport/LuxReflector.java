@@ -6,15 +6,15 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+
+import javax.annotation.Nonnull;
 
 /*
 直角棱镜/反射棱镜
@@ -24,7 +24,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
     //xoz平面上的四个方向则取和下台阶类似的方位，如EAST（正x）从+x-y到-x+y，SOUTH（正z）从+z-y到-z+y
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    public int redstonePower = 0;
+    private int redstonePower = 0;
 
     public LuxReflector(){
         super(Block.Properties.create(Material.ROCK).hardnessAndResistance(3f).notSolid());
@@ -37,6 +37,7 @@ public class LuxReflector extends Block implements IWaterLoggable {
         builder.add(FACING);
     }
 
+    @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;

@@ -11,6 +11,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DingTileEntity extends TileEntity {
 
@@ -28,8 +29,8 @@ public class DingTileEntity extends TileEntity {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nonnull Direction side) {
-        if(side != Direction.DOWN && cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if(!Direction.DOWN.equals(side) && cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return LazyOptional.of(()->itemStackHandler).cast();
         }
         return super.getCapability(cap, side);
@@ -49,6 +50,7 @@ public class DingTileEntity extends TileEntity {
         super.read(compound);
     }
 
+    @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         compound.put("store", itemStackHandler.serializeNBT());

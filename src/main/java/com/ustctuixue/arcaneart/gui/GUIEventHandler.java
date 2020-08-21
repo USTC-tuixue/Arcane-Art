@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@SuppressWarnings("unused")
 public class GUIEventHandler {
 	@SubscribeEvent
 	public static void onClientSetUpEvent(FMLClientSetupEvent event) {

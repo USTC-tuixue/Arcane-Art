@@ -5,10 +5,12 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
+import javax.annotation.Nonnull;
+
 public class SpellBallModel extends EntityModel<EntitySpellBall> {
     private final ModelRenderer body;
 
-    public SpellBallModel() {
+    SpellBallModel() {
         textureWidth = 128;
         textureHeight = 128;
 
@@ -55,11 +57,11 @@ public class SpellBallModel extends EntityModel<EntitySpellBall> {
     }
 
     @Override
-    public void setRotationAngles(EntitySpellBall entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setRotationAngles(@Nonnull EntitySpellBall entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void render(@Nonnull MatrixStack matrixStackIn, @Nonnull IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         body.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
     }
 }

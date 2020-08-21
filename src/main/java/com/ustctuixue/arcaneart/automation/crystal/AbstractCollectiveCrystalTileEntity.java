@@ -15,11 +15,13 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractCollectiveCrystalTileEntity extends TileEntity implements ITickableTileEntity {
 
+    @SuppressWarnings("WeakerAccess")
     public AbstractCollectiveCrystalTileEntity(TileEntityType<? extends AbstractCollectiveCrystalTileEntity> entityType) {
         super(entityType);
     }
 
-    public MPStorage CrystalMPStorage = createMPStorage();
+    @SuppressWarnings("WeakerAccess")
+    public final MPStorage CrystalMPStorage = createMPStorage();
 
     @Nonnull
     @Override

@@ -13,6 +13,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+@SuppressWarnings("WeakerAccess")
 public class AutomationRegistry {
 
     public static final DeferredRegister<Block> BLOCK_TYPE_DEFERRED_REGISTER = new DeferredRegister<>(ForgeRegistries.BLOCKS, "arcaneart");
@@ -30,7 +31,7 @@ public class AutomationRegistry {
 
     public static final DeferredRegister<Item> ITEM_TYPE_DEFERRED_REGISTER = new DeferredRegister<>(ForgeRegistries.ITEMS, "arcaneart");
 
-    public static RegistryObject<Item> LUX_WAND = ITEM_TYPE_DEFERRED_REGISTER.register("lux_wand", () -> {return new LuxWand();});
+    public static RegistryObject<Item> LUX_WAND = ITEM_TYPE_DEFERRED_REGISTER.register("lux_wand", LuxWand::new);
     public static RegistryObject<Item> SOLAR_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("solar_crystal", () -> new BlockItem(AutomationRegistry.SOLAR_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> FROZEN_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("frozen_crystal", () -> new BlockItem(AutomationRegistry.FROZEN_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));
     public static RegistryObject<Item> MAGMA_CRYSTAL_ITEM = ITEM_TYPE_DEFERRED_REGISTER.register("magma_crystal", () -> new BlockItem(AutomationRegistry.MAGMA_CRYSTAL_BLOCK.get(), new Item.Properties().group(ArcaneArt.ARCANE_ART_ITEM_GROUP)));

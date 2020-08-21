@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.automation;
 
-import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.InnerNumberDefaults;
 import net.minecraftforge.common.ForgeConfigSpec;
 

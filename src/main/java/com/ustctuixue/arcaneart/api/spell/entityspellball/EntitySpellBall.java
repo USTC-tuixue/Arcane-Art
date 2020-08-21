@@ -9,7 +9,6 @@ import com.ustctuixue.arcaneart.api.mp.mpstorage.CapabilityMPStorage;
 import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.CapabilitySpell;
 import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
-import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
@@ -19,7 +18,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -27,12 +25,10 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,13 +38,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
-import java.util.Random;
 
 public class EntitySpellBall extends Entity{
     //直接转extends Entity，告辞
 
-    public static double HALF_SIZE = 0.25;//法球y轴高度的一半
+    private static double HALF_SIZE = 0.25;//法球y轴高度的一半
 
     @Getter @Setter
     public LivingEntity shootingEntity;
@@ -62,11 +56,11 @@ public class EntitySpellBall extends Entity{
     private static final DataParameter<Integer> TICKS_ALIVE = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.VARINT);
     private static final DataParameter<Float> GRAVITY = EntityDataManager.createKey(EntitySpellBall.class, DataSerializers.FLOAT);
 
-    public int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
-    public double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
+    private int maxTimer = APIConfig.Spell.MAX_LIFE_TIME.get();//最大不衰减飞行时间
+    private double descendingRate = APIConfig.Spell.DESCENDING_RATE.get();//每tick衰减量
 
     public final ITranslatedSpellProvider translatedSpellProvider = new ITranslatedSpellProvider.Impl();
-    public final MPStorage spellBallMPStorage = new MPStorage();
+    private final MPStorage spellBallMPStorage = new MPStorage();
 
 
 
@@ -104,6 +98,7 @@ public class EntitySpellBall extends Entity{
         new CapabilityMPStorage.Storage().readNBT(CapabilityMPStorage.MP_STORAGE_CAP, this.spellBallMPStorage, null, compound.get("mpstorage"));
     }
 
+    @Nonnull
     @Override
     public IPacket<?> createSpawnPacket() {
         //int i = this.shootingEntity == null ? 0 : this.shootingEntity.getEntityId();
@@ -153,7 +148,7 @@ public class EntitySpellBall extends Entity{
         }
     }
 
-
+    @SuppressWarnings("unused")
     protected EntitySpellBall(World p_i50173_2_)
     {
         super(APIRegistries.Entities.SPELL_BALL_TYPE, p_i50173_2_);
@@ -175,6 +170,7 @@ public class EntitySpellBall extends Entity{
         this.spellBallMPStorage.setMaxMana(builder.mps.getMaxMana());
     }
 
+    @SuppressWarnings({"WeakerAccess","unused"})
     public static class Builder{
         private final World world;
         private double x, y, z;
@@ -284,7 +280,7 @@ public class EntitySpellBall extends Entity{
     }
 
 
-
+    @SuppressWarnings("WeakerAccess")
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
@@ -340,19 +336,14 @@ public class EntitySpellBall extends Entity{
                     //BlockState block = world.getBlockState(pos);
                     if (this.translatedSpellProvider.hasSpell()) {
                         //执行瞬时施法操作
-                        TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                         this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
                         LivingEntity shooter = this.getShootingEntity();
                         LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
-                            double maxMP = s.getMaxMana((LivingEntity) shooter);
+                            double maxMP = s.getMaxMana(shooter);
                             double leftOverMana = this.spellBallMPStorage.getMana();
-                            if (mana + leftOverMana > maxMP) {
-                                s.setMana(maxMP);
-                            } else {
-                                s.setMana(mana + leftOverMana);
-                            }
+                            s.setMana(Math.min(mana + leftOverMana, maxMP));
                         });//return the leftover mana to the caster
                     }
                     else if (block.hasTileEntity()) {
@@ -363,12 +354,7 @@ public class EntitySpellBall extends Entity{
                             double mana = s.getMana();
                             double maxMP = s.getMaxMana();
                             double spellMana = this.spellBallMPStorage.getMana();
-                            if (mana + spellMana > maxMP) {
-                                s.setMana(maxMP);
-                            }
-                            else {
-                                s.setMana(mana + spellMana);
-                            }
+                            s.setMana(Math.min(mana + spellMana, maxMP));
                         });
                     }
                     this.spellBallMPStorage.setMana(0D);//delete this spell ball
@@ -379,20 +365,14 @@ public class EntitySpellBall extends Entity{
             else if (result.getType() == RayTraceResult.Type.ENTITY) {
                 if (this.translatedSpellProvider.hasSpell()) {
                     //执行瞬时施法操作
-                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                     this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
                     LivingEntity shooter = this.getShootingEntity();
                     LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
                     optionalManaBar.ifPresent((s) -> {
                         double mana = s.getMana();
-                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double maxMP = s.getMaxMana(shooter);
                         double leftOverMana = this.spellBallMPStorage.getMana();
-                        if (mana + leftOverMana > maxMP) {
-                            s.setMana(maxMP);
-                        }
-                        else {
-                            s.setMana(mana + leftOverMana);
-                        }
+                        s.setMana(Math.min(mana + leftOverMana, maxMP));
                     });//return the leftover mana to the caster
                     this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
@@ -405,11 +385,7 @@ public class EntitySpellBall extends Entity{
                             double mana = s.getMana();
                             double maxMP = s.getMaxMana((LivingEntity) entity);
                             double spellMana = this.spellBallMPStorage.getMana();
-                            if (mana + spellMana > maxMP) {
-                                s.setMana(maxMP);
-                            } else {
-                                s.setMana(mana + spellMana);
-                            }
+                            s.setMana(Math.min(mana + spellMana, maxMP));
                         });
                     }
                     this.spellBallMPStorage.setMana(0D);//delete this spell ball
@@ -555,6 +531,7 @@ public class EntitySpellBall extends Entity{
     /**
     执行反射操作，传入镜子的两个方向属性
      */
+    @SuppressWarnings("WeakerAccess")
     public void reflect(Direction face, BlockPos pos){
         //例如计算xz的反射，把xz和y的运算拆开
         //xz对换，y反向
@@ -601,9 +578,10 @@ public class EntitySpellBall extends Entity{
     /**
     执行拆分操作，传入镜子的方向属性
      */
+    @SuppressWarnings("WeakerAccess")
     public void split(Direction face, BlockPos pos){
         this.spellBallMPStorage.setMana(this.spellBallMPStorage.getMana()/2);
-        EntitySpellBall newSpell = this.clone();
+        EntitySpellBall newSpell = this.copy();
         newSpell.reflect(face, pos);
         world.addEntity(newSpell);
 
@@ -621,12 +599,14 @@ public class EntitySpellBall extends Entity{
     /**
      复制一个法球实体
      */
-    public EntitySpellBall clone(){
+    @SuppressWarnings("WeakerAccess")
+    public EntitySpellBall copy()
+    {
         double x = this.getPosX();
         double y = this.getPosY();
         double z = this.getPosZ();
         Vec3d mot = this.getMotion();
-        EntitySpellBall spell = new EntitySpellBall.Builder(world)
+        EntitySpellBall spell = new Builder(world)
                 .pos(x, y, z).motion(mot)
                 .gravity(this.dataManager.get(GRAVITY))
                 .shooter(this.shootingEntity)

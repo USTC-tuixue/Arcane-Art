@@ -15,9 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.lwjgl.system.CallbackI;
-
-import java.util.concurrent.CountDownLatch;
 
 public class RitualAppendSpell implements IRitualEffect {
     //
@@ -48,9 +45,7 @@ public class RitualAppendSpell implements IRitualEffect {
             if(ts != null) {
                 INBT inbt = new CapabilitySpell.Storage().writeNBT(CapabilitySpell.SPELL_CAP,
                         new ITranslatedSpellProvider.Impl(ts), null);
-                if(inbt != null) {
-                    store.write((CompoundNBT) inbt);
-                }
+                store.write((CompoundNBT) inbt);
             }
             player.setHeldItem(Hand.OFF_HAND, store);
         }

@@ -101,12 +101,11 @@ public class BookShelfContainer extends Container {
     	return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
-    private int addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
+    private void addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(inventory, index, x, y, horAmount, dx);
             y += dy;
         }
-        return index;
     }
 
     private void layoutPlayerInventorySlots(IInventory inventory, int leftCol, int topRow) {

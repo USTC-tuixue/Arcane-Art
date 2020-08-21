@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class MagmaCrystal extends Block{
@@ -28,7 +29,7 @@ public class MagmaCrystal extends Block{
     }
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getAmbientOcclusionLightValue(BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
        return 1.0F;
     }
 

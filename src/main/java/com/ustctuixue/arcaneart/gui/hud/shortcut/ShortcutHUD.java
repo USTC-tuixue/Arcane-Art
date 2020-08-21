@@ -9,11 +9,7 @@ import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.WrittenBookItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class ShortcutHUD extends AbstractGui{
@@ -39,14 +35,14 @@ public class ShortcutHUD extends AbstractGui{
         blit(width/2-81, height / 2 - 60, 0, 0, 162, 18,162,18);
         this.minecraft.getTextureManager().bindTexture(HUDSEL);
         blit(width/2-81+18*sel, height / 2 - 60, 0, 0, 18, 18,18,18);
-		LazyOptional<ISpellInventory> spellCap = Minecraft.getInstance().player
+        assert Minecraft.getInstance().player != null;
+        LazyOptional<ISpellInventory> spellCap = Minecraft.getInstance().player
 				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
-		Inventory inventory = new Inventory();
-		inventory=spellCap.orElseGet(SpellInventory::new).getShortCut();
+		Inventory inventory = spellCap.orElseGet(SpellInventory::new).getShortCut();
         for(int i=0;i<9;i++) {
         	this.minecraft.getItemRenderer().renderItemIntoGUI(inventory.getStackInSlot(i), width/2-80+18*i, height / 2 - 59);
         }
         if(!inventory.getStackInSlot(sel).isEmpty())
-        minecraft.getRenderManager().getFontRenderer().drawString((inventory.getStackInSlot(sel).getItem()).getDisplayName(inventory.getStackInSlot(sel)).getFormattedText(), width/2-80+18*sel, height / 2 - 70,0x790C2F);
+        minecraft.getRenderManager().getFontRenderer().drawString((inventory.getStackInSlot(sel).getItem()).getDisplayName(inventory.getStackInSlot(sel)).getFormattedText(), (float)(width / 2-80+18*sel), (float) (height / 2 - 70),0x790C2F);
     }
 }

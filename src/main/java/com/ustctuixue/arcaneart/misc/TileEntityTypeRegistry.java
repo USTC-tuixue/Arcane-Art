@@ -1,7 +1,6 @@
 package com.ustctuixue.arcaneart.misc;
 
 import com.ustctuixue.arcaneart.ArcaneArt;
-import com.ustctuixue.arcaneart.misc.BlockRegistry;
 
 import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfBlock;
 import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfTileEntity;

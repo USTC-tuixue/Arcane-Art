@@ -13,7 +13,7 @@ public class SpellConfig
 {
     private String path;
 
-    public SpellConfig(String path)
+    SpellConfig(String path)
     {
         this.path = path;
     }

@@ -2,14 +2,12 @@ package com.ustctuixue.arcaneart.automation.luxtransport;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -17,7 +15,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /*
 偏振分光棱镜（游戏里去掉了偏振的属性，仅保留分拆为两束强度相同光的特性）
@@ -40,6 +38,7 @@ public class LuxSplitter extends Block implements IWaterLoggable {
         builder.add(FACING);
     }
 
+    @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;

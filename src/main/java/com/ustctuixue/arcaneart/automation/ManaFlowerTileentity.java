@@ -8,7 +8,6 @@ import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
@@ -34,7 +33,7 @@ public class ManaFlowerTileentity extends TileEntity implements ITickableTileEnt
     private SpellCasterSource source;
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    SpellCasterSource createSource(){
+    private SpellCasterSource createSource(){
         assert world != null;
         Direction face = world.getBlockState(this.getPos()).get(ManaFlower.FACING);
         float pitch = 0;

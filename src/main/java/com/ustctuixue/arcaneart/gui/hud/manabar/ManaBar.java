@@ -9,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class ManaBar extends AbstractGui
 {
-    private final int width;
     private final int height;
     private final Minecraft minecraft;
     private final ResourceLocation HUDC = new ResourceLocation(ArcaneArt.MOD_ID, "textures/gui/hudc.png");
@@ -18,7 +17,6 @@ public class ManaBar extends AbstractGui
 
     public ManaBar(double percent)
     {
-        this.width = Minecraft.getInstance().getMainWindow().getScaledWidth();
         this.height = Minecraft.getInstance().getMainWindow().getScaledHeight();
         this.minecraft = Minecraft.getInstance();
         this.percent = percent;

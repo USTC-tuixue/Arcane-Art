@@ -35,6 +35,7 @@ public class MapSerializer<K, V>
     }
 
     @Nullable
+    @SuppressWarnings("WeakerAccess")
     public Map<K, V> deserialize(@Nonnull List<String> serialized, String regex, boolean requireValueNonNull)
     {
         Map<K, V> result = Maps.newHashMap();
@@ -59,6 +60,7 @@ public class MapSerializer<K, V>
         return result;
 
     }
+
 
     public Map<K, V> deserialize(List<String> serialized, String regex)
     {

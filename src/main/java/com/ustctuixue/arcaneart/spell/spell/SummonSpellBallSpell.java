@@ -6,24 +6,21 @@ import com.ustctuixue.arcaneart.api.spell.ITranslatedSpellProvider;
 import com.ustctuixue.arcaneart.api.spell.TranslatedSpell;
 import com.ustctuixue.arcaneart.api.spell.entityspellball.EntitySpellBall;
 import com.ustctuixue.arcaneart.api.spell.interpreter.ISpell;
-import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellCasterSource;
 import com.ustctuixue.arcaneart.api.spell.interpreter.SpellContainer;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.Variable;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause.FromClause;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.clause.TowardsClause;
 import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionBuilder;
-import com.ustctuixue.arcaneart.api.spell.interpreter.argument.raytrace.DirectionVariableArgument;
 import com.ustctuixue.arcaneart.api.spell.translator.RawSpell;
 import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 
 public class SummonSpellBallSpell implements ISpell
 {
-    TranslatedSpell spell;
-    Variable<DirectionBuilder> vec;
-    double speed;
-    final ITranslatedSpellProvider provider = new ITranslatedSpellProvider.Impl();
-    int maxLoop;
+    private TranslatedSpell spell;
+    private Variable<DirectionBuilder> vec;
+    private double speed;
+    private final ITranslatedSpellProvider provider = new ITranslatedSpellProvider.Impl();
+    private int maxLoop;
 
     /**
      * Get spell complexity according to spell source
@@ -81,6 +78,7 @@ public class SummonSpellBallSpell implements ISpell
         }
         spellBall.translatedSpellProvider.setSpell(this.spell);
 
+        assert source.getWorld() != null;
         source.getWorld().addEntity(spellBall);
     }
 

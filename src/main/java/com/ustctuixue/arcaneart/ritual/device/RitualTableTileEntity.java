@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.ritual.device;
 
-import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
@@ -12,19 +11,15 @@ import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import com.ustctuixue.arcaneart.ritual.RitualConfig;
 import com.ustctuixue.arcaneart.ritual.RitualRegistries;
-import com.ustctuixue.arcaneart.spell.SpellConfig;
-import com.ustctuixue.arcaneart.spell.SpellModuleConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -35,7 +30,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class RitualTableTileEntity extends TileEntity implements ITickableTileEntity {
     public RitualTableTileEntity() {
@@ -47,7 +41,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
         tableCostAmplifier = RitualConfig.RITUAL_MANA_AMPLIFIER.get();
     }
 
-    protected MPStorage mpStorage = new MPStorage();
+    protected final MPStorage mpStorage = new MPStorage();
 
     @Nonnull
     @Override
@@ -76,6 +70,7 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private boolean isCreativePlayer = false;
 
 
+    @SuppressWarnings("WeakerAccess")
     public void start(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player) {
         if(executeStage != -1 || neverExec || player == null ) {
             return;
@@ -217,11 +212,15 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void cancelRitual() {
-        if(worldIn != null) for(BlockPos bp : dingPos) {
-            if(bp != null && worldIn.getBlockState(bp).has(DingBlock.LOCK)) {
-                worldIn.setBlockState(bp, worldIn.getBlockState(bp).with(DingBlock.LOCK, false));
+        if(worldIn != null)
+        {
+            for (BlockPos bp : dingPos)
+            {
+                if (bp != null && worldIn.getBlockState(bp).has(DingBlock.LOCK))
+                {
+                    worldIn.setBlockState(bp, worldIn.getBlockState(bp).with(DingBlock.LOCK, false));
+                }
             }
-            bp = null;
         }
         if(worldIn != null && tablePos != null && worldIn.getBlockState(tablePos).has(RitualTableBlock.LOCK)) {
             worldIn.setBlockState(tablePos, getBlockState().with(RitualTableBlock.LOCK, false));
@@ -310,9 +309,7 @@ findEdgeDing:
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(tileEntity instanceof DingTileEntity) {
             BlockState state = worldIn.getBlockState(pos);
-            if(state.get(DingBlock.SHAPE) == shape && state.get(DingBlock.LOCK) == isLock) {
-                return true;
-            }
+            return state.get(DingBlock.SHAPE) == shape && state.get(DingBlock.LOCK) == isLock;
         }
         return false;
     }
@@ -372,6 +369,7 @@ findEdgeDing:
         super.read(compound);
     }
 
+    @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         compound.put("mana", mpStorage.serializeNBT());
