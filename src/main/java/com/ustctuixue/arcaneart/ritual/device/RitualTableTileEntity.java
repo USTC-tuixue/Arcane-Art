@@ -63,9 +63,9 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     private IItemHandler [] dingItemHandlers = new IItemHandler[9];
     private PlayerEntity playerEntity = null;
     private Direction playerFacing;
-    private BlockPos tablePos;
+    private BlockPos tablePos = this.pos;
     private Ritual ritual;
-    private World worldIn;
+    private World worldIn = this.world;
     private double manaConsumed = 0;
     private boolean neverExec = false;
     private int executeStage = -1;
@@ -217,13 +217,13 @@ public class RitualTableTileEntity extends TileEntity implements ITickableTileEn
     }
 
     private void cancelRitual() {
-        for(BlockPos bp : dingPos) {
+        if(worldIn != null) for(BlockPos bp : dingPos) {
             if(bp != null && worldIn.getBlockState(bp).has(DingBlock.LOCK)) {
                 worldIn.setBlockState(bp, worldIn.getBlockState(bp).with(DingBlock.LOCK, false));
             }
             bp = null;
         }
-        if(worldIn.getBlockState(tablePos).has(RitualTableBlock.LOCK)) {
+        if(worldIn != null && tablePos != null && worldIn.getBlockState(tablePos).has(RitualTableBlock.LOCK)) {
             worldIn.setBlockState(tablePos, getBlockState().with(RitualTableBlock.LOCK, false));
         }
         executeStage = -1;
