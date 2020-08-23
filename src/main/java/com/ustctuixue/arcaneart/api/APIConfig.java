@@ -72,8 +72,8 @@ public class APIConfig
                         .defineInRange("RegenCooldownTick", 100, 0, 10000);
 
                 REGEN_RATE = builder
-                        .comment("Regeneration rate factor, 1.0 means ")
-                        .defineInRange("RegenerationRate", 1.0D, 0.0D, 1000.0D);
+                        .comment("Regeneration rate factor")
+                        .defineInRange("RegenerationRate", 0.05D, 0.0D, 1000.0D);
 
                 builder.pop();
 

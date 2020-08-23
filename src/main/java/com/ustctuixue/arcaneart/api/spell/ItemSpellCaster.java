@@ -20,9 +20,11 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -63,12 +65,13 @@ public class ItemSpellCaster extends Item
             // Get mana cost
             double cost = SpellContainer.getManaCost(source, container.preProcess);
             cost += SpellContainer.getManaCost(source, container.onRelease);
+            LogManager.getLogger(this.getClass()).debug("Cost: " + cost);
             // Get complexity
             double complexity = SpellContainer.getComplexity(source, container.preProcess);
             complexity += SpellContainer.getComplexity(source,container.onRelease);
-
+            LogManager.getLogger(this.getClass()).debug("Complexity: " + complexity);
             // Fire pre instant spell event, will not be executed nor consume mana if cancelled
-            if (MinecraftForge.EVENT_BUS.post(
+            if (!MinecraftForge.EVENT_BUS.post(
                     new MPEvent.CastSpell.Pre(
                             entityLiving, false, cost, complexity
                     )
@@ -80,6 +83,10 @@ public class ItemSpellCaster extends Item
                 MinecraftForge.EVENT_BUS.post(new MPEvent.CastSpell.Post(
                         entityLiving, true, cost, complexity
                 ));
+            }
+            else
+            {
+                source.getEntity().sendMessage(new StringTextComponent("Not enough mana!"));
             }
         }
     }

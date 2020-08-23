@@ -6,13 +6,13 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ArcaneArtConfig
 {
-    public static final ForgeConfigSpec COMMON_CONFIG =
+    private static final ForgeConfigSpec COMMON_CONFIG =
             new ForgeConfigSpec.Builder().configure(CommonConfig::new).getRight();
 
-    public static final ForgeConfigSpec CLIENT_CONFIG =
+    private static final ForgeConfigSpec CLIENT_CONFIG =
             new ForgeConfigSpec.Builder().configure(ClientConfig::new).getRight();
 
-    public static final ForgeConfigSpec SERVER_CONFIG =
+    private static final ForgeConfigSpec SERVER_CONFIG =
             new ForgeConfigSpec.Builder().configure(ServerConfig::new).getRight();
 
     public static void registerConfigs()

@@ -30,6 +30,7 @@ public class MagicMenu extends ContainerScreen<MagicContainer> {
 	public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		this.font.drawString(new TranslationTextComponent("title.arcaneart.magicmenu").getFormattedText(), 8.0f, 6.0f,
 				0xAB61AB);
+		assert minecraft != null;
 		this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F,
 				(float) (this.ySize - 96 + 2), 4210752);
 		if (this.clicked) {
@@ -80,7 +81,7 @@ public class MagicMenu extends ContainerScreen<MagicContainer> {
 			int k = this.container.getEmptySlot();
 			this.clicked = true;
 			if (k != -1) {
-				KeyEvent.INSTANCE.sendToServer(new KeyPack("ItchMagic:" + String.valueOf(k)));
+				KeyEvent.INSTANCE.sendToServer(new KeyPack("ItchMagic:" + k));
 			}
 		}
 		return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);

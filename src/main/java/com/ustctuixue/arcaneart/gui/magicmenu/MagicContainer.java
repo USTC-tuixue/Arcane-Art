@@ -1,12 +1,9 @@
 package com.ustctuixue.arcaneart.gui.magicmenu;
 
 import com.ustctuixue.arcaneart.api.spell.ItemSpell;
-import com.ustctuixue.arcaneart.api.spell.interpreter.Interpreter;
 import com.ustctuixue.arcaneart.api.spell.inventory.ISpellInventory;
 import com.ustctuixue.arcaneart.api.spell.inventory.SpellInventoryCapability;
 import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
-import com.ustctuixue.arcaneart.networking.KeyEvent;
-import com.ustctuixue.arcaneart.networking.KeyPack;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,9 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
+
 public class MagicContainer extends Container {
-	private PlayerEntity player;
-	private PlayerInventory inv;
 	private Inventory spellMainInventory;
 	private Inventory spellHotBar;
 	private Inventory deleteIcon;
@@ -29,8 +26,6 @@ public class MagicContainer extends Container {
 
 	public MagicContainer(int id, PlayerInventory inv, PlayerEntity player) {
 		super(ContainerTypeRegistry.magicContainer.get(), id);
-		this.inv = inv;
-		this.player = player;
 		LazyOptional<ISpellInventory> spellCap = player
 				.getCapability(SpellInventoryCapability.SPELL_INVENTORY_CAPABILITY);
 		spellCap.ifPresent((spellInventory) -> {
@@ -61,10 +56,11 @@ public class MagicContainer extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn) {
+	public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
 		return ItemStack.EMPTY;
@@ -79,15 +75,15 @@ public class MagicContainer extends Container {
 		addSlotRange(inventory, 0, leftCol, topRow, 9, 18);
 	}
 
-	private int addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount,
-			int dy) {
+	private void addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount,
+							int dy) {
 		for (int j = 0; j < verAmount; j++) {
 			index = addSlotRange(inventory, index, x, y, horAmount, dx);
 			y += dy;
 		}
-		return index;
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
 		if (slotId == -999) {

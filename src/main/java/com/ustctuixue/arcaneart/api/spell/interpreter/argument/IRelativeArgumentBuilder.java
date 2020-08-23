@@ -10,5 +10,6 @@ import javax.annotation.Nonnull;
  */
 public interface IRelativeArgumentBuilder<T>
 {
+    @Nonnull
     T build(@Nonnull SpellCasterSource source);
 }

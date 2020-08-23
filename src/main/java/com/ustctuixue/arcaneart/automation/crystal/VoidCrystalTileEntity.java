@@ -27,9 +27,7 @@ public class VoidCrystalTileEntity extends AbstractCollectiveCrystalTileEntity {
         }
         for(int i = -1; i <= 1; i++){
             for(int j = -1; j <= 1; j++){
-                BlockPos newpos = pos.add(i, -1, j);
-                assert world != null;
-                if (world.getBlockState(pos).getBlock() != Blocks.OBSIDIAN)
+                if (world.getBlockState(pos.add(i, -1, j)).getBlock() != Blocks.OBSIDIAN)
                     return 0.0D;
             }
         }

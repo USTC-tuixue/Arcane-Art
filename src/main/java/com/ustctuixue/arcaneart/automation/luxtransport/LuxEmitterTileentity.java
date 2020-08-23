@@ -5,11 +5,9 @@ import com.ustctuixue.arcaneart.api.mp.mpstorage.MPStorage;
 import com.ustctuixue.arcaneart.api.spell.entityspellball.EntitySpellBall;
 import com.ustctuixue.arcaneart.automation.AutomationConfig;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class LuxEmitterTileentity extends TileEntity implements ITickableTileEntity {
@@ -18,9 +16,9 @@ public class LuxEmitterTileentity extends TileEntity implements ITickableTileEnt
         super(AutomationRegistry.LUX_EMITTER_TILEENTITY.get());
     }
 
-    public static int TRANSF_COUNTER = 0;
-    public double emitterTransferInterval = AutomationConfig.Emitter.EMIT_INTERVAL.get();//下次从cfg读
-    public double emitterTransferAmount = AutomationConfig.Emitter.EMIT_AMOUNT.get();//下次从cfg读
+    private static int TRANSF_COUNTER = 0;
+    private double emitterTransferInterval = AutomationConfig.Emitter.EMIT_INTERVAL.get();//下次从cfg读
+    private double emitterTransferAmount = AutomationConfig.Emitter.EMIT_AMOUNT.get();//下次从cfg读
 
     @Override
     public void tick() {

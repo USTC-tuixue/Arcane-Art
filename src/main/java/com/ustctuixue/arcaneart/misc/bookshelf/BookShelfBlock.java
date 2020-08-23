@@ -25,6 +25,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BookShelfBlock extends Block {
@@ -55,6 +56,8 @@ public class BookShelfBlock extends Block {
     }
     private static VoxelShape shape1=Block.makeCuboidShape(5, 0, 0, 11, 16, 16);
     private static VoxelShape shape2=Block.makeCuboidShape(0, 0, 5, 16, 16, 11);
+
+    @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
     	Direction v=state.get(HORIZONTAL_FACING);
@@ -66,28 +69,35 @@ public class BookShelfBlock extends Block {
     public boolean hasTileEntity(BlockState state) {
         return true;
     }
+
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new BookShelfTileEntity();
     }
+
+    @Nonnull
     @Override
     public PushReaction getPushReaction(BlockState state) {
        return PushReaction.BLOCK;
     }
+
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         if (state.hasTileEntity() && (state.getBlock() != newState.getBlock() || !newState.hasTileEntity())) {
             BookShelfTileEntity BookShelfTileEntity = (BookShelfTileEntity) worldIn.getTileEntity(pos);
+            assert BookShelfTileEntity != null;
             InventoryHelper.dropInventoryItems(worldIn, pos, BookShelfTileEntity.getInventory());
             worldIn.removeTileEntity(pos);
         }
      }
+    @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (!worldIn.isRemote && handIn == Hand.MAIN_HAND) {
             BookShelfTileEntity BookShelfTileEntity = (BookShelfTileEntity) worldIn.getTileEntity(pos);
             NetworkHooks.openGui((ServerPlayerEntity) player, BookShelfTileEntity, (PacketBuffer packerBuffer) -> {
+                assert BookShelfTileEntity != null;
                 packerBuffer.writeBlockPos(BookShelfTileEntity.getPos());
             });
         }

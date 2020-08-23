@@ -3,13 +3,19 @@ package com.ustctuixue.arcaneart.api.events;
 import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.MPEvent;
+import com.ustctuixue.arcaneart.api.network.PacketSyncMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 @Mod.EventBusSubscriber
 public class InGameMPEventHandler
@@ -91,9 +97,22 @@ public class InGameMPEventHandler
         event.getManaBar().addMagicExperience(event.getComplexity(), event.getEntityLiving());
     }
 
+    private static int counter = 0;
     @SubscribeEvent @SuppressWarnings("unused")
     public void syncMP(TickEvent.PlayerTickEvent event)
     {
+       if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END)
+        {
+            if (++counter % 20 == 0)
+            {
+                PacketSyncMP.CHANNEL.send(PacketDistributor.PLAYER.with(
+                        () -> (ServerPlayerEntity) event.player
+                        ),
+                        new PacketSyncMP(event.player)
+                );
+                counter = 0;
+            }
+        }
 
     }
 }

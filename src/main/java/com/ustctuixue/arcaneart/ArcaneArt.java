@@ -2,11 +2,9 @@ package com.ustctuixue.arcaneart;
 
 import com.ustctuixue.arcaneart.api.APIRegistries;
 import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
+import com.ustctuixue.arcaneart.api.network.PacketSyncMP;
 import com.ustctuixue.arcaneart.automation.AutomationRegistry;
-import com.ustctuixue.arcaneart.misc.ContainerTypeRegistry;
-import com.ustctuixue.arcaneart.gui.magicmenu.MagicMenu;
 import com.ustctuixue.arcaneart.client.KeyLoader;
-import com.ustctuixue.arcaneart.misc.bookshelf.BookShelfScreen;
 import com.ustctuixue.arcaneart.networking.KeyEvent;
 import com.ustctuixue.arcaneart.config.ArcaneArtConfig;
 import com.ustctuixue.arcaneart.ritual.ritualMagic.RitualModuleRegistries;
@@ -15,9 +13,7 @@ import com.ustctuixue.arcaneart.ritual.RitualRegistries;
 import com.ustctuixue.arcaneart.spell.SpellModuleRegistries;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -84,6 +80,7 @@ public class ArcaneArt
     {
         LOGGER.info(COMMON_SETUP, "FML Common Setup Event");
     	KeyEvent.registerMessage();
+        PacketSyncMP.registerChannel();
     }
 
     @SubscribeEvent
@@ -97,7 +94,7 @@ public class ArcaneArt
         @Override
         public ItemStack createIcon()
         {
-            return new ItemStack(Items.OBSIDIAN);
+            return new ItemStack(APIRegistries.Items.ITEM_SPELL);
         }
     };
 }

@@ -59,9 +59,7 @@ public class ManaFlower extends FlowerBlock {
             ManaFlowerTileentity tile = (ManaFlowerTileentity) worldIn.getTileEntity(pos);
             assert tile != null;
             LazyOptional<ITranslatedSpellProvider> spellCap = tile.getCapability(CapabilitySpell.SPELL_CAP);
-            spellCap.ifPresent((s) -> {
-                new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt);
-            });
+            spellCap.ifPresent((s) -> new CapabilitySpell.Storage().readNBT(CapabilitySpell.SPELL_CAP, s, null, nbt));
 
         }
 

@@ -126,6 +126,18 @@ public class SpellKeyWord implements IForgeRegistryEntry<SpellKeyWord>
 
     public enum ExecuteType
     {
-        PRE_PROCESS, ON_HOLD, ON_RELEASE, NOT_EXECUTABLE
+
+        PRE_PROCESS("preprocess"), ON_HOLD("onHold"), ON_RELEASE("onRelease"), NOT_EXECUTABLE("notExecutable");
+
+        String name;
+        ExecuteType(String name)
+        {
+            this.name = name;
+        }
+
+        public String toString()
+        {
+            return this.name;
+        }
     }
 }

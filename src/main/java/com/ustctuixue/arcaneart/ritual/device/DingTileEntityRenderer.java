@@ -15,13 +15,15 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
+import javax.annotation.Nonnull;
+
 public class DingTileEntityRenderer extends TileEntityRenderer<DingTileEntity> {
     public DingTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
 
     @Override
-    public void render(DingTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(DingTileEntity tileEntityIn, float partialTicks, @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         ItemStack itemStack = tileEntityIn.getItemStored();
         if(itemStack.isEmpty()) {
             return;

@@ -1,7 +1,6 @@
 package com.ustctuixue.arcaneart.ritual.ritualMagic;
 
 import com.ustctuixue.arcaneart.api.ritual.IRitualEffect;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

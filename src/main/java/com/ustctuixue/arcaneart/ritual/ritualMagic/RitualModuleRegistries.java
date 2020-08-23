@@ -1,6 +1,5 @@
 package com.ustctuixue.arcaneart.ritual.ritualMagic;
 
-import com.mojang.datafixers.types.templates.Tag;
 import com.ustctuixue.arcaneart.ArcaneArt;
 import com.ustctuixue.arcaneart.api.ritual.Ritual;
 import net.minecraft.client.util.ITooltipFlag;
@@ -10,8 +9,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

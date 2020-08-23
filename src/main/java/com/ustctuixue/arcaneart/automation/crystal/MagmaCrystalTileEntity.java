@@ -46,7 +46,7 @@ public class MagmaCrystalTileEntity extends AbstractCollectiveCrystalTileEntity 
             for(int j = -1; j <= 2; j++){
                 BlockPos newpos = pos.add(i, 0, j);
                 assert world != null;
-                if (((i == -2)||(i == 2))&&((j == -2)||(j == 2)))
+                if ((i == -2 || i == 2) && j == 2)
                     continue;
                 if ((i == 0)&&(j == 0))
                     continue;

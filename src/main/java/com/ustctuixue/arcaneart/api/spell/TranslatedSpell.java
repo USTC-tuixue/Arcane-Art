@@ -161,6 +161,7 @@ public class TranslatedSpell
                 ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "Line: " + s);
                 return null;
             }
+            ArcaneArtAPI.LOGGER.info(LanguageManager.LANGUAGE, "keyword type: " + kw.getType());
             switch (kw.getType())
             {
                 case ON_HOLD:

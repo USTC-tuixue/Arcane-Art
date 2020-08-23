@@ -15,9 +15,10 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(value=Dist.CLIENT)
 public class HUDClientEvent {
-	public static boolean render=false;
+	private static boolean render=false;
 	@SubscribeEvent
 	public static void onOverlayRender(RenderGameOverlayEvent event) {
 		ClientPlayerEntity playerEntity = Minecraft.getInstance().player;

@@ -25,7 +25,7 @@ public class CapabilitySpell
         private static final String ON_HOLD = "onHoldSentences";
         private static final String ON_RELEASE = "onReleaseSentences";
 
-        @Nullable
+        @Nonnull
         @Override
         public INBT writeNBT(Capability<ITranslatedSpellProvider> capability, ITranslatedSpellProvider instance, Direction side)
         {
@@ -46,7 +46,7 @@ public class CapabilitySpell
             translatedSpell.setName(compoundNBT.getString(TITLE));
             translatedSpell.addAllCommonSentences(decodeIncantation(compoundNBT.getList(PRE_PROCESS, 8)));
             translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_HOLD, 8)));
-            translatedSpell.addAllOnHoldSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
+            translatedSpell.addAllOnReleaseSentences(decodeIncantation(compoundNBT.getList(ON_RELEASE, 8)));
             instance.setSpell(translatedSpell);
         }
 

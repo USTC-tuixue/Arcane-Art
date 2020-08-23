@@ -27,10 +27,13 @@ public class ContainerTypeRegistry {
             = CONTAINERS.register("bookshelf_container", () ->
             IForgeContainerType.create(
                     (int windowId, PlayerInventory inv, PacketBuffer data) ->
-                            new BookShelfContainer(
-                                    windowId,inv,data.readBlockPos(),
-                                    Minecraft.getInstance().world.getWorld()
-                            )
+                    {
+                        assert Minecraft.getInstance().world != null;
+                        return new BookShelfContainer(
+                                windowId,inv,data.readBlockPos(),
+                                Minecraft.getInstance().world.getWorld()
+                        );
+                    }
             )
     );
 }

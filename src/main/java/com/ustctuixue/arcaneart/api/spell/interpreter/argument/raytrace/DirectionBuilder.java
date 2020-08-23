@@ -22,6 +22,7 @@ public class DirectionBuilder implements IRelativeArgumentBuilder<Vec3dList>
         pivotBuilder = new RelativeVec3dListBuilder();
     }
 
+    @Nonnull
     @Override
     public Vec3dList build(@Nonnull SpellCasterSource source)
     {

@@ -50,7 +50,7 @@ public class SpellModuleRegistries
     public static class SpellTranslations
     {
         // public static LanguageProfile LATIN = LanguageManager.getInstance().getLanguageProfile("latin");
-        public static LanguageProfile EN_US = LanguageManager.getInstance().getLanguageProfile("en_us");
+        static LanguageProfile EN_US = LanguageManager.getInstance().getLanguageProfile("en_us");
         @SubscribeEvent
         public void addTranslations(FMLCommonSetupEvent event)
         {
