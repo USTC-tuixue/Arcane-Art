@@ -2,6 +2,7 @@ package com.ustctuixue.arcaneart.api.spell.entityspellball;
 
 import com.ustctuixue.arcaneart.api.APIConfig;
 import com.ustctuixue.arcaneart.api.APIRegistries;
+import com.ustctuixue.arcaneart.api.ArcaneArtAPI;
 import com.ustctuixue.arcaneart.api.mp.CapabilityMP;
 import com.ustctuixue.arcaneart.api.mp.IMPConsumer;
 import com.ustctuixue.arcaneart.api.mp.IManaBar;
@@ -329,7 +330,6 @@ public class EntitySpellBall extends Entity{
                 }
                 else if (this.translatedSpellProvider.hasSpell()) {
                     //执行瞬时施法操作
-                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                     this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
                     LivingEntity shooter = this.getShootingEntity();
                     LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
@@ -357,7 +357,6 @@ public class EntitySpellBall extends Entity{
             else if (result.getType() == RayTraceResult.Type.ENTITY) {
                 if (this.translatedSpellProvider.hasSpell()) {
                     //执行瞬时施法操作
-                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                     this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
                     LivingEntity shooter = this.getShootingEntity();
                     LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
@@ -416,6 +415,9 @@ public class EntitySpellBall extends Entity{
                 p.sendMessage(new StringTextComponent("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
             }//测试
              */
+            ArcaneArtAPI.LOGGER.debug("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ());
+
+
 
             int ticksAlive = this.dataManager.get(TICKS_ALIVE);
             this.dataManager.set(TICKS_ALIVE, ticksAlive + 1);
@@ -438,6 +440,7 @@ public class EntitySpellBall extends Entity{
                 p.sendMessage(new StringTextComponent(raytraceresult.getType().toString()));
             }//测试
              */
+            ArcaneArtAPI.LOGGER.debug(new StringTextComponent(raytraceresult.getType().toString()));
             if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
             //if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
                 /*
@@ -445,6 +448,7 @@ public class EntitySpellBall extends Entity{
                     p.sendMessage(new StringTextComponent("on impact" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
                 }//测试
                  */
+                ArcaneArtAPI.LOGGER.debug("on impact" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ());
                 this.onImpact(raytraceresult);
             }
 
@@ -476,6 +480,7 @@ public class EntitySpellBall extends Entity{
                     p.sendMessage(new StringTextComponent("delete spell"));
                 }//测试
                 */
+                ArcaneArtAPI.LOGGER.debug("remove");
                 this.remove();
             }
 
