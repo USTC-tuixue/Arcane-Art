@@ -283,39 +283,29 @@ public class EntitySpellBall extends Entity{
     }
 
 
-    @SuppressWarnings("WeakerAccess")
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
-        if (!this.world.isRemote) {
+        //if (!this.world.isRemote) {
 
             //没带法术，插入作为能量传输手段的逻辑
             //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
             //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
             //不考虑任何折射，摸了
             //和MPStorage的te碰撞时赋予其能量
-        //*
-        for(PlayerEntity p : world.getPlayers()){
-            p.sendMessage(new StringTextComponent(","));
-        }//测试
-        //*/
 
 
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
-                //BlockPos pos = ((BlockRayTraceResult) result).getPos();
-                //BlockState block = world.getBlockState(pos);
-
                 BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
+                //getPos拿到的是在撞上之前最后一个经过的方块
                 BlockState block = world.getBlockState(pos);
 
-                //*
+                /*
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
                 }//测试
-                 //*/
-
-
+                 */
 
                 if (block.getBlock() instanceof LuxReflector) {
                     this.reflect(block.get(LuxReflector.FACING), pos);
@@ -337,48 +327,43 @@ public class EntitySpellBall extends Entity{
                     //https://www.bilibili.com/read/cv4565671/
                     //net\minecraft\world\IWorldWriter.java line 9-19
                 }
-                else if (! (world.getBlockState(this.getPosition()).getBlock() instanceof AirBlock)){
-                    //getPos拿到的是在撞上之前最后一个经过的方块（或实体所在的blockpos），因此后面施法和充能需要判断是不是已经在方块内
-                    //把上面替换成“若该实体和方块有碰撞箱重叠”，然后把下面两句调出来
-                    pos = ((BlockRayTraceResult) result).getPos();
-                    block = world.getBlockState(pos);
-                    if (this.translatedSpellProvider.hasSpell()) {
-                        //执行瞬时施法操作
-                        this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
-                        LivingEntity shooter = this.getShootingEntity();
-                        LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
-                        optionalManaBar.ifPresent((s) -> {
-                            double mana = s.getMana();
-                            double maxMP = s.getMaxMana(shooter);
-                            double leftOverMana = this.spellBallMPStorage.getMana();
-                            s.setMana(Math.min(mana + leftOverMana, maxMP));
-                        });//return the leftover mana to the caster
-                    }
-                    else if (block.hasTileEntity()) {
-                        TileEntity te = world.getTileEntity(pos);
-                        assert te != null;
-                        LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
-                        mpStorageCapLazyOptional.ifPresent((s) -> {
-                            double mana = s.getMana();
-                            double maxMP = s.getMaxMana();
-                            double spellMana = this.spellBallMPStorage.getMana();
-                            s.setMana(Math.min(mana + spellMana, maxMP));
-                        });
-                    }
-                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
-                }
-
-
-            }
-            else if (result.getType() == RayTraceResult.Type.ENTITY) {
-                if (this.translatedSpellProvider.hasSpell()) {
+                else if (this.translatedSpellProvider.hasSpell()) {
                     //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
                     this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
                     LivingEntity shooter = this.getShootingEntity();
                     LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
                     optionalManaBar.ifPresent((s) -> {
                         double mana = s.getMana();
-                        double maxMP = s.getMaxMana(shooter);
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
+                        double leftOverMana = this.spellBallMPStorage.getMana();
+                        s.setMana(Math.min(mana + leftOverMana, maxMP));
+                    });//return the leftover mana to the caster
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
+                }
+                else if (block.hasTileEntity()) {
+                    TileEntity te = world.getTileEntity(pos);
+                    assert te != null;
+                    LazyOptional<MPStorage> mpStorageCapLazyOptional = te.getCapability(CapabilityMPStorage.MP_STORAGE_CAP);
+                    mpStorageCapLazyOptional.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana();
+                        double spellMana = this.spellBallMPStorage.getMana();
+                        s.setMana(Math.min(mana + spellMana, maxMP));
+                    });
+                }
+                this.spellBallMPStorage.setMana(0D);//delete this spell ball
+            }
+            else if (result.getType() == RayTraceResult.Type.ENTITY) {
+                if (this.translatedSpellProvider.hasSpell()) {
+                    //执行瞬时施法操作
+                    TranslatedSpell spell = this.translatedSpellProvider.getSpell();
+                    this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
+                    LivingEntity shooter = this.getShootingEntity();
+                    LazyOptional<IManaBar> optionalManaBar = shooter.getCapability(CapabilityMP.MANA_BAR_CAP);
+                    optionalManaBar.ifPresent((s) -> {
+                        double mana = s.getMana();
+                        double maxMP = s.getMaxMana((LivingEntity) shooter);
                         double leftOverMana = this.spellBallMPStorage.getMana();
                         s.setMana(Math.min(mana + leftOverMana, maxMP));
                     });//return the leftover mana to the caster
@@ -387,7 +372,7 @@ public class EntitySpellBall extends Entity{
                 else {
                     //没有携带法术，给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
-                    if (entity instanceof LivingEntity) {
+                    if (entity.isLiving()) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
@@ -400,7 +385,7 @@ public class EntitySpellBall extends Entity{
                 }
 
             }
-        }
+        //}
     }
 
 
