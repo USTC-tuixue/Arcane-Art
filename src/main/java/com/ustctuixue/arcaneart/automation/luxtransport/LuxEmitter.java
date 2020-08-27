@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 public class LuxEmitter extends DirectionalBlock {
 
     public LuxEmitter(){
-        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
     }
 
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {

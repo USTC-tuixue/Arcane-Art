@@ -14,10 +14,12 @@ import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -29,6 +31,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -284,13 +287,18 @@ public class EntitySpellBall extends Entity{
     protected void onImpact(RayTraceResult result){
         //super.onImpact(result);
 
-        //if (!this.world.isRemote) {
+        if (!this.world.isRemote) {
 
             //没带法术，插入作为能量传输手段的逻辑
             //和棱镜碰撞时转向（专门处理和xyz轴对齐的情况以提高效率）
             //棱镜分两种：直角棱镜和分光棱镜，直角棱镜和台阶类似，分光棱镜是两个直角棱镜捏在一起的正方体
             //不考虑任何折射，摸了
             //和MPStorage的te碰撞时赋予其能量
+        //*
+        for(PlayerEntity p : world.getPlayers()){
+            p.sendMessage(new StringTextComponent(","));
+        }//测试
+        //*/
 
 
             if (result.getType() == RayTraceResult.Type.BLOCK) {
@@ -301,11 +309,11 @@ public class EntitySpellBall extends Entity{
                 BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
                 BlockState block = world.getBlockState(pos);
 
-                /*
+                //*
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
                 }//测试
-                 */
+                 //*/
 
 
 
@@ -329,11 +337,11 @@ public class EntitySpellBall extends Entity{
                     //https://www.bilibili.com/read/cv4565671/
                     //net\minecraft\world\IWorldWriter.java line 9-19
                 }
-                else if (true){
+                else if (! (world.getBlockState(this.getPosition()).getBlock() instanceof AirBlock)){
                     //getPos拿到的是在撞上之前最后一个经过的方块（或实体所在的blockpos），因此后面施法和充能需要判断是不是已经在方块内
-                    //把那个if true替换成“若该实体和方块有碰撞箱重叠”，然后把下面两句调出来
-                    //BlockPos pos = ((BlockRayTraceResult) result).getPos();
-                    //BlockState block = world.getBlockState(pos);
+                    //把上面替换成“若该实体和方块有碰撞箱重叠”，然后把下面两句调出来
+                    pos = ((BlockRayTraceResult) result).getPos();
+                    block = world.getBlockState(pos);
                     if (this.translatedSpellProvider.hasSpell()) {
                         //执行瞬时施法操作
                         this.translatedSpellProvider.getCompiled(source).executeOnRelease(source);
@@ -392,7 +400,7 @@ public class EntitySpellBall extends Entity{
                 }
 
             }
-        //}
+        }
     }
 
 
