@@ -301,11 +301,16 @@ public class EntitySpellBall extends Entity{
 
             if (result.getType() == RayTraceResult.Type.BLOCK) {
                 //碰上方块了
-                BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
+                BlockPos pos = ((BlockRayTraceResult) result).getPos();
+                //BlockPos pos = ((BlockRayTraceResult) result).getPos().offset(((BlockRayTraceResult) result).getFace());
                 //getPos拿到的是在撞上之前最后一个经过的方块
-                BlockState block = world.getBlockState(pos);
 
-                /*
+                ArcaneArtAPI.LOGGER.debug("onImpact at pos: " + pos.getX() + "," + pos.getY() + "," + pos.getZ());
+                pos = pos.offset(((BlockRayTraceResult) result).getFace());
+                ArcaneArtAPI.LOGGER.debug("offset pos: " + pos.getX() + "," + pos.getY() + "," + pos.getZ());
+
+                BlockState block = world.getBlockState(pos);
+                /*e
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
                 }//测试
@@ -374,7 +379,7 @@ public class EntitySpellBall extends Entity{
                 else {
                     //没有携带法术，给实体补充能量
                     Entity entity = ((EntityRayTraceResult) result).getEntity();
-                    if (entity.isLiving()) {
+                    if (entity instanceof LivingEntity) {
                         LazyOptional<IManaBar> optionalManaBar = entity.getCapability(CapabilityMP.MANA_BAR_CAP);
                         optionalManaBar.ifPresent((s) -> {
                             double mana = s.getMana();
