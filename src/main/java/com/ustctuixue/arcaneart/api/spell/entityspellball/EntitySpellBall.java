@@ -170,8 +170,10 @@ public class EntitySpellBall extends Entity{
         this.dataManager.set(GRAVITY, builder.gravityFactor);
         this.setShootingEntity(builder.shooter);
         this.setMotion(new Vec3d(builder.vx,builder.vy,builder.vz));
-        this.spellBallMPStorage.setMana(builder.mps.getMana());
-        this.spellBallMPStorage.setMaxMana(builder.mps.getMaxMana());
+        this.spellBallMPStorage.setMaxMana(builder.maxmp);
+        this.spellBallMPStorage.setMana(builder.mp);
+        //一定要先设定maxMP！否则在setMana的时候maxMP还是0，会导致mana被限定为0
+        ArcaneArtAPI.LOGGER.debug("creating spell at pos " + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()+ ", mana:" + this.spellBallMPStorage.getMana() + ", maxMana:" + this.spellBallMPStorage.getMaxMana());
     }
 
     @SuppressWarnings({"WeakerAccess","unused"})
@@ -182,7 +184,7 @@ public class EntitySpellBall extends Entity{
         private float gravityFactor;
         private LivingEntity shooter;
         private float yaw, pitch;
-        private final MPStorage mps = new MPStorage();
+        private double mp, maxmp;
 
          public Builder (World world) {
              this.world = world;
@@ -267,14 +269,15 @@ public class EntitySpellBall extends Entity{
          gives out a spell ball with full mp
           */
          public Builder setFullMP(double maxMP) {
-             mps.setMaxMana(maxMP);
-             mps.setMana(maxMP);
+             this.mp = maxMP;
+             this.maxmp = maxMP;
+             ArcaneArtAPI.LOGGER.debug("mp:" + this.mp + "/" + this.maxmp);
              return this;
          }
 
          public Builder setMP(double mana, double maxMP) {
-             mps.setMaxMana(maxMP);
-             mps.setMana(mana);
+             this.mp = mana;
+             this.maxmp = maxMP;
              return this;
          }
 
@@ -415,7 +418,7 @@ public class EntitySpellBall extends Entity{
                 p.sendMessage(new StringTextComponent("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()));
             }//测试
              */
-            ArcaneArtAPI.LOGGER.debug("ticking spell" + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ());
+            ArcaneArtAPI.LOGGER.debug("ticking spell at pos " + this.getPosX() + "," + this.getPosY() + "," + this.getPosZ()+ ", mana:" + this.spellBallMPStorage.getMana() + ", maxMana:" + this.spellBallMPStorage.getMaxMana());
 
 
 
@@ -440,7 +443,7 @@ public class EntitySpellBall extends Entity{
                 p.sendMessage(new StringTextComponent(raytraceresult.getType().toString()));
             }//测试
              */
-            ArcaneArtAPI.LOGGER.debug(new StringTextComponent(raytraceresult.getType().toString()));
+            ArcaneArtAPI.LOGGER.debug(raytraceresult.getType().toString());
             if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
             //if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
                 /*
