@@ -327,7 +327,7 @@ public class EntitySpellBall extends Entity{
                     //https://www.bilibili.com/read/cv4565671/
                     //net\minecraft\world\IWorldWriter.java line 9-19
                 }
-                else if (block.getBlock() instanceof LuxSplitter) {
+               else if (block.getBlock() instanceof LuxSplitter) {
                     this.split(block.get(LuxSplitter.FACING), pos);
                     //TODO
                     // 设置红石信号强度的blockstate
@@ -360,6 +360,10 @@ public class EntitySpellBall extends Entity{
                         double spellMana = this.spellBallMPStorage.getMana();
                         s.setMana(Math.min(mana + spellMana, maxMP));
                     });
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
+                }
+                else if (!(block.getBlock() instanceof AirBlock)){
+                    //理论上来说上面应该没有if，这里是对splitter逻辑的一个hotfix，这个raytrace的逻辑还是有很大问题
                     this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
             }

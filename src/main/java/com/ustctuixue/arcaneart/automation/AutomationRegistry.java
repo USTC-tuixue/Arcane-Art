@@ -5,6 +5,7 @@ import com.ustctuixue.arcaneart.automation.crystal.*;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxEmitter;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxEmitterTileentity;
 import com.ustctuixue.arcaneart.automation.luxtransport.LuxReflector;
+import com.ustctuixue.arcaneart.automation.luxtransport.LuxSplitter;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -24,7 +25,7 @@ public class AutomationRegistry {
     public static RegistryObject<Block> VOID_CRYSTAL_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("void_crystal", VoidCrystal::new);
     public static RegistryObject<Block> LUX_EMITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_emitter", LuxEmitter::new);
     public static RegistryObject<Block> LUX_REFLECTOR_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_reflector", LuxReflector::new);
-    public static RegistryObject<Block> LUX_SPLITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_splitter", LuxReflector::new);
+    public static RegistryObject<Block> LUX_SPLITTER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("lux_splitter", LuxSplitter::new);
     public static RegistryObject<Block> MANA_FLOWER_BLOCK = BLOCK_TYPE_DEFERRED_REGISTER.register("mana_flower", ManaFlower::new);
 
 
