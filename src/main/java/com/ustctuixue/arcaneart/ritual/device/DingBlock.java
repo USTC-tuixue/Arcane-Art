@@ -144,7 +144,7 @@ public class DingBlock extends Block implements IWaterLoggable {
 
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
-        if(state.get(LOCK)) {
+        if(state.get(LOCK) && world.getTileEntity(pos) instanceof DingTileEntity) {
             DingTileEntity dingTileEntity = (DingTileEntity) world.getTileEntity(pos);
             if(dingTileEntity == null) {
                 return 0;
