@@ -310,6 +310,7 @@ public class EntitySpellBall extends Entity{
                 ArcaneArtAPI.LOGGER.debug("offset pos: " + pos.getX() + "," + pos.getY() + "," + pos.getZ());
 
                 BlockState block = world.getBlockState(pos);
+                ArcaneArtAPI.LOGGER.debug("offset block: " + block);
                 /*e
                 for(PlayerEntity p : world.getPlayers()){
                     p.sendMessage(new StringTextComponent(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
@@ -359,8 +360,8 @@ public class EntitySpellBall extends Entity{
                         double spellMana = this.spellBallMPStorage.getMana();
                         s.setMana(Math.min(mana + spellMana, maxMP));
                     });
+                    this.spellBallMPStorage.setMana(0D);//delete this spell ball
                 }
-                this.spellBallMPStorage.setMana(0D);//delete this spell ball
             }
             else if (result.getType() == RayTraceResult.Type.ENTITY) {
                 if (this.translatedSpellProvider.hasSpell()) {
